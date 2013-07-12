@@ -133,12 +133,6 @@
 	</pluginRepositories>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>14.0.1</version>
-		</dependency>
-
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -155,11 +149,6 @@
             <artifactId>jsf-api</artifactId>
             <version>2.1.16</version>
         </dependency>
-        <dependency>
-            <groupId>com.sun.faces</groupId>
-            <artifactId>jsf-impl</artifactId>
-            <version>2.1.16</version>
-        </dependency>
         <!-- SERVLET -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -167,19 +156,5 @@
             <scope>provided</scope>
             <version>2.5</version>
         </dependency>
-
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.8.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 </project>
