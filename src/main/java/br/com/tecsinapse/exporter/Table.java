@@ -73,6 +73,10 @@ public class Table {
 		cells.add(new ArrayList<TableCell>());
 	}
 
+    public void addNewRow(List<TableCell> row) {
+        cells.add(row);
+    }
+
 	public List<List<TableCell>> getCells() {
 		return cells;
 	}
@@ -221,6 +225,18 @@ public class Table {
 			System.out.println();
 		}
 	}
+
+    public String getStringMatrixAsString(List<List<String>> matrix) {
+        StringBuilder sb = new StringBuilder();
+        for (List<String> row : matrix) {
+            for (String cell : row) {
+                sb.append("|");
+                sb.append(cell);
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 
 	public void printString() {
 
