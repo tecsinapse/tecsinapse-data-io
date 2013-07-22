@@ -1,27 +1,16 @@
 package br.com.tecsinapse.exporter;
 
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.IOUtils;
 
 public class Table {
 	private String title;
@@ -209,16 +198,19 @@ public class Table {
 		return matrix;
 	}
 
-	private int getBiggerRowSize() {
-		int biggerRowSize = 0;
-		for (List<TableCell> row : cells) {
-			if (row.size() > biggerRowSize) {
-				biggerRowSize = row.size();
-
-			}
-		}
-		return biggerRowSize;
-	}
+    private int getBiggerRowSize() {
+        int biggerRowSize = 0;
+        for (List<TableCell> row : cells) {
+            int qtdColumns = 0;
+            for(TableCell column : row) {
+                qtdColumns += column.getColspan();
+                if (qtdColumns > biggerRowSize) {
+                    biggerRowSize = qtdColumns;
+                }
+            }
+        }
+        return biggerRowSize;
+    }
 
 	public void printStringMatrix(List<List<String>> matrix) {
 		System.out.println("print matrix");

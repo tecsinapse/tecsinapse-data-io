@@ -139,6 +139,11 @@
             <version>2.1</version>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.9</version>
@@ -155,6 +160,13 @@
             <artifactId>servlet-api</artifactId>
             <scope>provided</scope>
             <version>2.5</version>
+        </dependency>
+        <!-- test -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8.1</version>
+            <scope>test</scope>
         </dependency>
 	</dependencies>
 </project>
