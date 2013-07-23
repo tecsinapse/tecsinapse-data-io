@@ -8,6 +8,7 @@ import org.reflections.ReflectionUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,21 +19,25 @@ public class ExcelImporter<T> {
 
     private final Class<T> clazz;
     private File excel;
+    private InputStream excelInputStream;
 
     public ExcelImporter(Class<T> clazz, File file) throws IOException {
         this(clazz);
         this.excel = file;
+    }
+    public ExcelImporter(Class<T> clazz, InputStream inputStream) throws IOException {
+        this(clazz);
+        this.excelInputStream = inputStream;
     }
 
     private ExcelImporter(Class<T> clazz) {
         this.clazz = clazz;
     }
 
-
     public <X> List<T> parse() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException {
         List<T> list = new ArrayList<>();
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
-        Workbook wb =  WorkbookFactory.create(excel);
+        Workbook wb =  getWorkbook();
         Sheet sheet = wb.getSheetAt(0);
 
         Iterator<Row> rowIterator = sheet.iterator();
@@ -84,5 +89,12 @@ public class ExcelImporter<T> {
             return "";
         }
         return fields.get(index);
+    }
+
+    public Workbook getWorkbook() throws IOException, InvalidFormatException {
+        if(excel != null) {
+            return WorkbookFactory.create(excel);
+        }
+        return WorkbookFactory.create(excelInputStream);
     }
 }
