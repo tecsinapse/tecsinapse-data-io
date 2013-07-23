@@ -2,8 +2,10 @@ package br.com.tecsinapse.exporter.importer;
 
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.joda.time.LocalDate;
 import org.reflections.ReflectionUtils;
 
 import java.io.File;
@@ -83,6 +85,10 @@ public class ExcelImporter<T> {
             case Cell.CELL_TYPE_BOOLEAN:
                 return Boolean.valueOf(cell.getBooleanCellValue()).toString();
             case Cell.CELL_TYPE_NUMERIC:
+                CellStyle style = cell.getCellStyle();
+                if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                    return new LocalDate(cell.getDateCellValue()).toString("dd/MM/yyyy");
+                }
                 return Double.valueOf(cell.getNumericCellValue()).toString();
             case Cell.CELL_TYPE_STRING:
                 return cell.getStringCellValue();
