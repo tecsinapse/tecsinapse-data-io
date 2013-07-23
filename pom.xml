@@ -148,6 +148,11 @@
             <artifactId>poi</artifactId>
             <version>3.9</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.9</version>
+        </dependency>
         <!-- JSF -->
         <dependency>
             <groupId>com.sun.faces</groupId>
@@ -161,6 +166,11 @@
             <scope>provided</scope>
             <version>2.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.9-RC1</version>
+        </dependency>
         <!-- test -->
         <dependency>
             <groupId>org.testng</groupId>
@@ -168,5 +178,5 @@
             <version>6.8.1</version>
             <scope>test</scope>
         </dependency>
-	</dependencies>
+    </dependencies>
 </project>
