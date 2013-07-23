@@ -5,7 +5,6 @@ import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import com.sun.istack.internal.NotNull;
 import org.reflections.ReflectionUtils;
 
 import java.io.File;
@@ -23,16 +22,16 @@ public class CsvImporter<T> {
     private final Class<T> clazz;
     private List<String> csvLines;
 
-    public CsvImporter(Class<T> clazz, @NotNull List<String> csvLines) {
+    public CsvImporter(Class<T> clazz, List<String> csvLines) {
         this(clazz);
         this.csvLines = csvLines;
     }
 
-    public CsvImporter(Class<T> clazz, @NotNull File file, Charset charset) throws IOException {
+    public CsvImporter(Class<T> clazz, File file, Charset charset) throws IOException {
         this(clazz, CSVUtil.processInputCSV(new FileInputStream(file), charset));
     }
 
-    public CsvImporter(Class<T> clazz, @NotNull InputStream inputStream, Charset charset) throws IOException {
+    public CsvImporter(Class<T> clazz, InputStream inputStream, Charset charset) throws IOException {
         this(clazz, CSVUtil.processInputCSV(inputStream, charset));
     }
 

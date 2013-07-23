@@ -2,7 +2,6 @@ package br.com.tecsinapse.exporter.importer;
 
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
-import com.sun.istack.internal.NotNull;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.reflections.ReflectionUtils;
@@ -20,7 +19,7 @@ public class ExcelImporter<T> {
     private final Class<T> clazz;
     private File excel;
 
-    public ExcelImporter(Class<T> clazz, @NotNull File file) throws IOException {
+    public ExcelImporter(Class<T> clazz, File file) throws IOException {
         this(clazz);
         this.excel = file;
     }
