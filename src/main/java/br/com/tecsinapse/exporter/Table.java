@@ -85,6 +85,12 @@ public class Table {
 		this.cells = cells;
 	}
 
+    public void removeFirstRow() {
+        if(cells.size() > 0) {
+            cells.remove(0);
+        }
+    }
+
 	public List<List<String>> toStringMatrix() {
 		int rows = cells.size();
 		int columns = getBiggerRowSize();

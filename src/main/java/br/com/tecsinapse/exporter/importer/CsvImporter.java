@@ -39,8 +39,12 @@ public class CsvImporter<T> {
         this.clazz = clazz;
     }
 
-
-    public <X> List<T> parse() throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    /**
+     * Não lê a primeira linha
+     * @return
+     * @throws Exception
+     */
+    public List<T> parse() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         List<T> list = new ArrayList<>();
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
 
