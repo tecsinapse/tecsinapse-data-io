@@ -493,4 +493,7 @@ public class Table {
 		this.title = title;
 	}
 
+    public int getNextColumnIndexOfLastRow() {
+        return getLastColumnIndex(getLastRow()) + 1;
+    }
 }

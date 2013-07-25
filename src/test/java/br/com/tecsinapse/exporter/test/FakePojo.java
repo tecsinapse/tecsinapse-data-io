@@ -2,13 +2,6 @@ package br.com.tecsinapse.exporter.test;
 
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 
-/**
- * Created with IntelliJ IDEA.
- * User: filipe
- * Date: 7/23/13
- * Time: 9:58 AM
- * To change this template use File | Settings | File Templates.
- */
 public class FakePojo {
 
     private String one;

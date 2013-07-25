@@ -1,6 +1,7 @@
 package br.com.tecsinapse.exporter.importer;
 
 import br.com.tecsinapse.exporter.ExcelType;
+import br.com.tecsinapse.exporter.ExcelUtil;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
@@ -55,6 +56,7 @@ public class ExcelImporter<T> {
 
     /**
      * Não lê a primeira linha
+     *
      * @return
      * @throws Exception
      */
@@ -217,6 +219,12 @@ public class ExcelImporter<T> {
 
             @Override
             public void cell(String cellReference, String formattedValue) {
+                int columnIndex = ExcelUtil.getColumnIndexByColumnName(cellReference);
+                int idx = table.getNextColumnIndexOfLastRow();
+                int dif = columnIndex - idx;
+                while(dif-- > 0) {
+                    table.add("");
+                }
                 table.add(formattedValue);
             }
 
@@ -234,4 +242,6 @@ public class ExcelImporter<T> {
         table.removeFirstRow();
         return table;
     }
+
+
 }
