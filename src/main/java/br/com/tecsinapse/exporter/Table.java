@@ -297,12 +297,8 @@ public class Table {
 							rowEnd, colStart, colEnd));
 				}
 
-				try {
-					Double value = Double.valueOf(tableCell.getContent());
-					cell.setCellValue(value);
-				} catch (Exception e) {
-					cell.setCellValue(tableCell.getContent());
-				}
+				cell.setCellValue(tableCell.getContent());
+				
 				switch (tableCell.getTableCellType()) {
 				case HEADER:
 					cell.setCellStyle(styleHeader);
