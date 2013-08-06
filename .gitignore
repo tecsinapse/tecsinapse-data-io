@@ -5,3 +5,4 @@
 .metadata
 target
 bin
+/src/main/resources/rebel.xml
