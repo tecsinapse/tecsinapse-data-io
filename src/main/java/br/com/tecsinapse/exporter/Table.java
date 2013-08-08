@@ -467,7 +467,7 @@ public class Table {
 		int biggerRow = this.getBiggerRowSize();
 		List<TableCell> emptyCells = new ArrayList<TableCell>();
 		for (int i = 0; i < biggerRow; ++i) {
-			emptyCells.add(new TableCell(""));
+			emptyCells.add(new TableCell(" "));
 		}
 
 		this.addNewRow();
