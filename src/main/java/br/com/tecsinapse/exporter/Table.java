@@ -160,7 +160,7 @@ public class Table {
 			spanMark[r] = new boolean[columns];
 			matrix.add(new ArrayList<TableCell>());
 			for (int c = 0; c < columns; ++c) {
-				matrix.get(r).add(new TableCell(""));
+				matrix.get(r).add(EmptyTableCell.EMPTY_CELL);
 				spanMark[r][c] = false;
 			}
 		}
@@ -273,8 +273,8 @@ public class Table {
 		for (List<TableCell> row : matrix) {
 			Row sheetRow = sheet.createRow(r);
 			for (TableCell tableCell : row) {
-				while (matrixFull.get(r - titleRows).get(c).getContent()
-						.equals("")) {
+				while (matrixFull.get(r - titleRows)
+						.get(c) == EmptyTableCell.EMPTY_CELL) {
 					c++;
 					if (c >= matrixFull.get(r - titleRows).size()) {
 						c = 0;
@@ -443,7 +443,7 @@ public class Table {
 			int biggerRow = this.getBiggerRowSize();
 			List<TableCell> emptyCells = new ArrayList<TableCell>();
 			for (int i = 0; i < biggerRow; ++i) {
-				emptyCells.add(new TableCell(""));
+				emptyCells.add(EmptyTableCell.EMPTY_CELL);
 			}
 			for (int i = 0; i < rowsOut - rows; ++i) {
 				this.addNewRow();
@@ -452,7 +452,7 @@ public class Table {
 		}
 
 		for (List<TableCell> row : this.cells) {
-			row.add(new TableCell(""));
+			row.add(EmptyTableCell.EMPTY_CELL);
 		}
 
 		// concatena linhas
