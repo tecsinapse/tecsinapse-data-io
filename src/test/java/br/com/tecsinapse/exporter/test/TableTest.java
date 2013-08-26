@@ -22,7 +22,30 @@ public class TableTest {
 
         String text = t.getStringMatrixAsString(t.toStringMatrix());
         Assert.assertEquals(text, "|Coluna 1||||||Coluna 2|\n");
-
+    }
+	 
+    @Test
+    public void testRowspanFirstLine() {
+        Table t = new Table();
+        t.addNewRow();
+        TableCell l1 = new TableCell("Linha 1", TableCellType.HEADER);
+        l1.setColspan(6);
+        t.add(l1);
+		  
+        TableCell l12 = new TableCell("Linha 1/2", TableCellType.HEADER);
+        l12.setRowspan(2);
+		  t.add(l12);
+        
+		  t.addNewRow();
+        TableCell l2 = new TableCell("Linha 2", TableCellType.HEADER);
+        l2.setColspan(6);
+        t.add(l2);
+        
+		  
+        String text = t.getStringMatrixAsString(t.toStringMatrix());
+        Assert.assertEquals(text, 
+				  "|Linha 1||||||Linha 1/2\n" + 
+				  "|Linha 2||||||\n");
     }
 
 }
