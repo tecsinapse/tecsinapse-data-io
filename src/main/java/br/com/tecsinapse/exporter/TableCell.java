@@ -1,7 +1,7 @@
 package br.com.tecsinapse.exporter;
 
 public class TableCell {
-	private String content = "";
+	private String content = " ";
 	private Integer colspan = 1;
 	private Integer rowspan = 1;
 	private TableCellType tableCellType = TableCellType.BODY;
@@ -12,7 +12,8 @@ public class TableCell {
 
 	public TableCell(String content) {
 		super();
-		this.content = content;
+		this.content = 
+				(content == null || content.isEmpty()) ? " " : content;
 	}
 
 	public TableCell(String content, TableCellType tableCellType) {
