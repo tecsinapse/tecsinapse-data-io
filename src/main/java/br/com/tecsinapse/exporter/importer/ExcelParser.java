@@ -31,26 +31,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class ExcelImporter<T> {
+class ExcelParser<T> implements Parser<T> {
 
     private final Class<T> clazz;
     private File excel;
     private InputStream excelInputStream;
     private ExcelType type;
 
-    public ExcelImporter(Class<T> clazz, File file) throws IOException {
+    public ExcelParser(Class<T> clazz, File file) throws IOException {
         this(clazz);
         this.excel = file;
         this.type = ExcelType.getExcelType(excel.getName());
     }
 
-    public ExcelImporter(Class<T> clazz, InputStream inputStream, ExcelType type) throws IOException {
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type) throws IOException {
         this(clazz);
         this.excelInputStream = inputStream;
         this.type = type;
     }
 
-    private ExcelImporter(Class<T> clazz) {
+    private ExcelParser(Class<T> clazz) {
         this.clazz = clazz;
     }
 
@@ -60,6 +60,7 @@ public class ExcelImporter<T> {
      * @return
      * @throws Exception
      */
+    @Override
     public List<T> parse() throws Exception {
         if (ExcelType.XLSX == type) {
             return parseXlsx();
@@ -67,7 +68,7 @@ public class ExcelImporter<T> {
         return parseXls();
     }
 
-    public List<T> parseXlsx() throws Exception {
+    private List<T> parseXlsx() throws Exception {
 
         List<List<String>> xlsLines = parseXlsxToStrings();
         List<T> list = new ArrayList<>();
@@ -88,7 +89,7 @@ public class ExcelImporter<T> {
         return list;
     }
 
-    public List<T> parseXls() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException {
+    private List<T> parseXls() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException {
         List<T> list = new ArrayList<>();
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
         Workbook wb = getWorkbook();

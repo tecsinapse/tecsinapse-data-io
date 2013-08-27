@@ -18,24 +18,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class CsvImporter<T> {
+class CsvParser<T> implements Parser<T> {
     private final Class<T> clazz;
     private List<String> csvLines;
 
-    public CsvImporter(Class<T> clazz, List<String> csvLines) {
+    public CsvParser(Class<T> clazz, List<String> csvLines) {
         this(clazz);
         this.csvLines = csvLines;
     }
 
-    public CsvImporter(Class<T> clazz, File file, Charset charset) throws IOException {
+    public CsvParser(Class<T> clazz, File file, Charset charset) throws IOException {
         this(clazz, CSVUtil.processInputCSV(new FileInputStream(file), charset));
     }
 
-    public CsvImporter(Class<T> clazz, InputStream inputStream, Charset charset) throws IOException {
+    public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset) throws IOException {
         this(clazz, CSVUtil.processInputCSV(inputStream, charset));
     }
 
-    private CsvImporter(Class<T> clazz) {
+    private CsvParser(Class<T> clazz) {
         this.clazz = clazz;
     }
 
@@ -44,6 +44,7 @@ public class CsvImporter<T> {
      * @return
      * @throws Exception
      */
+    @Override
     public List<T> parse() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         List<T> list = new ArrayList<>();
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
