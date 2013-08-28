@@ -176,7 +176,6 @@ public class Table {
 				}
 				if (!spanMark[r][c]) {
 					matrix.get(r).set(c, cell);
-					System.out.print(cell.getContent() + " - ");
 
 					int rowspan = cell.getRowspan();
 					int colspan = cell.getColspan();
