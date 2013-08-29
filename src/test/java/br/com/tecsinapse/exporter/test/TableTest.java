@@ -47,5 +47,26 @@ public class TableTest {
 				  "|Linha 1||||||Linha 1/2\n" + 
 				  "|Linha 2||||||\n");
     }
+	 
+    @Test
+    public void testRowAndColspanFirstLine() {
+        Table t = new Table();
+        t.addNewRow();
+        TableCell l1 = new TableCell("Linha/Coluna 1", TableCellType.HEADER);
+        l1.setColspan(2);
+        l1.setRowspan(2);
+        t.add(l1);
+		  
+        t.add(new TableCell("Linha 1", TableCellType.HEADER));
+        
+		  t.addNewRow();
+        t.add(new TableCell("Linha 2", TableCellType.HEADER));
+        
+		  
+        String text = t.getStringMatrixAsString(t.toStringMatrix());
+        Assert.assertEquals(text, 
+				  "|Linha/Coluna 1|Linha 1|\n" +
+	           "|Linha 2||\n");
+    }
 
 }

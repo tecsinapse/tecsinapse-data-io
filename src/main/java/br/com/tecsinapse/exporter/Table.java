@@ -191,9 +191,11 @@ public class Table {
 						}
 					}
 					if (colspan > 1 && rowspan > 1) {
-						for (int i = 1; i < colspan; ++i) {
-							for (int j = 1; j < rowspan; ++j) {
-								spanMark[r + j][c + i] = true;
+						for (int jr = r; jr < (r + rowspan); jr++) {
+							for (int ic = c; ic < (c + colspan); ic++) {
+								if (ic != c || jr != r) {
+									spanMark[jr][ic] = true;
+								}
 							}
 						}
 					}
