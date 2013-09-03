@@ -6,6 +6,9 @@ import org.joda.time.DateTime;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
@@ -69,6 +72,28 @@ public class ExcelUtil {
     public static void exportCsv(Table t, String chartsetName, OutputStream out) throws IOException {
         List<List<String>> csv = t.toStringMatrix();
         CSVUtil.write(csv, out, chartsetName);
+    }
+    
+    public static File getCsvFile(Table t, String file, String charsetName) throws IOException {
+    	File f = new File(file);
+    	FileOutputStream fos = new FileOutputStream(f);
+    	try {
+    		CSVUtil.write(t.toStringMatrix(), fos, charsetName);
+		} finally {
+			fos.close();
+		}
+    	return f;
+    }
+    
+    public static File getXlsFile(Table t, String file) throws IOException {
+    	File f = new File(file);
+    	FileOutputStream fos = new FileOutputStream(f);
+    	try {
+    		t.toWorkBook().write(fos);
+		} finally {
+			fos.close();
+		}
+    	return f;
     }
 
     public static int getColumnIndexByColumnName(String columnName) {
