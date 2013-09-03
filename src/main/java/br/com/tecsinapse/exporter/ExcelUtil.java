@@ -75,23 +75,19 @@ public class ExcelUtil {
     }
     
     public static File getCsvFile(Table t, String file, String charsetName) throws IOException {
+
     	File f = new File(file);
-    	FileOutputStream fos = new FileOutputStream(f);
-    	try {
+    	try (FileOutputStream fos = new FileOutputStream(f)) {
     		CSVUtil.write(t.toStringMatrix(), fos, charsetName);
-		} finally {
-			fos.close();
 		}
     	return f;
     }
     
     public static File getXlsFile(Table t, String file) throws IOException {
+    	
     	File f = new File(file);
-    	FileOutputStream fos = new FileOutputStream(f);
-    	try {
+    	try (FileOutputStream fos = new FileOutputStream(f)) {
     		t.toWorkBook().write(fos);
-		} finally {
-			fos.close();
 		}
     	return f;
     }
