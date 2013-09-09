@@ -1,10 +1,11 @@
 package br.com.tecsinapse.exporter.test;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
 import br.com.tecsinapse.exporter.TableCellType;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class TableTest {
 

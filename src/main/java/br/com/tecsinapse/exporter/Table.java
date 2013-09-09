@@ -1,16 +1,27 @@
 package br.com.tecsinapse.exporter;
 
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.IOUtils;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
 
 public class Table {
 	private String title;
@@ -63,7 +74,15 @@ public class Table {
 	public void add(String content) {
 		add(new TableCell(content));
 	}
-
+	
+	public void add(String content, CellType cellType) {
+		add(new TableCell(content, cellType));
+	}
+	
+	public void add(Double content) {
+		add(new TableCell(content));
+	}
+	
 	public void addOnNewRow(TableCell cell) {
 		addNewRow();
 		add(cell);
@@ -297,8 +316,8 @@ public class Table {
 					sheet.addMergedRegion(new CellRangeAddress(rowStart,
 							rowEnd, colStart, colEnd));
 				}
-
-				cell.setCellValue(tableCell.getContent());
+				
+				this.setConvertedValue(cell, tableCell);
 				
 				switch (tableCell.getTableCellType()) {
 				case HEADER:
@@ -322,6 +341,17 @@ public class Table {
 		}
 		
 		return wb;
+	}
+	
+	private void setConvertedValue(Cell cell, TableCell tableCell){
+		if(tableCell.getCellType() == CellType.NUMERIC_TYPE){
+			Double dValue = tableCell.getContentAsDoubleOrNull();
+			if(dValue != null){
+				cell.setCellValue(dValue.doubleValue());
+				return;
+			}
+		}
+		cell.setCellValue(tableCell.getContent());
 	}
 
 	private CellStyle header(CellStyle style) {
@@ -423,7 +453,7 @@ public class Table {
 			}
 		}
 	}
-
+	
 	public void addAllCells(List<TableCell> values) {
 		if (values != null) {
 			for (TableCell cell : values) {
