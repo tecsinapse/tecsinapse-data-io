@@ -100,11 +100,12 @@ class CsvParser<T> implements Parser<T> {
 					index = getFinalColuna(line.substring(lastIndex), lastIndex);
 					if (index == -1) {
 						//ultima coluna
-						linhaParseadaPorAspas.add(line.substring(lastIndex).replace(";", ""));
+						linhaParseadaPorAspas.add(line.substring(lastIndex).replace("\"\"", "\"").trim());
 						break;
 					}
-					linhaParseadaPorAspas.add(line.substring(lastIndex, index - 1));
-					lastIndex = index == -1 ? -1 : index + 1;
+					coluna = substringNormalizada(line, lastIndex, index - 1); 
+					linhaParseadaPorAspas.add(coluna);
+					lastIndex = index;
 				} else {
 					linhaParseadaPorAspas.add(coluna.replace(";", ""));
 					lastIndex = index == -1 ? -1 : index + 1;
@@ -137,5 +138,17 @@ class CsvParser<T> implements Parser<T> {
 
 	private boolean temAspas(String column) {
 		return column.indexOf("\"") != -1;
+	}
+	
+	private String substringNormalizada(String line, int i, int f) {
+		line = line.substring(i, f - 1).trim();
+		if (line.startsWith("\"")) {
+			line = line.substring(1);
+		}
+		if (line.endsWith("\"")) {
+			line = line.substring(0, line.length() - 1);
+		}
+		
+		return line.replace("\"\"", "\"").trim();
 	}
 }
