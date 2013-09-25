@@ -3,8 +3,6 @@ package br.com.tecsinapse.exporter.importer;
 import br.com.tecsinapse.exporter.CSVUtil;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import org.reflections.ReflectionUtils;
 
 import java.io.File;
@@ -84,59 +82,60 @@ class CsvParser<T> implements Parser<T> {
 		List<String> linhaParseadaPorAspas = new ArrayList<>();
 
 		/**
-		 * Primeiro separa os campos com aspas, pois valores dentro de aspas devem
-		 * ser tratados como um único campo. Ex: x;\"a;b;c\";z gera 3 colunas: [x]
-		 * [a;b;c] [z]
+		 * Percorre a linha em busca de ; 
+		 * depois verifica se entre 2 ; existem aspas
+		 * Se houver, é preciso ignorar os ; internos às aspas
 		 */
-		while (index != -1 && index < line.length() - 1) {
-			index = line.indexOf("\"", lastIndex);
+		while (lastIndex != -1 && lastIndex < line.length()) {
+			index = line.indexOf(";", lastIndex);
 
-			if (index != -1) {
-				String parteSemAspas = line.substring(lastIndex, index);
-
-				if (parteSemAspas.length() > 1) {
-					//tem parte sem aspas
-					parteSemAspas = parteSemAspas.trim();
-					if (parteSemAspas.startsWith(";")) {
-						parteSemAspas = parteSemAspas.substring(1);
-					}
-					if (parteSemAspas.endsWith(";")) {
-						parteSemAspas = parteSemAspas.substring(0, parteSemAspas
-								.length() - 1);
-					}
-
-					linhaParseadaPorAspas.addAll(Lists.newArrayList(Splitter.on(';')
-							.split(parteSemAspas)));
-				}
-
-				int index2 = line.indexOf("\"", index + 1);
-
-				if (index2 == -1) {
-					System.out.println(
-							"Não foi encontrado o fechamento de aspas. "
-							+ "As aspas serão tratadas como um caractere comum.");
-					return Lists
-							.newArrayList(Splitter.on(";").split(line).iterator());
-				}
-
-				String parteComAspas = line.substring(index + 1, index2);
-
-				linhaParseadaPorAspas.add(parteComAspas.replace("\"", ""));
-
-				index = index2;
-				lastIndex = index2 + 1;
+			if (index == -1) {
+				//ultima coluna
+				linhaParseadaPorAspas.add(line.substring(lastIndex).replace(";", ""));
+				break;
 			} else {
-				if (lastIndex < line.length() && lastIndex > 0) {
-					linhaParseadaPorAspas.addAll(Lists.newArrayList(Splitter.on(";")
-							.split(line.substring(lastIndex + 1)).iterator()));
-					return linhaParseadaPorAspas;
+				String coluna = line.substring(lastIndex, index + 1);
+				 
+				if (temAspas(coluna)) {
+					index = getFinalColuna(line.substring(lastIndex), lastIndex);
+					if (index == -1) {
+						//ultima coluna
+						linhaParseadaPorAspas.add(line.substring(lastIndex).replace(";", ""));
+						break;
+					}
+					linhaParseadaPorAspas.add(line.substring(lastIndex, index - 1));
+					lastIndex = index == -1 ? -1 : index + 1;
 				} else {
-					return Lists
-							.newArrayList(Splitter.on(";").split(line).iterator());
+					linhaParseadaPorAspas.add(coluna.replace(";", ""));
+					lastIndex = index == -1 ? -1 : index + 1;
 				}
 			}
 		}
 
 		return linhaParseadaPorAspas;
+	}
+
+	private int getFinalColuna(String substring, int inicio) {
+		char[] chars = substring.toCharArray();
+		
+		for (int i = 0; i < chars.length; i++) {
+			if (chars[i] == '\"') {
+				for (int j = i + 1; j < chars.length; j++) {
+					if (chars[j] == '\"') {
+						return getFinalColuna(substring.substring(j + 1), inicio + j + 1);
+					}
+				}
+			}
+			
+			if (chars[i] == ';') {
+				return i + inicio + 1;
+			}
+		}
+		
+		return -1;
+	}
+
+	private boolean temAspas(String column) {
+		return column.indexOf("\"") != -1;
 	}
 }
