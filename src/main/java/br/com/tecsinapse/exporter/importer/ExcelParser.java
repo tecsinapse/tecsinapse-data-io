@@ -24,6 +24,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -74,8 +75,10 @@ class ExcelParser<T> implements Parser<T> {
         List<T> list = new ArrayList<>();
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
 
+			final Constructor<T> constructor = clazz.getDeclaredConstructor();
+			constructor.setAccessible(true);
         for (List<String> fields : xlsLines) {
-            T instance = clazz.newInstance();
+			   T instance = constructor.newInstance();
 
             for (Method method : methods) {
                 TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
