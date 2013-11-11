@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-class ExcelParser<T> implements Parser<T> {
+public class ExcelParser<T> implements Parser<T> {
 
     private final Class<T> clazz;
     private File excel;
