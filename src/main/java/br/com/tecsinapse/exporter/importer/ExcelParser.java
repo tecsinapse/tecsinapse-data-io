@@ -1,26 +1,5 @@
 package br.com.tecsinapse.exporter.importer;
 
-import br.com.tecsinapse.exporter.ExcelType;
-import br.com.tecsinapse.exporter.ExcelUtil;
-import br.com.tecsinapse.exporter.Table;
-import br.com.tecsinapse.exporter.annotation.TableCellMapping;
-import br.com.tecsinapse.exporter.converter.TableCellConverter;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
-import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
-import org.apache.poi.xssf.model.StylesTable;
-import org.joda.time.LocalDate;
-import org.reflections.ReflectionUtils;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +10,34 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
+import org.apache.poi.xssf.eventusermodel.XSSFReader;
+import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
+import org.apache.poi.xssf.model.StylesTable;
+import org.joda.time.LocalDate;
+import org.reflections.ReflectionUtils;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
+import br.com.tecsinapse.exporter.ExcelType;
+import br.com.tecsinapse.exporter.ExcelUtil;
+import br.com.tecsinapse.exporter.Table;
+import br.com.tecsinapse.exporter.annotation.TableCellMapping;
+import br.com.tecsinapse.exporter.converter.TableCellConverter;
 
 public class ExcelParser<T> implements Parser<T> {
 
@@ -71,7 +78,7 @@ public class ExcelParser<T> implements Parser<T> {
 
     private List<T> parseXlsx() throws Exception {
 
-        List<List<String>> xlsLines = parseXlsxToStrings();
+        List<List<String>> xlsLines = parseXlsxToStrings(true);
         List<T> list = new ArrayList<>();
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
 
@@ -177,8 +184,12 @@ public class ExcelParser<T> implements Parser<T> {
         }
         return OPCPackage.open(excelInputStream);
     }
-
+    
     public List<List<String>> parseXlsxToStrings() throws Exception {
+    	return parseXlsxToStrings(false);
+    }
+
+    private List<List<String>> parseXlsxToStrings(boolean ignoreFirstRow) throws Exception {
 
         Table table = null;
         OPCPackage container;
@@ -190,7 +201,7 @@ public class ExcelParser<T> implements Parser<T> {
         while (iter.hasNext()) {
             InputStream stream = iter.next();
 
-            Table aba = processXlsxSheet(styles, strings, stream);
+            Table aba = processXlsxSheet(styles, strings, stream, ignoreFirstRow);
             if (table == null) {
                 table = aba;
             } else {
@@ -203,7 +214,7 @@ public class ExcelParser<T> implements Parser<T> {
         return table.toStringMatrix();
     }
 
-    protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream) throws Exception {
+    protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, boolean ignoreFirstRow) throws Exception {
 
         final Table table = new Table();
         InputSource sheetSource = new InputSource(sheetInputStream);
@@ -243,7 +254,9 @@ public class ExcelParser<T> implements Parser<T> {
         sheetParser.setContentHandler(handler);
         sheetParser.parse(sheetSource);
 
-        table.removeFirstRow();
+        if (ignoreFirstRow) {
+        	table.removeFirstRow();
+		}
         return table;
     }
 
