@@ -39,6 +39,10 @@ import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+
 public class ExcelParser<T> implements Parser<T> {
 
     private final Class<T> clazz;
@@ -78,13 +82,13 @@ public class ExcelParser<T> implements Parser<T> {
 
     private List<T> parseXlsx() throws Exception {
 
-        List<List<String>> xlsLines = parseXlsxToStrings(true);
+        List<List<String>> xlsxLines = getXlsxLines(true);
         List<T> list = new ArrayList<>();
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
 
 			final Constructor<T> constructor = clazz.getDeclaredConstructor();
 			constructor.setAccessible(true);
-        for (List<String> fields : xlsLines) {
+        for (List<String> fields : xlsxLines) {
 			   T instance = constructor.newInstance();
 
             for (Method method : methods) {
@@ -133,6 +137,26 @@ public class ExcelParser<T> implements Parser<T> {
             return "";
         }
         return fields.get(index);
+    }
+    
+    public List<List<String>> getXlsLines() throws InvalidFormatException, IOException {
+    	Workbook wb = getWorkbook();
+        Sheet sheet = wb.getSheetAt(0);
+
+        List<List<String>> lines = Lists.newArrayList();
+        List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
+        for (Row row : linhasArquivo) {
+			List<Cell> cells = Lists.newArrayList(row.cellIterator());
+			List<String> cellsAsString = Lists.newArrayList(Collections2.transform(cells, new Function<Cell, String>() {
+				@Override
+				public String apply(Cell input) {
+					return getValueOrEmpty(input);
+				}
+			}));
+			lines.add(cellsAsString);
+		}
+        
+		return lines;
     }
 
     private List<String> getFields(Row row) {
@@ -185,11 +209,11 @@ public class ExcelParser<T> implements Parser<T> {
         return OPCPackage.open(excelInputStream);
     }
     
-    public List<List<String>> parseXlsxToStrings() throws Exception {
-    	return parseXlsxToStrings(false);
+    public List<List<String>> getXlsxLines() throws Exception {
+    	return getXlsxLines(false);
     }
 
-    private List<List<String>> parseXlsxToStrings(boolean ignoreFirstRow) throws Exception {
+    private List<List<String>> getXlsxLines(boolean ignoreFirstRow) throws Exception {
 
         Table table = null;
         OPCPackage container;
