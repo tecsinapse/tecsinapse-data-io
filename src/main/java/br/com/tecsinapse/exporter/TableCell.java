@@ -15,25 +15,27 @@ public class TableCell {
 	}
 
 	public TableCell(String content) {
-		super();
+		this();
 		this.content = content;
 	}
 	
-	public TableCell(Double content) {
-		super();
-		this.content = content.toString();
+	public TableCell(Number content) {
+		this(content.toString());
 		this.cellType = CellType.NUMERIC_TYPE;
 	}
+
+    public TableCell(Number content, TableCellType tableCellType) {
+        this(content);
+        this.tableCellType = tableCellType;
+    }
 	
 	public TableCell(String content, CellType cellType) {
-		super();
-		this.content = content;
+		this(content);
 		this.cellType = cellType;
 	}
 	
 	public TableCell(String content, TableCellType tableCellType) {
-		super();
-		this.content = content;
+        this(content);
 		this.tableCellType = tableCellType;
 	}
 

@@ -70,4 +70,21 @@ public class TableTest {
 	           "|Linha 2||\n");
     }
 
+    @Test
+    public void testNumber() {
+        Table t = new Table();
+        t.addNewRow();
+        t.add(new TableCell(1, TableCellType.HEADER));
+        t.add(new TableCell(2.2, TableCellType.HEADER));
+
+        t.addNewRow();
+        t.add(10);
+        t.add(10.2);
+
+        String text = t.getStringMatrixAsString(t.toStringMatrix());
+        Assert.assertEquals(text,
+                "|1|2.2\n" +
+                        "|10|10.2\n");
+    }
+
 }

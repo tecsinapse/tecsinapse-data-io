@@ -79,7 +79,7 @@ public class Table {
 		add(new TableCell(content, cellType));
 	}
 	
-	public void add(Double content) {
+	public void add(Number content) {
 		add(new TableCell(content));
 	}
 	
