@@ -20,7 +20,7 @@ public class TableCell {
 	}
 	
 	public TableCell(Number content) {
-		this(content.toString());
+		this(content != null ? content.toString() : null);
 		this.cellType = CellType.NUMERIC_TYPE;
 	}
 
