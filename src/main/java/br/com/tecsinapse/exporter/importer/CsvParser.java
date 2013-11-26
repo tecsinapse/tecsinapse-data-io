@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
+
 class CsvParser<T> implements Parser<T> {
 	private final Class<T> clazz;
 	private List<String> csvLines;
@@ -49,8 +51,9 @@ class CsvParser<T> implements Parser<T> {
 	public List<T> parse() throws IllegalAccessException, InstantiationException,
 			InvocationTargetException {
 		List<T> list = new ArrayList<>();
-		Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils
-				.withAnnotation(TableCellMapping.class));
+		@SuppressWarnings("unchecked")
+		Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
+				ReflectionUtils.<Method>withAnnotation(TableCellMapping.class));
 
 		for (String line : csvLines) {
 			List<String> fields = split(line);
@@ -59,7 +62,7 @@ class CsvParser<T> implements Parser<T> {
 			for (Method method : methods) {
 				TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
 				String value = getValueOrEmpty(fields, tcm.columnIndex());
-				TableCellConverter converter = tcm.converter().newInstance();
+				TableCellConverter<?> converter = tcm.converter().newInstance();
 				Object obj = converter.apply(value);
 				method.invoke(instance, obj);
 			}

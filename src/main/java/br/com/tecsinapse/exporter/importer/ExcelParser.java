@@ -84,7 +84,9 @@ public class ExcelParser<T> implements Parser<T> {
 
         List<List<String>> xlsxLines = getXlsxLines(true);
         List<T> list = new ArrayList<>();
-        Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
+		  @SuppressWarnings("unchecked")
+        Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
+				  ReflectionUtils.withAnnotation(TableCellMapping.class));
 
 			final Constructor<T> constructor = clazz.getDeclaredConstructor();
 			constructor.setAccessible(true);
@@ -94,7 +96,7 @@ public class ExcelParser<T> implements Parser<T> {
             for (Method method : methods) {
                 TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
                 String value = getValueOrEmpty(fields, tcm.columnIndex());
-                TableCellConverter converter = tcm.converter().newInstance();
+                TableCellConverter<?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
                 method.invoke(instance, obj);
             }
@@ -105,7 +107,9 @@ public class ExcelParser<T> implements Parser<T> {
 
     private List<T> parseXls() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException, NoSuchMethodException {
         List<T> list = new ArrayList<>();
-        Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
+		  @SuppressWarnings("unchecked")
+        Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
+				  ReflectionUtils.withAnnotation(TableCellMapping.class));
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(0);
 
@@ -126,7 +130,7 @@ public class ExcelParser<T> implements Parser<T> {
             for (Method method : methods) {
                 TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
                 String value = getValueOrEmpty(row.getCell(tcm.columnIndex()));
-                TableCellConverter converter = tcm.converter().newInstance();
+                TableCellConverter<?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
                 method.invoke(instance, obj);
             }
