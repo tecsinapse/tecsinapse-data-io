@@ -103,12 +103,15 @@ public class ExcelParser<T> implements Parser<T> {
         return list;
     }
 
-    private List<T> parseXls() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException {
+    private List<T> parseXls() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException, NoSuchMethodException {
         List<T> list = new ArrayList<>();
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(0);
 
+		  final Constructor<T> constructor = clazz.getDeclaredConstructor();
+		  constructor.setAccessible(true);
+		 
         Iterator<Row> rowIterator = sheet.iterator();
 
         boolean header = true;
@@ -118,7 +121,7 @@ public class ExcelParser<T> implements Parser<T> {
                 header = false;
                 continue;
             }
-            T instance = clazz.newInstance();
+            T instance = constructor.newInstance();
 
             for (Method method : methods) {
                 TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
