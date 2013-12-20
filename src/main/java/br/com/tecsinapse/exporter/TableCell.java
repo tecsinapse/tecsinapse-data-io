@@ -9,6 +9,8 @@ public class TableCell {
 	private Integer rowspan = 1;
 	private TableCellType tableCellType = TableCellType.BODY;
 	private CellType cellType = CellType.STRING_TYPE;
+    private String style;
+    private String styleClass;
 
 	public TableCell() {
 		super();
@@ -82,4 +84,23 @@ public class TableCell {
 	public Double getContentAsDoubleOrNull(){
 		return content == null ? null : Doubles.tryParse(content);
 	}
+
+    public String getStyle() {
+        if(style == null) {
+            return getTableCellType().getDefaultStyle();
+        }
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getStyleClass() {
+        return styleClass;
+    }
+
+    public void setStyleClass(String styleClass) {
+        this.styleClass = styleClass;
+    }
 }

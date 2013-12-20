@@ -17,12 +17,12 @@
 
 <cc:implementation>
     <c:if test="#{cc.attrs.rendered}">
-        <table style="#{cc.attrs.style}" class="#{cc.attrs.styleClass}" cellpadding="#{cc.attrs.cellpadding}"
+        <table id="#{cc.attrs.clientId}" style="#{cc.attrs.style}" class="#{cc.attrs.styleClass}" cellpadding="#{cc.attrs.cellpadding}"
                cellspacing="#{cc.attrs.cellspacing}" border="#{cc.attrs.border}">
             <ui:repeat value="#{cc.attrs.value.cells}" var="linha">
                 <tr>
                     <ui:repeat value="#{linha}" var="item">
-                        <td rowspan="#{item.rowspan}" colspan="#{item.colspan}">#{item.content}</td>
+                        <td rowspan="#{item.rowspan}" colspan="#{item.colspan}" style="#{item.style}" class="#{item.styleClass}">#{item.content}</td>
                     </ui:repeat>
                 </tr>
             </ui:repeat>
