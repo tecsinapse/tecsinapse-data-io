@@ -65,6 +65,14 @@
 			<name>Tecsinapse</name>
 			<url>http://tools.tecsinapse.com.br/nexus/content/groups/public</url>
 		</repository>
+        <repository>
+            <id>tecsinapse-snapshots</id>
+            <name>Tecsinapse Snapshots</name>
+            <url>http://tools.tecsinapse.com.br/nexus/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
 	</repositories>
 
 	<developers>
