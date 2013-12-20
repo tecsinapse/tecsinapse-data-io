@@ -9,6 +9,7 @@
 <cc:interface>
     <cc:attribute name="value" type="br.com.tecsinapse.exporter.Table" required="true"/>
     <cc:attribute name="style"/>
+    <cc:attribute name="styleClass"/>
     <cc:attribute name="cellpadding"/>
     <cc:attribute name="cellspacing"/>
     <cc:attribute name="border"/>
@@ -16,7 +17,7 @@
 
 <cc:implementation>
     <c:if test="#{cc.attrs.rendered}">
-        <table style="#{cc.attrs.style}" cellpadding="#{cc.attrs.cellpadding}"
+        <table style="#{cc.attrs.style}" class="#{cc.attrs.styleClass}" cellpadding="#{cc.attrs.cellpadding}"
                cellspacing="#{cc.attrs.cellspacing}" border="#{cc.attrs.border}">
             <ui:repeat value="#{cc.attrs.value.cells}" var="linha">
                 <tr>
