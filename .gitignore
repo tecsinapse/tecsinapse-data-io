@@ -6,3 +6,7 @@
 target
 bin
 /src/main/resources/rebel.xml
+*.iml
+.idea/*
+!.idea/codeStyleSettings.xml
+!.idea/encodings.xml
