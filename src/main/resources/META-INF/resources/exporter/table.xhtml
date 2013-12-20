@@ -21,7 +21,7 @@
             <ui:repeat value="#{cc.attrs.value.cells}" var="linha">
                 <tr>
                     <ui:repeat value="#{linha}" var="item">
-                        <td>#{item.content}</td>
+                        <td rowspan="#{item.rowspan}" colspan="#{item.colspan}">#{item.content}</td>
                     </ui:repeat>
                 </tr>
             </ui:repeat>
