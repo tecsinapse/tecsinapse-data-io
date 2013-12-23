@@ -20,6 +20,33 @@ public class TableCell {
 		this();
 		this.content = content;
 	}
+
+    public TableCell(String content, String style) {
+        this(content);
+        this.style = style;
+    }
+
+    public TableCell(String content, String style, int colspan) {
+        this(content);
+        this.style = style;
+        this.colspan = colspan;
+    }
+
+    public TableCell(String content, String style, int colspan, int rowspan) {
+        this(content, colspan);
+        this.style = style;
+        this.rowspan = rowspan;
+    }
+
+    public TableCell(String content, int colspan) {
+        this(content);
+        this.colspan = colspan;
+    }
+
+    public TableCell(String content, int colspan, int rowspan) {
+        this(content, colspan);
+        this.rowspan = rowspan;
+    }
 	
 	public TableCell(Number content) {
 		this(content != null ? content.toString() : null);
@@ -41,7 +68,35 @@ public class TableCell {
 		this.tableCellType = tableCellType;
 	}
 
-	public String getContent() {
+    public TableCell(String content, TableCellType tableCellType, int colspan) {
+        this(content, tableCellType);
+        this.colspan = colspan;
+    }
+
+    public TableCell(String content, TableCellType tableCellType, int colspan, int rowspan) {
+        this(content, tableCellType, colspan);
+        this.rowspan = rowspan;
+    }
+
+    public TableCell(String content, TableCellType tableCellType, String style) {
+        this(content);
+        this.style = style;
+        this.tableCellType = tableCellType;
+    }
+
+    public TableCell(String content, TableCellType tableCellType, String style, int colspan) {
+        this(content, tableCellType);
+        this.style = style;
+        this.colspan = colspan;
+    }
+
+    public TableCell(String content, TableCellType tableCellType, String style, int colspan, int rowspan) {
+        this(content, tableCellType, colspan);
+        this.style = style;
+        this.rowspan = rowspan;
+    }
+
+    public String getContent() {
 		return content;
 	}
 
@@ -86,7 +141,7 @@ public class TableCell {
 	}
 
     public String getStyle() {
-        if(style == null) {
+        if(style == null && styleClass == null) {
             return getTableCellType().getDefaultStyle();
         }
         return style;

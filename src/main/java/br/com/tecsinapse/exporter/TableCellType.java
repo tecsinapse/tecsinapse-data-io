@@ -1,7 +1,9 @@
 package br.com.tecsinapse.exporter;
 
 public enum TableCellType {
-	BODY("body", ""), FOOTER("footer", "background-color: rgb(221, 221, 221);"), HEADER("header", "background-color: rgb(221, 221, 221);");
+	BODY("body", Style.VERTICAL_ALIGN_MIDDLE),
+    FOOTER("footer", Style.BACKGROUND_COLOR_GRAY + Style.FONT_WEIGHT_BOLD + Style.VERTICAL_ALIGN_MIDDLE + Style.FONT_SIZE_1_2_EM),
+    HEADER("header", Style.BACKGROUND_COLOR_GRAY + Style.FONT_WEIGHT_BOLD + Style.VERTICAL_ALIGN_MIDDLE + Style.FONT_SIZE_1_2_EM);
 
     private final String name;
     private final String defaultStyle;

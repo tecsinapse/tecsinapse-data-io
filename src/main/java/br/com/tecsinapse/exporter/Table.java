@@ -1,27 +1,16 @@
 package br.com.tecsinapse.exporter;
 
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.IOUtils;
 
 public class Table {
 	private String title;
@@ -74,6 +63,46 @@ public class Table {
 	public void add(String content) {
 		add(new TableCell(content));
 	}
+
+    public void add(String content, TableCellType tableCellType) {
+        add(new TableCell(content, tableCellType));
+    }
+
+    public void add(String content, TableCellType tableCellType, int colspan) {
+        add(new TableCell(content, tableCellType, colspan));
+    }
+
+    public void add(String content, TableCellType tableCellType, int colspan, int rowspan) {
+        add(new TableCell(content, tableCellType, colspan, rowspan));
+    }
+
+    public void add(String content, TableCellType tableCellType, String style, int colspan) {
+        add(new TableCell(content, tableCellType, style, colspan));
+    }
+
+    public void add(String content, TableCellType tableCellType, String style, int colspan, int rowspan) {
+        add(new TableCell(content, tableCellType, style, colspan, rowspan));
+    }
+
+    public void add(String content, String style) {
+        add(new TableCell(content, style));
+    }
+
+    public void add(String content, String style, int colspan) {
+        add(new TableCell(content, style, colspan));
+    }
+
+    public void add(String content, String style, int colspan, int rowspan) {
+        add(new TableCell(content, style, colspan, rowspan));
+    }
+
+    public void add(String content, int colspan) {
+        add(new TableCell(content, colspan));
+    }
+
+    public void add(String content, int colspan, int rowspan) {
+        add(new TableCell(content, colspan, rowspan));
+    }
 	
 	public void add(String content, CellType cellType) {
 		add(new TableCell(content, cellType));
