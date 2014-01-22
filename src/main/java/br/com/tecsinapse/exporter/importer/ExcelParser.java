@@ -49,6 +49,7 @@ public class ExcelParser<T> implements Parser<T> {
     private File excel;
     private InputStream excelInputStream;
     private ExcelType type;
+    private int initialRow;
 
     public ExcelParser(Class<T> clazz, File file) throws IOException {
         this(clazz);
@@ -56,10 +57,16 @@ public class ExcelParser<T> implements Parser<T> {
         this.type = ExcelType.getExcelType(excel.getName());
     }
 
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type) throws IOException {
+    public ExcelParser(Class<T> clazz, File file, int initialRow) throws IOException {
+        this(clazz, file);
+        this.initialRow = initialRow;
+    }
+
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow) {
         this(clazz);
         this.excelInputStream = inputStream;
         this.type = type;
+        this.initialRow = initialRow;
     }
 
     private ExcelParser(Class<T> clazz) {
@@ -81,8 +88,8 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     private List<T> parseXlsx() throws Exception {
+        List<List<String>> xlsxLines = getXlsxLines(initialRow);
 
-        List<List<String>> xlsxLines = getXlsxLines(true);
         List<T> list = new ArrayList<>();
 		  @SuppressWarnings("unchecked")
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
@@ -245,51 +252,93 @@ public class ExcelParser<T> implements Parser<T> {
         return table.toStringMatrix();
     }
 
+    private List<List<String>> getXlsxLines(int initialRow) throws Exception {
+
+        Table table = null;
+        OPCPackage container;
+        container = getOPCPackage();
+        ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(container);
+        XSSFReader xssfReader = new XSSFReader(container);
+        StylesTable styles = xssfReader.getStylesTable();
+        XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
+        while (iter.hasNext()) {
+            InputStream stream = iter.next();
+
+            Table aba = processXlsxSheet(styles, strings, stream, initialRow);
+            if (table == null) {
+                table = aba;
+            } else {
+                table.concatenateTableBelow(aba);
+            }
+            stream.close();
+            //le apenas 1 aba
+            break;
+        }
+        return table.toStringMatrix();
+    }
+
     protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, boolean ignoreFirstRow) throws Exception {
 
-        final Table table = new Table();
-        InputSource sheetSource = new InputSource(sheetInputStream);
-        SAXParserFactory saxFactory = SAXParserFactory.newInstance();
-        SAXParser saxParser = saxFactory.newSAXParser();
-        XMLReader sheetParser = saxParser.getXMLReader();
-        ContentHandler handler = new XSSFSheetXMLHandler(styles, strings, new XSSFSheetXMLHandler.SheetContentsHandler() {
-
-            @Override
-            public void startRow(int rowNum) {
-                table.addNewRow();
-            }
-
-            @Override
-            public void endRow() {
-            }
-
-            @Override
-            public void cell(String cellReference, String formattedValue) {
-                int columnIndex = ExcelUtil.getColumnIndexByColumnName(cellReference);
-                int idx = table.getNextColumnIndexOfLastRow();
-                int dif = columnIndex - idx;
-                while(dif-- > 0) {
-                    table.add("");
-                }
-                table.add(formattedValue);
-            }
-
-            @Override
-            public void headerFooter(String text, boolean isHeader, String tagName) {
-
-            }
-
-        },
-                false//means result instead of formula
-        );
-        sheetParser.setContentHandler(handler);
-        sheetParser.parse(sheetSource);
+        final Table table = processXlsxSheet(styles, strings, sheetInputStream);
 
         if (ignoreFirstRow) {
         	table.removeFirstRow();
 		}
+
         return table;
     }
+
+	protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, int rowInitial) throws Exception {
+
+		final Table table = processXlsxSheet(styles, strings, sheetInputStream);
+
+		table.removeInitialRows(rowInitial);
+
+		return table;
+	}
+
+	private Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream) throws Exception {
+
+		final Table table = new Table();
+		InputSource sheetSource = new InputSource(sheetInputStream);
+		SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+		SAXParser saxParser = saxFactory.newSAXParser();
+		XMLReader sheetParser = saxParser.getXMLReader();
+		ContentHandler handler = new XSSFSheetXMLHandler(styles, strings, new XSSFSheetXMLHandler.SheetContentsHandler() {
+
+			@Override
+			public void startRow(int rowNum) {
+				table.addNewRow();
+			}
+
+			@Override
+			public void endRow() {
+			}
+
+			@Override
+			public void cell(String cellReference, String formattedValue) {
+				int columnIndex = ExcelUtil.getColumnIndexByColumnName(cellReference);
+				int idx = table.getNextColumnIndexOfLastRow();
+				int dif = columnIndex - idx;
+				while(dif-- > 0) {
+					table.add("");
+				}
+				table.add(formattedValue);
+			}
+
+			@Override
+			public void headerFooter(String text, boolean isHeader, String tagName) {
+
+			}
+
+		},
+				false//means result instead of formula
+		);
+		sheetParser.setContentHandler(handler);
+		sheetParser.parse(sheetSource);
+
+		return table;
+	}
 
 
 }

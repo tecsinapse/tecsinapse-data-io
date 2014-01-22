@@ -10,12 +10,16 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 public class Importer<T> {
+
+    public static final int DEFAULT_INITIAL_ROW = 1;
+
     private Class<T> clazz;
     private File file;
     private InputStream inputStream;
     private String filename;
     private Charset charset;
     private Parser<T> parser;
+    private int initialRow;
 
     private Importer(Class<T> clazz, Charset charset) {
         this.clazz = clazz;
@@ -47,9 +51,14 @@ public class Importer<T> {
     }
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename) throws IOException {
+        this(clazz, inputStream, filename, DEFAULT_INITIAL_ROW);
+    }
+
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, int initialRow) throws IOException {
         this(clazz);
         this.inputStream = inputStream;
         this.filename = filename;
+        this.initialRow = initialRow;
         prepareParser();
     }
 
@@ -57,11 +66,11 @@ public class Importer<T> {
         FileType fileType = getFileType();
         if(fileType == FileType.XLSX || fileType == FileType.XLS) {
             if(file != null) {
-                parser = new ExcelParser<T>(clazz, file);
+                parser = new ExcelParser<T>(clazz, file, initialRow);
                 return;
             }
             if(inputStream != null) {
-                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType());
+                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), initialRow);
                 return;
             }
         }

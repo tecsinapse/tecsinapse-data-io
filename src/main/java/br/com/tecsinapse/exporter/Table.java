@@ -139,6 +139,14 @@ public class Table {
         }
     }
 
+	public void removeInitialRows(int numberRows) {
+		if(cells.size() > numberRows) {
+			for(int i = 0; i < numberRows; i++) {
+				cells.remove(0);
+			}
+		}
+	}
+
 	public List<List<String>> toStringMatrix() {
 		int rows = cells.size();
 		int columns = getBiggerRowSize();
