@@ -139,7 +139,7 @@ public class Table {
         }
     }
 
-	void removeInitialRows(int numberRows) {
+	public void removeInitialRows(int numberRows) {
 		if(cells.size() > numberRows) {
 			for(int i = 0; i < numberRows; i++) {
 				cells.remove(0);
