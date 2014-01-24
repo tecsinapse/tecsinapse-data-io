@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Importer<T> {
 
-    public static final int DEFAULT_INITIAL_ROW = 1;
+    public static final int DEFAULT_START_ROW = 1;
 
     private Class<T> clazz;
     private File file;
@@ -51,7 +51,7 @@ public class Importer<T> {
     }
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename) throws IOException {
-        this(clazz, inputStream, filename, DEFAULT_INITIAL_ROW);
+        this(clazz, inputStream, filename, DEFAULT_START_ROW);
     }
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename, int initialRow) throws IOException {
