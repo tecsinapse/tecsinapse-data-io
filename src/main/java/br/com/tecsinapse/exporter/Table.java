@@ -2,8 +2,10 @@ package br.com.tecsinapse.exporter;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFRegionUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.util.IOUtils;
 
 import java.io.FileInputStream;
@@ -350,10 +352,16 @@ public class Table {
 					int rowEnd = rowStart + (tableCell.getRowspan() - 1);
 					int colStart = c;
 					int colEnd = colStart + (tableCell.getColspan() - 1);
-					sheet.addMergedRegion(new CellRangeAddress(rowStart,
-							rowEnd, colStart, colEnd));
-				}
-				
+
+                    CellRangeAddress cellRange = new CellRangeAddress(rowStart, rowEnd, colStart, colEnd);
+                    sheet.addMergedRegion(cellRange);
+
+                    RegionUtil.setBorderTop(1, cellRange, sheet, wb);
+                    RegionUtil.setBorderRight(1, cellRange, sheet, wb);
+                    RegionUtil.setBorderBottom(1, cellRange, sheet, wb);
+                    RegionUtil.setBorderLeft(1, cellRange, sheet, wb);
+                }
+
 				this.setConvertedValue(cell, tableCell);
 				
 				switch (tableCell.getTableCellType()) {
