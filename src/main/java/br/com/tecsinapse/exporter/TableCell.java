@@ -11,6 +11,7 @@ public class TableCell {
 	private CellType cellType = CellType.STRING_TYPE;
     private String style;
     private String styleClass;
+    private boolean bold = false;
 
 	public TableCell() {
 		super();
@@ -20,6 +21,12 @@ public class TableCell {
 		this();
 		this.content = content;
 	}
+
+    public TableCell(String content, boolean bold) {
+        this();
+        this.content = content;
+        this.bold = bold;
+    }
 
     public TableCell(String content, String style) {
         this(content);
@@ -53,9 +60,21 @@ public class TableCell {
 		this.cellType = CellType.NUMERIC_TYPE;
 	}
 
+    public TableCell(Number content, boolean bold) {
+        this(content != null ? content.toString() : null);
+        this.cellType = CellType.NUMERIC_TYPE;
+        this.bold = bold;
+    }
+
     public TableCell(Number content, TableCellType tableCellType) {
         this(content);
         this.tableCellType = tableCellType;
+    }
+
+    public TableCell(Number content, TableCellType tableCellType, boolean bold) {
+        this(content);
+        this.tableCellType = tableCellType;
+        this.bold = bold;
     }
 	
 	public TableCell(String content, CellType cellType) {
@@ -67,6 +86,12 @@ public class TableCell {
         this(content);
 		this.tableCellType = tableCellType;
 	}
+
+    public TableCell(String content, TableCellType tableCellType, boolean bold) {
+        this(content);
+        this.tableCellType = tableCellType;
+        this.bold = bold;
+    }
 
     public TableCell(String content, TableCellType tableCellType, int colspan) {
         this(content, tableCellType);
@@ -120,7 +145,15 @@ public class TableCell {
 		this.rowspan = rowspan;
 	}
 
-	public TableCellType getTableCellType() {
+    public boolean isBold() {
+        return bold;
+    }
+
+    public void setBold(boolean bold) {
+        this.bold = bold;
+    }
+
+    public TableCellType getTableCellType() {
 		return tableCellType;
 	}
 

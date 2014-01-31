@@ -66,8 +66,16 @@ public class Table {
 		add(new TableCell(content));
 	}
 
+    public void add(String content, boolean bold) {
+        add(new TableCell(content, bold));
+    }
+
     public void add(String content, TableCellType tableCellType) {
         add(new TableCell(content, tableCellType));
+    }
+
+    public void add(String content, TableCellType tableCellType, boolean bold) {
+        add(new TableCell(content, tableCellType, bold));
     }
 
     public void add(String content, TableCellType tableCellType, int colspan) {
@@ -113,6 +121,10 @@ public class Table {
 	public void add(Number content) {
 		add(new TableCell(content));
 	}
+
+    public void add(Number content, boolean bold) {
+        add(new TableCell(content, bold));
+    }
 	
 	public void addOnNewRow(TableCell cell) {
 		addNewRow();
@@ -363,18 +375,7 @@ public class Table {
                 }
 
 				this.setConvertedValue(cell, tableCell);
-				
-				switch (tableCell.getTableCellType()) {
-				case HEADER:
-					cell.setCellStyle(styleHeader);
-					break;
-				case BODY:
-					cell.setCellStyle(styleBody);
-					break;
-				case FOOTER:
-					cell.setCellStyle(styleFooter);
-					break;
-				}
+                this.setCellStyle(styleHeader, styleBody, styleFooter, cell, tableCell, wb);
 				c++;
 			}
 			r++;
@@ -387,7 +388,30 @@ public class Table {
 		
 		return wb;
 	}
-	
+
+    private void setCellStyle(CellStyle defaultHeader, CellStyle defaultBody, CellStyle defaultFooter, Cell cell, TableCell tableCell, Workbook wb){
+
+        CellStyle style = null;
+        switch (tableCell.getTableCellType()) {
+            case HEADER:
+                style = tableCell.isBold() ? header(getDefaultCellStyle(wb)) : defaultHeader;
+                break;
+            case BODY:
+                style = tableCell.isBold() ? body(getDefaultCellStyle(wb)) : defaultBody;
+                break;
+            case FOOTER:
+                style = tableCell.isBold() ? footer(getDefaultCellStyle(wb)) : defaultFooter;
+                break;
+        }
+
+        if(tableCell.isBold()){
+            Font font = wb.createFont();
+            font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+            style.setFont(font);
+        }
+        cell.setCellStyle(style);
+    }
+
 	private void setConvertedValue(Cell cell, TableCell tableCell){
 		if(tableCell.getCellType() == CellType.NUMERIC_TYPE){
 			Double dValue = tableCell.getContentAsDoubleOrNull();
