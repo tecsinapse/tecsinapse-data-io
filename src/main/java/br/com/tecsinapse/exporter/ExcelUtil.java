@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ExcelUtil {
 
-    private static HttpServletResponse getResponseForExcel(String filename,
+    private static HttpServletResponse getResponseForExcel(String filenameWithExtension,
                                                            FacesContext context) {
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext()
                 .getResponse();
@@ -26,7 +26,7 @@ public class ExcelUtil {
                 "must-revalidate, post-check=0, pre-check=0");
         response.setHeader("Pragma", "public");
         response.setHeader("Content-disposition", "attachment;filename="
-                + filename + ".xls");
+                + filenameWithExtension);
         return response;
     }
 
@@ -51,7 +51,7 @@ public class ExcelUtil {
         filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletResponse response = getResponseForExcel(
-                filename, context);
+                filename + ".xls", context);
         wb.write(response.getOutputStream());
         context.responseComplete();
     }
@@ -63,7 +63,7 @@ public class ExcelUtil {
         filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletResponse response = getResponseForExcel(
-                filename, context);
+                filename + ".xlsx", context);
         wb.write(response.getOutputStream());
         context.responseComplete();
     }
