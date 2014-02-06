@@ -45,7 +45,7 @@ public class ExcelUtil {
     }
 
     public static void export(String name, Table t) throws IOException {
-        Workbook wb = t.toWorkBook();
+        Workbook wb = t.toHSSFWorkBook();
 
         String filename = name + "_";
         filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
@@ -54,7 +54,18 @@ public class ExcelUtil {
                 filename, context);
         wb.write(response.getOutputStream());
         context.responseComplete();
+    }
 
+    public static void exportXlsx(String name, Table t) throws IOException {
+        Workbook wb = t.toXSSFWorkBook();
+
+        String filename = name + "_";
+        filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletResponse response = getResponseForExcel(
+                filename, context);
+        wb.write(response.getOutputStream());
+        context.responseComplete();
     }
 
 
@@ -87,7 +98,7 @@ public class ExcelUtil {
     	
     	File f = new File(file);
     	try (FileOutputStream fos = new FileOutputStream(f)) {
-    		t.toWorkBook().write(fos);
+    		t.toHSSFWorkBook().write(fos);
 		}
     	return f;
     }

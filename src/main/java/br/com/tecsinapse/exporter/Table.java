@@ -2,7 +2,7 @@ package br.com.tecsinapse.exporter;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFRegionUtil;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
@@ -326,11 +326,18 @@ public class Table {
 
 	}
 
-	public Workbook toWorkBook() {
+	public Workbook toXSSFWorkBook() {
+        return toWorkBook(new XSSFWorkbook());
+    }
+
+    public Workbook toHSSFWorkBook() {
+        return toWorkBook(new HSSFWorkbook());
+    }
+
+	public Workbook toWorkBook(Workbook wb) {
 		List<List<TableCell>> matrix = cells;
 		List<List<TableCell>> matrixFull = toTableCellMatrix();
 
-		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet();
 		int titleRows = 0;
 		int r = titleRows;
