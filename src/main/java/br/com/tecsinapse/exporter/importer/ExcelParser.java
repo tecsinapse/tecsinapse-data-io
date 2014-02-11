@@ -45,11 +45,13 @@ import com.google.common.collect.Lists;
 
 public class ExcelParser<T> implements Parser<T> {
 
+    private static final int FIRST_SHEET = 0;
     private final Class<T> clazz;
     private File excel;
     private InputStream excelInputStream;
     private ExcelType type;
     private int initialRow;
+    private boolean isLastSheet;
 
     public ExcelParser(Class<T> clazz, File file) throws IOException {
         this(clazz);
@@ -58,17 +60,28 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     public ExcelParser(Class<T> clazz, File file, int initialRow) throws IOException {
-        this(clazz, file);
-        this.initialRow = initialRow;
+        this(clazz, file, initialRow, false);
     }
 
+    public ExcelParser(Class<T> clazz, File file, int initialRow, boolean lastSheet) throws IOException {
+        this(clazz, file);
+        this.initialRow = initialRow;
+        this.isLastSheet = lastSheet;
+    }
+
+    
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow) {
+    	this(clazz,inputStream,type,initialRow,false);
+    }
+
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow, boolean isLastSheet) {
         this(clazz);
         this.excelInputStream = inputStream;
         this.type = type;
         this.initialRow = initialRow;
+        this.isLastSheet = isLastSheet;
     }
-
+    
     private ExcelParser(Class<T> clazz) {
         this.clazz = clazz;
     }
@@ -88,7 +101,7 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     private List<T> parseXlsx() throws Exception {
-        List<List<String>> xlsxLines = getXlsxLines(initialRow);
+        List<List<String>> xlsxLines = getXlsxLines(initialRow==1?true:false, isLastSheet);
 
         List<T> list = new ArrayList<>();
 		  @SuppressWarnings("unchecked")
@@ -118,10 +131,17 @@ public class ExcelParser<T> implements Parser<T> {
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
 				  ReflectionUtils.withAnnotation(TableCellMapping.class));
         Workbook wb = getWorkbook();
-        Sheet sheet = wb.getSheetAt(0);
+        
+        int sheetIndex = FIRST_SHEET;
+        
+        if(isLastSheet) {
+        	sheetIndex = wb.getNumberOfSheets() - 1;
+        }
+        
+        Sheet sheet = wb.getSheetAt(sheetIndex);
 
-		  final Constructor<T> constructor = clazz.getDeclaredConstructor();
-		  constructor.setAccessible(true);
+		final Constructor<T> constructor = clazz.getDeclaredConstructor();
+		constructor.setAccessible(true);
 		 
         Iterator<Row> rowIterator = sheet.iterator();
 
@@ -155,7 +175,14 @@ public class ExcelParser<T> implements Parser<T> {
     
     public List<List<String>> getXlsLines() throws InvalidFormatException, IOException {
     	Workbook wb = getWorkbook();
-        Sheet sheet = wb.getSheetAt(0);
+        
+        int sheetIndex = FIRST_SHEET;
+        
+        if(isLastSheet) {
+        	sheetIndex = wb.getNumberOfSheets() - 1;
+        }
+
+    	Sheet sheet = wb.getSheetAt(sheetIndex);
 
         List<List<String>> lines = Lists.newArrayList();
         List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
@@ -228,6 +255,10 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     private List<List<String>> getXlsxLines(boolean ignoreFirstRow) throws Exception {
+    	return getXlsxLines(ignoreFirstRow, false);
+    }
+    
+    private List<List<String>> getXlsxLines(boolean ignoreFirstRow, boolean isLastSheet) throws Exception {
 
         Table table = null;
         OPCPackage container;
@@ -236,18 +267,25 @@ public class ExcelParser<T> implements Parser<T> {
         XSSFReader xssfReader = new XSSFReader(container);
         StylesTable styles = xssfReader.getStylesTable();
         XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
+        
         while (iter.hasNext()) {
-            InputStream stream = iter.next();
-
-            Table aba = processXlsxSheet(styles, strings, stream, ignoreFirstRow);
-            if (table == null) {
-                table = aba;
+            
+        	InputStream stream = iter.next();
+        	
+        	if(isLastSheet && iter.hasNext()) {
+            	continue;
             } else {
-                table.concatenateTableBelow(aba);
+	
+	            Table aba = processXlsxSheet(styles, strings, stream, ignoreFirstRow);
+	            if (table == null) {
+	                table = aba;
+	            } else {
+	                table.concatenateTableBelow(aba);
+	            }
+	            stream.close();
+	            //le apenas 1 aba
+	            break;
             }
-            stream.close();
-            //le apenas 1 aba
-            break;
         }
         return table.toStringMatrix();
     }
@@ -304,6 +342,7 @@ public class ExcelParser<T> implements Parser<T> {
 		SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 		SAXParser saxParser = saxFactory.newSAXParser();
 		XMLReader sheetParser = saxParser.getXMLReader();
+		
 		ContentHandler handler = new XSSFSheetXMLHandler(styles, strings, new XSSFSheetXMLHandler.SheetContentsHandler() {
 
 			@Override

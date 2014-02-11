@@ -1,8 +1,10 @@
 package br.com.tecsinapse.exporter.importer;
 
 import br.com.tecsinapse.exporter.FileType;
+
 import com.google.common.base.Strings;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +22,7 @@ public class Importer<T> {
     private Charset charset;
     private Parser<T> parser;
     private int initialRow;
+    private boolean isLastSheet;
 
     private Importer(Class<T> clazz, Charset charset) {
         this.clazz = clazz;
@@ -51,26 +54,31 @@ public class Importer<T> {
     }
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename) throws IOException {
-        this(clazz, inputStream, filename, DEFAULT_START_ROW);
+        this(clazz, inputStream, filename, false);
     }
 
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, int initialRow) throws IOException {
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet) throws IOException {
+        this(clazz, inputStream, filename, DEFAULT_START_ROW, isLastSheet);
+    }
+    
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, int initialRow, boolean isLastSheet) throws IOException {
         this(clazz);
         this.inputStream = inputStream;
         this.filename = filename;
         this.initialRow = initialRow;
+        this.isLastSheet = isLastSheet;
         prepareParser();
     }
 
-    private void prepareParser() throws IOException {
+	private void prepareParser() throws IOException {
         FileType fileType = getFileType();
         if(fileType == FileType.XLSX || fileType == FileType.XLS) {
             if(file != null) {
-                parser = new ExcelParser<T>(clazz, file, initialRow);
+                parser = new ExcelParser<T>(clazz, file, initialRow, isLastSheet);
                 return;
             }
             if(inputStream != null) {
-                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), initialRow);
+                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), initialRow, isLastSheet);
                 return;
             }
         }
