@@ -334,6 +334,15 @@ public class Table {
         return toWorkBook(new HSSFWorkbook());
     }
 
+
+    /**
+     * @deprecated use {@link public Workbook toHSSFWorkBook()} instead.
+     */
+    @Deprecated
+    public Workbook toWorkBook() {
+        return toHSSFWorkBook();
+    }
+
 	public Workbook toWorkBook(Workbook wb) {
 		List<List<TableCell>> matrix = cells;
 		List<List<TableCell>> matrixFull = toTableCellMatrix();
