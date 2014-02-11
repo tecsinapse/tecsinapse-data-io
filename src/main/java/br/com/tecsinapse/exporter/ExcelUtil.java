@@ -3,6 +3,7 @@ package br.com.tecsinapse.exporter;
 import com.google.common.base.Strings;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
@@ -44,30 +45,32 @@ public class ExcelUtil {
         return response;
     }
 
-    public static void export(String name, Table t) throws IOException {
-        Workbook wb = t.toHSSFWorkBook();
-
+    private static void doExport(String name, String extension, Workbook wb) throws IOException {
         String filename = name + "_";
-        filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
+        filename += LocalDateTime.now().toString("dd-MM-yyyy_HH-mm");
         FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = getResponseForExcel(
-                filename + ".xls", context);
+        HttpServletResponse response = getResponseForExcel(filename + extension, context);
         wb.write(response.getOutputStream());
         context.responseComplete();
+    }
+
+    /**
+     * @deprecated use {@link void exportXls(String name, Table t)} instead.
+     */
+    @Deprecated
+    public static void export(String name, Table t) throws IOException {
+        exportXls(name, t);
+    }
+
+    public static void exportXls(String name, Table t) throws IOException {
+        Workbook wb = t.toHSSFWorkBook();
+        doExport(name, ".xls", wb);
     }
 
     public static void exportXlsx(String name, Table t) throws IOException {
         Workbook wb = t.toXSSFWorkBook();
-
-        String filename = name + "_";
-        filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = getResponseForExcel(
-                filename + ".xlsx", context);
-        wb.write(response.getOutputStream());
-        context.responseComplete();
+        doExport(name, ".xlsx", wb);
     }
-
 
     public static void exportCsv(String name, Table t, String chartsetName) throws IOException {
         String filename = name + "_";
