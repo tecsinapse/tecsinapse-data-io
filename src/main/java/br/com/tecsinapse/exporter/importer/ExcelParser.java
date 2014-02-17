@@ -45,7 +45,8 @@ import com.google.common.collect.Lists;
 
 public class ExcelParser<T> implements Parser<T> {
 
-    private static final int FIRST_SHEET = 0;
+    private static final int FIRST_LINE = 0;
+	private static final int FIRST_SHEET = 0;
     private final Class<T> clazz;
     private File excel;
     private InputStream excelInputStream;
@@ -101,7 +102,7 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     private List<T> parseXlsx() throws Exception {
-        List<List<String>> xlsxLines = getXlsxLines(initialRow==1?true:false, isLastSheet);
+        List<List<String>> xlsxLines = getXlsxLines(initialRow, isLastSheet);
 
         List<T> list = new ArrayList<>();
 		  @SuppressWarnings("unchecked")
@@ -251,14 +252,10 @@ public class ExcelParser<T> implements Parser<T> {
     }
     
     public List<List<String>> getXlsxLines() throws Exception {
-    	return getXlsxLines(false);
+    	return getXlsxLines(FIRST_LINE);
     }
 
-    private List<List<String>> getXlsxLines(boolean ignoreFirstRow) throws Exception {
-    	return getXlsxLines(ignoreFirstRow, false);
-    }
-    
-    private List<List<String>> getXlsxLines(boolean ignoreFirstRow, boolean isLastSheet) throws Exception {
+    private List<List<String>> getXlsxLines(int initialRow, boolean isLastSheet) throws Exception {
 
         Table table = null;
         OPCPackage container;
@@ -276,7 +273,7 @@ public class ExcelParser<T> implements Parser<T> {
             	continue;
             } else {
 	
-	            Table aba = processXlsxSheet(styles, strings, stream, ignoreFirstRow);
+	            Table aba = processXlsxSheet(styles, strings, stream, initialRow);
 	            if (table == null) {
 	                table = aba;
 	            } else {
@@ -292,27 +289,8 @@ public class ExcelParser<T> implements Parser<T> {
 
     private List<List<String>> getXlsxLines(int initialRow) throws Exception {
 
-        Table table = null;
-        OPCPackage container;
-        container = getOPCPackage();
-        ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(container);
-        XSSFReader xssfReader = new XSSFReader(container);
-        StylesTable styles = xssfReader.getStylesTable();
-        XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
-        while (iter.hasNext()) {
-            InputStream stream = iter.next();
-
-            Table aba = processXlsxSheet(styles, strings, stream, initialRow);
-            if (table == null) {
-                table = aba;
-            } else {
-                table.concatenateTableBelow(aba);
-            }
-            stream.close();
-            //le apenas 1 aba
-            break;
-        }
-        return table.toStringMatrix();
+    	return getXlsxLines(initialRow,false);
+    	
     }
 
     protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, boolean ignoreFirstRow) throws Exception {
@@ -326,6 +304,7 @@ public class ExcelParser<T> implements Parser<T> {
         return table;
     }
 
+    
 	protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, int rowInitial) throws Exception {
 
 		final Table table = processXlsxSheet(styles, strings, sheetInputStream);
