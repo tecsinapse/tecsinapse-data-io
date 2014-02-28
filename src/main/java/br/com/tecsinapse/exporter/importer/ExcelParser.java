@@ -53,6 +53,7 @@ public class ExcelParser<T> implements Parser<T> {
     private ExcelType type;
     private int initialRow;
     private boolean isLastSheet;
+    private String dateStringPattern = "dd/MM/yyyy";
 
     public ExcelParser(Class<T> clazz, File file) throws IOException {
         this(clazz);
@@ -85,6 +86,10 @@ public class ExcelParser<T> implements Parser<T> {
     
     private ExcelParser(Class<T> clazz) {
         this.clazz = clazz;
+    }
+
+    public void setDateStringPattern(String dateStringPattern) {
+        this.dateStringPattern = dateStringPattern;
     }
 
     /**
@@ -173,7 +178,19 @@ public class ExcelParser<T> implements Parser<T> {
         }
         return fields.get(index);
     }
-    
+
+    public List<List<String>> getLines(boolean ignoreFirstRow) throws Exception {
+        if(type == ExcelType.XLSX){
+            return getXlsxLines(ignoreFirstRow);
+        }
+        return getXlsLinesIncludingEmptyCells();
+    }
+
+    @Deprecated
+    /**
+     * Não traz na lista as ceulas que estão vazias no arquivo.
+     * O método getXlsLinesIncludingEmptyCells faz esse tratamento e deve ser acessado através do método getLines.
+     */
     public List<List<String>> getXlsLines() throws InvalidFormatException, IOException {
     	Workbook wb = getWorkbook();
         
@@ -188,17 +205,34 @@ public class ExcelParser<T> implements Parser<T> {
         List<List<String>> lines = Lists.newArrayList();
         List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
         for (Row row : linhasArquivo) {
-			List<Cell> cells = Lists.newArrayList(row.cellIterator());
-			List<String> cellsAsString = Lists.newArrayList(Collections2.transform(cells, new Function<Cell, String>() {
-				@Override
-				public String apply(Cell input) {
-					return getValueOrEmpty(input);
-				}
-			}));
-			lines.add(cellsAsString);
-		}
-        
-		return lines;
+            List<Cell> cells = Lists.newArrayList(row.cellIterator());
+            List<String> cellsAsString = Lists.newArrayList(Collections2.transform(cells, new Function<Cell, String>() {
+                @Override
+                public String apply(Cell input) {
+                    return getValueOrEmpty(input);
+                }
+            }));
+            lines.add(cellsAsString);
+        }
+
+        return lines;
+    }
+
+    private List<List<String>> getXlsLinesIncludingEmptyCells() throws InvalidFormatException, IOException {
+        Workbook wb = getWorkbook();
+        Sheet sheet = wb.getSheetAt(0);
+
+        List<List<String>> lines = Lists.newArrayList();
+        List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
+        for (Row row : linhasArquivo) {
+            List<String> cellsStringValues = Lists.newArrayList();
+            for(int index = 0; index < row.getLastCellNum(); index++) {
+                Cell cell = row.getCell(index, Row.CREATE_NULL_AS_BLANK);
+                cellsStringValues.add(getValueOrEmpty(cell));
+            }
+            lines.add(cellsStringValues);
+        }
+        return lines;
     }
 
     private List<String> getFields(Row row) {
@@ -221,7 +255,7 @@ public class ExcelParser<T> implements Parser<T> {
             case Cell.CELL_TYPE_NUMERIC:
                 CellStyle style = cell.getCellStyle();
                 if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                    return new LocalDate(cell.getDateCellValue()).toString("dd/MM/yyyy");
+                    return new LocalDate(cell.getDateCellValue()).toString(dateStringPattern);
                 }
                 return Double.valueOf(cell.getNumericCellValue()).toString();
             case Cell.CELL_TYPE_STRING:
