@@ -150,7 +150,19 @@ public class ExcelParser<T> implements Parser<T> {
         }
         return fields.get(index);
     }
-    
+
+    public List<List<String>> getLines(boolean ignoreFirstRow) throws Exception {
+        if(type == ExcelType.XLSX){
+            return getXlsxLines(ignoreFirstRow);
+        }
+        return getXlsLinesIncludingEmptyCells();
+    }
+
+    @Deprecated
+    /**
+     * Não traz na lista as ceulas que estão vazias no arquivo.
+     * O método getXlsLinesIncludingEmptyCells faz esse tratamento e deve ser acessado através do método getLines.
+     */
     public List<List<String>> getXlsLines() throws InvalidFormatException, IOException {
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(0);
@@ -171,7 +183,7 @@ public class ExcelParser<T> implements Parser<T> {
         return lines;
     }
 
-    public List<List<String>> getXlsLinesIncludingEmptyCells() throws InvalidFormatException, IOException {
+    private List<List<String>> getXlsLinesIncludingEmptyCells() throws InvalidFormatException, IOException {
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(0);
 
