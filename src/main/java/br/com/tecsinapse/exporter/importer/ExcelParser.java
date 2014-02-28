@@ -46,7 +46,7 @@ import com.google.common.collect.Lists;
 public class ExcelParser<T> implements Parser<T> {
 
     private static final int FIRST_LINE = 0;
-	private static final int FIRST_SHEET = 0;
+    private static final int FIRST_SHEET = 0;
     private final Class<T> clazz;
     private File excel;
     private InputStream excelInputStream;
@@ -179,9 +179,9 @@ public class ExcelParser<T> implements Parser<T> {
         return fields.get(index);
     }
 
-    public List<List<String>> getLines(boolean ignoreFirstRow) throws Exception {
+    public List<List<String>> getLines() throws Exception {
         if(type == ExcelType.XLSX){
-            return getXlsxLines(ignoreFirstRow);
+            return getXlsxLines(initialRow, isLastSheet);
         }
         return getXlsLinesIncludingEmptyCells();
     }
@@ -220,7 +220,8 @@ public class ExcelParser<T> implements Parser<T> {
 
     private List<List<String>> getXlsLinesIncludingEmptyCells() throws InvalidFormatException, IOException {
         Workbook wb = getWorkbook();
-        Sheet sheet = wb.getSheetAt(0);
+        int sheetIndex = isLastSheet ? wb.getNumberOfSheets() - 1 : FIRST_SHEET;
+        Sheet sheet = wb.getSheetAt(sheetIndex);
 
         List<List<String>> lines = Lists.newArrayList();
         List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
@@ -338,7 +339,7 @@ public class ExcelParser<T> implements Parser<T> {
         return table;
     }
 
-    
+
 	protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, int rowInitial) throws Exception {
 
 		final Table table = processXlsxSheet(styles, strings, sheetInputStream);
