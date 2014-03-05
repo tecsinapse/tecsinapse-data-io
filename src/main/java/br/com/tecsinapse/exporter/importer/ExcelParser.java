@@ -1,5 +1,7 @@
 package br.com.tecsinapse.exporter.importer;
 
+import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,11 +16,10 @@ import java.util.Set;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -52,8 +53,9 @@ public class ExcelParser<T> implements Parser<T> {
     private InputStream excelInputStream;
     private ExcelType type;
     private int initialRow;
-    private boolean isLastSheet;
+    private boolean isLastSheet = false;
     private String dateStringPattern = "dd/MM/yyyy";
+    private ImporterXLSXType importerXLSXType = DEFAULT;
 
     public ExcelParser(Class<T> clazz, File file) throws IOException {
         this(clazz);
@@ -62,26 +64,28 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     public ExcelParser(Class<T> clazz, File file, int initialRow) throws IOException {
-        this(clazz, file, initialRow, false);
-    }
-
-    public ExcelParser(Class<T> clazz, File file, int initialRow, boolean lastSheet) throws IOException {
         this(clazz, file);
         this.initialRow = initialRow;
+    }
+
+    public ExcelParser(Class<T> clazz, File file, int initialRow, boolean lastSheet, ImporterXLSXType importerXLSXType) throws IOException {
+        this(clazz, file, initialRow);
         this.isLastSheet = lastSheet;
+        this.importerXLSXType = importerXLSXType;
     }
 
     
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow) {
-    	this(clazz,inputStream,type,initialRow,false);
+		this(clazz);
+		this.excelInputStream = inputStream;
+		this.type = type;
+    	this.initialRow = initialRow;
     }
 
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow, boolean isLastSheet) {
-        this(clazz);
-        this.excelInputStream = inputStream;
-        this.type = type;
-        this.initialRow = initialRow;
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow, boolean isLastSheet, ImporterXLSXType importerXLSXType) {
+        this(clazz, inputStream, type, initialRow);
         this.isLastSheet = isLastSheet;
+        this.importerXLSXType = importerXLSXType;
     }
     
     private ExcelParser(Class<T> clazz) {
@@ -254,8 +258,7 @@ public class ExcelParser<T> implements Parser<T> {
             case Cell.CELL_TYPE_BOOLEAN:
                 return Boolean.valueOf(cell.getBooleanCellValue()).toString();
             case Cell.CELL_TYPE_NUMERIC:
-                CellStyle style = cell.getCellStyle();
-                if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                if (DateUtil.isCellDateFormatted(cell)) {
                     return new LocalDate(cell.getDateCellValue()).toString(dateStringPattern);
                 }
                 return Double.valueOf(cell.getNumericCellValue()).toString();
@@ -385,6 +388,7 @@ public class ExcelParser<T> implements Parser<T> {
 			}
 
 		},
+				importerXLSXType.formatter,
 				false//means result instead of formula
 		);
 		sheetParser.setContentHandler(handler);
