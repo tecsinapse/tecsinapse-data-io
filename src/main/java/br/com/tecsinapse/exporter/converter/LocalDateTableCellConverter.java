@@ -9,7 +9,7 @@ public class LocalDateTableCellConverter implements TableCellConverter<LocalDate
 	
 	public LocalDate apply(String input) {
 		LocalDateTime value = converter.apply(input);
-		return value != null ? value.toLocalDate(): null;
+		return value != null ? value.toLocalDate() : null;
 	}
 
 }
