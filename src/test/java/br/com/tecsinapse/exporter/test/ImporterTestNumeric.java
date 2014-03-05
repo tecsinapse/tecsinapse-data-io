@@ -18,7 +18,7 @@ public class ImporterTestNumeric {
     public Object[][] getExcel() throws URISyntaxException {
 
         return new Object[][]{
-                {getFile("excel-numeric.xlsx"), "FakePojoNumeric{value1='1323.45', value2='2433.56', value3='2014.0', value4='665.0', value5='4345.0'}FakePojoNumeric{value1='0.5', value2='4354.0', value3='null', value4='34.56', value5='454.0'}"},
+                {getFile("excel-numeric.xlsx"), "FakePojoNumeric{value1='1323.45', value2='2433.56', value3='2014.0', value4='665.0', value5='4345.0'}FakePojoNumeric{value1='0.5', value2='4354.0', value3='null', value4='34.56', value5='454'}"},
         };
     }
 
