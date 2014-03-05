@@ -30,7 +30,12 @@ public enum ImporterXLSXType {
                 Date d = DateUtil.getJavaDate(value, use1904Windowing);
                 return LocalDateTime.fromDateFields(d).toString();
             } else {
-            	// else Number, then format as toString output for BigDecimal. See the BigDecimal.toString() document to know why.
+            	// else Number
+            	// If is General formating then take the value from super
+            	if ("General".equalsIgnoreCase(formatString)) {
+            		return super.formatRawCellContents(value, formatIndex, formatString, use1904Windowing);
+            	}
+            	// then format as toString output for BigDecimal. See the BigDecimal.toString() document to know why.
             	return BigDecimal.valueOf(value).toString();
             }
 		}
