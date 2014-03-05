@@ -5,6 +5,7 @@
 .metadata
 target
 bin
+test-output
 /src/main/resources/rebel.xml
 *.iml
 .idea/*

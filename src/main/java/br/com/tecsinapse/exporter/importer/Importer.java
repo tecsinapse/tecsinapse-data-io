@@ -1,15 +1,16 @@
 package br.com.tecsinapse.exporter.importer;
 
-import br.com.tecsinapse.exporter.FileType;
+import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
 
-import com.google.common.base.Strings;
-
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
+
+import br.com.tecsinapse.exporter.FileType;
+
+import com.google.common.base.Strings;
 
 public class Importer<T> {
 
@@ -23,38 +24,46 @@ public class Importer<T> {
     private Parser<T> parser;
     private int initialRow;
     private boolean isLastSheet;
+    private ImporterXLSXType importerXLSXType;
 
     private Importer(Class<T> clazz, Charset charset) {
         this.clazz = clazz;
         this.charset = charset;
+        this.importerXLSXType = DEFAULT;
     }
 
     private Importer(Class<T> clazz) {
-        this.clazz = clazz;
-        this.charset = Charset.defaultCharset();
+    	this(clazz, Charset.defaultCharset());
     }
 
     public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
         this(clazz, charset);
         this.file = file;
-        prepareParser();
     }
 
     public Importer(Class<T> clazz, Charset charset, InputStream inputStream, String filename) throws IOException {
         this(clazz, charset);
         this.inputStream = inputStream;
         this.filename = filename;
-        prepareParser();
     }
 
     public Importer(Class<T> clazz, File file) throws IOException {
         this(clazz);
         this.file = file;
-        prepareParser();
+    }
+    
+    public Importer(Class<T> clazz, File file, ImporterXLSXType importerXLSXType) throws IOException {
+    	this(clazz, file);
+        this.importerXLSXType = importerXLSXType;
     }
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename) throws IOException {
         this(clazz, inputStream, filename, false);
+    }
+    
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) throws IOException {
+        this(clazz, inputStream, filename, false);
+        this.importerXLSXType = importerXLSXType;
     }
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet) throws IOException {
@@ -67,18 +76,17 @@ public class Importer<T> {
         this.filename = filename;
         this.initialRow = initialRow;
         this.isLastSheet = isLastSheet;
-        prepareParser();
     }
 
-	private void prepareParser() throws IOException {
+	private void beforeParser() throws IOException {
         FileType fileType = getFileType();
         if(fileType == FileType.XLSX || fileType == FileType.XLS) {
             if(file != null) {
-                parser = new ExcelParser<T>(clazz, file, initialRow, isLastSheet);
+                parser = new ExcelParser<T>(clazz, file, initialRow, isLastSheet, importerXLSXType);
                 return;
             }
             if(inputStream != null) {
-                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), initialRow, isLastSheet);
+                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), initialRow, isLastSheet, importerXLSXType);
                 return;
             }
         }
@@ -105,6 +113,7 @@ public class Importer<T> {
     }
 
     public List<T> parse() throws Exception {
+    	beforeParser();
         return parser.parse();
     }
 }
