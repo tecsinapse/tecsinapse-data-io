@@ -1,5 +1,6 @@
 package br.com.tecsinapse.exporter.importer;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -28,9 +29,10 @@ public enum ImporterXLSXType {
 			if(DateUtil.isADateFormat(formatIndex,formatString) && DateUtil.isValidExcelDate(value)) {
                 Date d = DateUtil.getJavaDate(value, use1904Windowing);
                 return LocalDateTime.fromDateFields(d).toString();
+            } else {
+            	// else Number, then format as toString output for BigDecimal. See the BigDecimal.toString() document to know why.
+            	return BigDecimal.valueOf(value).toString();
             }
-			
-			return super.formatRawCellContents(value, formatIndex, formatString, use1904Windowing);
 		}
 	}
 }
