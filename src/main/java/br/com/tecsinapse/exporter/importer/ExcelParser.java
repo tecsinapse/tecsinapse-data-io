@@ -1,5 +1,7 @@
 package br.com.tecsinapse.exporter.importer;
 
+import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,11 +16,10 @@ import java.util.Set;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -46,13 +47,15 @@ import com.google.common.collect.Lists;
 public class ExcelParser<T> implements Parser<T> {
 
     private static final int FIRST_LINE = 0;
-	private static final int FIRST_SHEET = 0;
+    private static final int FIRST_SHEET = 0;
     private final Class<T> clazz;
     private File excel;
     private InputStream excelInputStream;
     private ExcelType type;
     private int initialRow;
-    private boolean isLastSheet;
+    private boolean isLastSheet = false;
+    private String dateStringPattern = "dd/MM/yyyy";
+    private ImporterXLSXType importerXLSXType = DEFAULT;
 
     public ExcelParser(Class<T> clazz, File file) throws IOException {
         this(clazz);
@@ -61,30 +64,36 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     public ExcelParser(Class<T> clazz, File file, int initialRow) throws IOException {
-        this(clazz, file, initialRow, false);
-    }
-
-    public ExcelParser(Class<T> clazz, File file, int initialRow, boolean lastSheet) throws IOException {
         this(clazz, file);
         this.initialRow = initialRow;
+    }
+
+    public ExcelParser(Class<T> clazz, File file, int initialRow, boolean lastSheet, ImporterXLSXType importerXLSXType) throws IOException {
+        this(clazz, file, initialRow);
         this.isLastSheet = lastSheet;
+        this.importerXLSXType = importerXLSXType;
     }
 
     
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow) {
-    	this(clazz,inputStream,type,initialRow,false);
+		this(clazz);
+		this.excelInputStream = inputStream;
+		this.type = type;
+    	this.initialRow = initialRow;
     }
 
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow, boolean isLastSheet) {
-        this(clazz);
-        this.excelInputStream = inputStream;
-        this.type = type;
-        this.initialRow = initialRow;
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow, boolean isLastSheet, ImporterXLSXType importerXLSXType) {
+        this(clazz, inputStream, type, initialRow);
         this.isLastSheet = isLastSheet;
+        this.importerXLSXType = importerXLSXType;
     }
     
     private ExcelParser(Class<T> clazz) {
         this.clazz = clazz;
+    }
+
+    public void setDateStringPattern(String dateStringPattern) {
+        this.dateStringPattern = dateStringPattern;
     }
 
     /**
@@ -173,7 +182,19 @@ public class ExcelParser<T> implements Parser<T> {
         }
         return fields.get(index);
     }
-    
+
+    public List<List<String>> getLines() throws Exception {
+        if(type == ExcelType.XLSX){
+            return getXlsxLines(initialRow, isLastSheet);
+        }
+        return getXlsLinesIncludingEmptyCells();
+    }
+
+    @Deprecated
+    /**
+     * Não traz na lista as ceulas que estão vazias no arquivo.
+     * O método getXlsLinesIncludingEmptyCells faz esse tratamento e deve ser acessado através do método getLines.
+     */
     public List<List<String>> getXlsLines() throws InvalidFormatException, IOException {
     	Workbook wb = getWorkbook();
         
@@ -188,17 +209,35 @@ public class ExcelParser<T> implements Parser<T> {
         List<List<String>> lines = Lists.newArrayList();
         List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
         for (Row row : linhasArquivo) {
-			List<Cell> cells = Lists.newArrayList(row.cellIterator());
-			List<String> cellsAsString = Lists.newArrayList(Collections2.transform(cells, new Function<Cell, String>() {
-				@Override
-				public String apply(Cell input) {
-					return getValueOrEmpty(input);
-				}
-			}));
-			lines.add(cellsAsString);
-		}
-        
-		return lines;
+            List<Cell> cells = Lists.newArrayList(row.cellIterator());
+            List<String> cellsAsString = Lists.newArrayList(Collections2.transform(cells, new Function<Cell, String>() {
+                @Override
+                public String apply(Cell input) {
+                    return getValueOrEmpty(input);
+                }
+            }));
+            lines.add(cellsAsString);
+        }
+
+        return lines;
+    }
+
+    private List<List<String>> getXlsLinesIncludingEmptyCells() throws InvalidFormatException, IOException {
+        Workbook wb = getWorkbook();
+        int sheetIndex = isLastSheet ? wb.getNumberOfSheets() - 1 : FIRST_SHEET;
+        Sheet sheet = wb.getSheetAt(sheetIndex);
+
+        List<List<String>> lines = Lists.newArrayList();
+        List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
+        for (Row row : linhasArquivo) {
+            List<String> cellsStringValues = Lists.newArrayList();
+            for(int index = 0; index < row.getLastCellNum(); index++) {
+                Cell cell = row.getCell(index, Row.CREATE_NULL_AS_BLANK);
+                cellsStringValues.add(getValueOrEmpty(cell));
+            }
+            lines.add(cellsStringValues);
+        }
+        return lines;
     }
 
     private List<String> getFields(Row row) {
@@ -219,9 +258,8 @@ public class ExcelParser<T> implements Parser<T> {
             case Cell.CELL_TYPE_BOOLEAN:
                 return Boolean.valueOf(cell.getBooleanCellValue()).toString();
             case Cell.CELL_TYPE_NUMERIC:
-                CellStyle style = cell.getCellStyle();
-                if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                    return new LocalDate(cell.getDateCellValue()).toString("dd/MM/yyyy");
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return new LocalDate(cell.getDateCellValue()).toString(dateStringPattern);
                 }
                 return Double.valueOf(cell.getNumericCellValue()).toString();
             case Cell.CELL_TYPE_STRING:
@@ -304,7 +342,7 @@ public class ExcelParser<T> implements Parser<T> {
         return table;
     }
 
-    
+
 	protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, int rowInitial) throws Exception {
 
 		final Table table = processXlsxSheet(styles, strings, sheetInputStream);
@@ -350,6 +388,7 @@ public class ExcelParser<T> implements Parser<T> {
 			}
 
 		},
+				importerXLSXType.formatter,
 				false//means result instead of formula
 		);
 		sheetParser.setContentHandler(handler);
