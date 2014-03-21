@@ -52,44 +52,46 @@ public class ExcelParser<T> implements Parser<T> {
     private File excel;
     private InputStream excelInputStream;
     private ExcelType type;
-    private int initialRow;
+    private int afterLine = Importer.DEFAULT_START_ROW;
     private boolean isLastSheet = false;
     private String dateStringPattern = "dd/MM/yyyy";
     private ImporterXLSXType importerXLSXType = DEFAULT;
 
+    private ExcelParser(Class<T> clazz) {
+        this.clazz = clazz;
+    }
     public ExcelParser(Class<T> clazz, File file) throws IOException {
         this(clazz);
         this.excel = file;
         this.type = ExcelType.getExcelType(excel.getName());
     }
 
-    public ExcelParser(Class<T> clazz, File file, int initialRow) throws IOException {
+    public ExcelParser(Class<T> clazz, File file, int afterLine) throws IOException {
         this(clazz, file);
-        this.initialRow = initialRow;
+        this.afterLine = afterLine;
     }
 
-    public ExcelParser(Class<T> clazz, File file, int initialRow, boolean lastSheet, ImporterXLSXType importerXLSXType) throws IOException {
-        this(clazz, file, initialRow);
+    public ExcelParser(Class<T> clazz, File file, int afterLine, boolean lastSheet, ImporterXLSXType importerXLSXType) throws IOException {
+        this(clazz, file, afterLine);
         this.isLastSheet = lastSheet;
         this.importerXLSXType = importerXLSXType;
     }
 
-    
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow) {
-		this(clazz);
-		this.excelInputStream = inputStream;
-		this.type = type;
-    	this.initialRow = initialRow;
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type) {
+        this(clazz);
+        this.excelInputStream = inputStream;
+        this.type = type;
     }
 
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow, boolean isLastSheet, ImporterXLSXType importerXLSXType) {
-        this(clazz, inputStream, type, initialRow);
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine) {
+		this(clazz, inputStream, type);
+		this.afterLine = afterLine;
+    }
+
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet, ImporterXLSXType importerXLSXType) {
+        this(clazz, inputStream, type, afterLine);
         this.isLastSheet = isLastSheet;
         this.importerXLSXType = importerXLSXType;
-    }
-    
-    private ExcelParser(Class<T> clazz) {
-        this.clazz = clazz;
     }
 
     public void setDateStringPattern(String dateStringPattern) {
@@ -111,19 +113,21 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     private List<T> parseXlsx() throws Exception {
-        List<List<String>> xlsxLines = getXlsxLines(initialRow, isLastSheet);
+        List<List<String>> xlsxLines = getXlsxLines(afterLine, isLastSheet);
 
         List<T> list = new ArrayList<>();
 		  @SuppressWarnings("unchecked")
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
 				  ReflectionUtils.withAnnotation(TableCellMapping.class));
 
-			final Constructor<T> constructor = clazz.getDeclaredConstructor();
-			constructor.setAccessible(true);
+        final Constructor<T> constructor = clazz.getDeclaredConstructor();
+        constructor.setAccessible(true);
         for (List<String> fields : xlsxLines) {
 			   T instance = constructor.newInstance();
 
             for (Method method : methods) {
+                method.setAccessible(true);
+
                 TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
                 String value = getValueOrEmpty(fields, tcm.columnIndex());
                 TableCellConverter<?> converter = tcm.converter().newInstance();
@@ -155,16 +159,18 @@ public class ExcelParser<T> implements Parser<T> {
 		 
         Iterator<Row> rowIterator = sheet.iterator();
 
-        boolean header = true;
+        int i = 0;
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-            if (header) {
-                header = false;
+            if ((i + 1) <= afterLine) {
+                i++;
                 continue;
             }
             T instance = constructor.newInstance();
 
             for (Method method : methods) {
+                method.setAccessible(true);
+
                 TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
                 String value = getValueOrEmpty(row.getCell(tcm.columnIndex()));
                 TableCellConverter<?> converter = tcm.converter().newInstance();
@@ -185,7 +191,7 @@ public class ExcelParser<T> implements Parser<T> {
 
     public List<List<String>> getLines() throws Exception {
         if(type == ExcelType.XLSX){
-            return getXlsxLines(initialRow, isLastSheet);
+            return getXlsxLines(afterLine, isLastSheet);
         }
         return getXlsLinesIncludingEmptyCells();
     }
@@ -229,7 +235,13 @@ public class ExcelParser<T> implements Parser<T> {
 
         List<List<String>> lines = Lists.newArrayList();
         List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
-        for (Row row : linhasArquivo) {
+        for (int i = 0; i < linhasArquivo.size(); i++) {
+            if ((i + 1) <= afterLine) {
+                continue;
+            }
+
+            final Row row = linhasArquivo.get(i);
+
             List<String> cellsStringValues = Lists.newArrayList();
             for(int index = 0; index < row.getLastCellNum(); index++) {
                 Cell cell = row.getCell(index, Row.CREATE_NULL_AS_BLANK);
@@ -288,9 +300,13 @@ public class ExcelParser<T> implements Parser<T> {
         }
         return OPCPackage.open(excelInputStream);
     }
-    
+
+    /**
+     * @deprecated Use getLines() mais afterLine 0 nao deveria importar se e xls ou xlsx
+     */
+    @Deprecated
     public List<List<String>> getXlsxLines() throws Exception {
-    	return getXlsxLines(FIRST_LINE);
+        return getXlsxLines(FIRST_LINE, false);
     }
 
     private List<List<String>> getXlsxLines(int initialRow, boolean isLastSheet) throws Exception {
@@ -323,12 +339,6 @@ public class ExcelParser<T> implements Parser<T> {
             }
         }
         return table.toStringMatrix();
-    }
-
-    private List<List<String>> getXlsxLines(int initialRow) throws Exception {
-
-    	return getXlsxLines(initialRow,false);
-    	
     }
 
     protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, boolean ignoreFirstRow) throws Exception {

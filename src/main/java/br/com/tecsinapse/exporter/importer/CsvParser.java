@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
@@ -20,7 +21,25 @@ import com.google.common.base.Predicate;
 
 class CsvParser<T> implements Parser<T> {
 	private final Class<T> clazz;
-	private List<String> csvLines;
+    private List<String> csvLines;
+
+    private int afterLine = Importer.DEFAULT_START_ROW;
+
+    private CsvParser(Class<T> clazz) {
+        this.clazz = clazz;
+    }
+
+    CsvParser(Class<T> clazz, File file, Charset charset, int afterLine) throws IOException {
+        this(clazz, file, charset);
+
+        this.afterLine = afterLine;
+    }
+
+    CsvParser(Class<T> clazz, InputStream input, Charset charset, int afterLine) throws IOException {
+        this(clazz, input, charset);
+
+        this.afterLine = afterLine;
+    }
 
 	public CsvParser(Class<T> clazz, List<String> csvLines) {
 		this(clazz);
@@ -29,19 +48,15 @@ class CsvParser<T> implements Parser<T> {
 
 	public CsvParser(Class<T> clazz, File file, Charset charset) throws
 			IOException {
-		this(clazz, CSVUtil.processInputCSV(new FileInputStream(file), charset));
+		this(clazz, CSVUtil.processCSV(new FileInputStream(file), charset));
 	}
 
 	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset)
 			throws IOException {
-		this(clazz, CSVUtil.processInputCSV(inputStream, charset));
+		this(clazz, CSVUtil.processCSV(inputStream, charset));
 	}
 
-	private CsvParser(Class<T> clazz) {
-		this.clazz = clazz;
-	}
-
-	/**
+    /**
 	 * Não lê a primeira linha
 	 * <p/>
 	 * @return
@@ -49,17 +64,26 @@ class CsvParser<T> implements Parser<T> {
 	 */
 	@Override
 	public List<T> parse() throws IllegalAccessException, InstantiationException,
-			InvocationTargetException {
+            InvocationTargetException, NoSuchMethodException {
 		List<T> list = new ArrayList<>();
 		@SuppressWarnings("unchecked")
 		Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
 				ReflectionUtils.<Method>withAnnotation(TableCellMapping.class));
 
-		for (String line : csvLines) {
-			List<String> fields = split(line);
-			T instance = clazz.newInstance();
+        final Constructor<T> constructor = clazz.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        for (int i = 0; i < csvLines.size(); i++) {
+            final String line = csvLines.get(i);
+            if ((i + 1) <= afterLine) {
+                continue;
+            }
+
+            List<String> fields = split(line);
+            T instance = constructor.newInstance();
 
 			for (Method method : methods) {
+                method.setAccessible(true);
+
 				TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
 				String value = getValueOrEmpty(fields, tcm.columnIndex());
 				TableCellConverter<?> converter = tcm.converter().newInstance();

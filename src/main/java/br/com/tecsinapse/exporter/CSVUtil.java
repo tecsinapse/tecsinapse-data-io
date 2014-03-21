@@ -13,12 +13,24 @@ public class CSVUtil {
 	public static final String SEPARATOR = ";";
 	public static final char SEPARATOR_CHAR = ';';
 
-	static public List<String> processInputCSV(InputStream inputStream, Charset charset) throws IOException {
+    public static List<String> processInputCSV(InputStream inputStream, Charset charset) throws IOException {
+        return processInputCSV(inputStream, true, charset);
+    }
+
+    public static List<String> processCSV(InputStream inputStream, Charset charset) throws IOException {
+        return processInputCSV(inputStream, false, charset);
+    }
+
+    private static List<String> processInputCSV(InputStream inputStream, boolean ignoreFirstLine, Charset charset) throws IOException {
         List<String> lines = new ArrayList<>();
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset)) ){
 
-		    String line = br.readLine();
-			while ((line = br.readLine()) != null) {
+		    String line = null;
+            if (ignoreFirstLine) {
+                line = br.readLine();
+            }
+
+            while ((line = br.readLine()) != null) {
 
 				if (!line.isEmpty() && line.split(SEPARATOR).length > 0) {
 					lines.add(line);
