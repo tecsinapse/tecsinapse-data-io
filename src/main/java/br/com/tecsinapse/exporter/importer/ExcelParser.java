@@ -2,7 +2,11 @@ package br.com.tecsinapse.exporter.importer;
 
 import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -13,9 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
@@ -28,6 +33,7 @@ import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 import org.reflections.ReflectionUtils;
 import org.xml.sax.ContentHandler;
@@ -40,62 +46,68 @@ import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-
 public class ExcelParser<T> implements Parser<T> {
 
     private static final int FIRST_LINE = 0;
     private static final int FIRST_SHEET = 0;
     private final Class<T> clazz;
-    private File excel;
-    private InputStream excelInputStream;
-    private ExcelType type;
+    private final InputStream excelInputStream;
+    private final ExcelType type;
+
     private int afterLine = Importer.DEFAULT_START_ROW;
-    private boolean isLastSheet = false;
+    private int sheetNumber = 0;
     private String dateStringPattern = "dd/MM/yyyy";
     private ImporterXLSXType importerXLSXType = DEFAULT;
 
-    private ExcelParser(Class<T> clazz) {
-        this.clazz = clazz;
-    }
+    //lazy somente criado ao chamar getWorkbook
+    private Workbook workbook;
+
     public ExcelParser(Class<T> clazz, File file) throws IOException {
-        this(clazz);
-        this.excel = file;
-        this.type = ExcelType.getExcelType(excel.getName());
+        this(clazz, new FileInputStream(file), ExcelType.getExcelType(file.getName()));
     }
 
     public ExcelParser(Class<T> clazz, File file, int afterLine) throws IOException {
-        this(clazz, file);
-        this.afterLine = afterLine;
+        this(clazz, new FileInputStream(file), ExcelType.getExcelType(file.getName()), afterLine);
     }
 
     public ExcelParser(Class<T> clazz, File file, int afterLine, boolean lastSheet, ImporterXLSXType importerXLSXType) throws IOException {
-        this(clazz, file, afterLine);
-        this.isLastSheet = lastSheet;
-        this.importerXLSXType = importerXLSXType;
+        this(clazz, new FileInputStream(file), ExcelType.getExcelType(file.getName()), afterLine, lastSheet, importerXLSXType);
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type) {
-        this(clazz);
-        this.excelInputStream = inputStream;
-        this.type = type;
+        this(clazz, inputStream, type, Importer.DEFAULT_START_ROW);
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine) {
-		this(clazz, inputStream, type);
-		this.afterLine = afterLine;
+		this(clazz, inputStream, type, afterLine, false, ImporterXLSXType.DEFAULT);
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet, ImporterXLSXType importerXLSXType) {
-        this(clazz, inputStream, type, afterLine);
-        this.isLastSheet = isLastSheet;
+        this.clazz = clazz;
+        this.excelInputStream = new BufferedInputStream(inputStream);
+        this.type = type;
+        this.afterLine = afterLine;
         this.importerXLSXType = importerXLSXType;
+
+        if (isLastSheet) {
+            sheetNumber = getWorkbook().getNumberOfSheets() - 1;
+        }
     }
 
     public void setDateStringPattern(String dateStringPattern) {
         this.dateStringPattern = dateStringPattern;
+    }
+
+    public void setAfterLine(int afterLine) {
+        this.afterLine = afterLine;
+    }
+
+    public void setSheetNumber(int sheetNumber) {
+        this.sheetNumber = sheetNumber;
+    }
+
+    public int getNumberOfSheets() {
+        return getWorkbook().getNumberOfSheets();
     }
 
     /**
@@ -113,7 +125,7 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     private List<T> parseXlsx() throws Exception {
-        List<List<String>> xlsxLines = getXlsxLines(afterLine, isLastSheet);
+        List<List<String>> xlsxLines = getXlsxLines(afterLine, sheetNumber);
 
         List<T> list = new ArrayList<>();
 		  @SuppressWarnings("unchecked")
@@ -146,13 +158,7 @@ public class ExcelParser<T> implements Parser<T> {
 				  ReflectionUtils.withAnnotation(TableCellMapping.class));
         Workbook wb = getWorkbook();
         
-        int sheetIndex = FIRST_SHEET;
-        
-        if(isLastSheet) {
-        	sheetIndex = wb.getNumberOfSheets() - 1;
-        }
-        
-        Sheet sheet = wb.getSheetAt(sheetIndex);
+        Sheet sheet = wb.getSheetAt(this.sheetNumber);
 
 		final Constructor<T> constructor = clazz.getDeclaredConstructor();
 		constructor.setAccessible(true);
@@ -191,26 +197,21 @@ public class ExcelParser<T> implements Parser<T> {
 
     public List<List<String>> getLines() throws Exception {
         if(type == ExcelType.XLSX){
-            return getXlsxLines(afterLine, isLastSheet);
+            return getXlsxLines(afterLine, sheetNumber);
         }
         return getXlsLinesIncludingEmptyCells();
     }
 
     @Deprecated
     /**
+     * @deprecated
      * Não traz na lista as ceulas que estão vazias no arquivo.
      * O método getXlsLinesIncludingEmptyCells faz esse tratamento e deve ser acessado através do método getLines.
      */
     public List<List<String>> getXlsLines() throws InvalidFormatException, IOException {
     	Workbook wb = getWorkbook();
-        
-        int sheetIndex = FIRST_SHEET;
-        
-        if(isLastSheet) {
-        	sheetIndex = wb.getNumberOfSheets() - 1;
-        }
 
-    	Sheet sheet = wb.getSheetAt(sheetIndex);
+    	Sheet sheet = wb.getSheetAt(this.sheetNumber);
 
         List<List<String>> lines = Lists.newArrayList();
         List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
@@ -230,8 +231,7 @@ public class ExcelParser<T> implements Parser<T> {
 
     private List<List<String>> getXlsLinesIncludingEmptyCells() throws InvalidFormatException, IOException {
         Workbook wb = getWorkbook();
-        int sheetIndex = isLastSheet ? wb.getNumberOfSheets() - 1 : FIRST_SHEET;
-        Sheet sheet = wb.getSheetAt(sheetIndex);
+        Sheet sheet = wb.getSheetAt(this.sheetNumber);
 
         List<List<String>> lines = Lists.newArrayList();
         List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
@@ -287,18 +287,23 @@ public class ExcelParser<T> implements Parser<T> {
         }
     }
 
-    public Workbook getWorkbook() throws IOException, InvalidFormatException {
-        if (excel != null) {
-            return WorkbookFactory.create(excel);
+    public Workbook getWorkbook() {
+        if (workbook == null) {
+            try {
+                workbook = WorkbookFactory.create(excelInputStream);
+            } catch (IOException | InvalidFormatException e) {
+                throw Throwables.propagate(e);
+            }
         }
-        return WorkbookFactory.create(excelInputStream);
+        return workbook;
     }
 
+    @Deprecated
+    /**
+     * @deprecated metodo especifico para xlsx não é api ts-expoter pública, será alterado para privado ou removido em futuras versões
+     */
     public OPCPackage getOPCPackage() throws InvalidFormatException, IOException {
-        if (excel != null) {
-            return OPCPackage.open(excel);
-        }
-        return OPCPackage.open(excelInputStream);
+        return ((XSSFWorkbook) getWorkbook()).getPackage();
     }
 
     /**
@@ -306,10 +311,10 @@ public class ExcelParser<T> implements Parser<T> {
      */
     @Deprecated
     public List<List<String>> getXlsxLines() throws Exception {
-        return getXlsxLines(FIRST_LINE, false);
+        return getXlsxLines(FIRST_LINE, FIRST_SHEET);
     }
 
-    private List<List<String>> getXlsxLines(int initialRow, boolean isLastSheet) throws Exception {
+    private List<List<String>> getXlsxLines(int initialRow, int sheet) throws Exception {
 
         Table table = null;
         OPCPackage container;
@@ -318,25 +323,25 @@ public class ExcelParser<T> implements Parser<T> {
         XSSFReader xssfReader = new XSSFReader(container);
         StylesTable styles = xssfReader.getStylesTable();
         XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
-        
+
+        int currentSheet = -1;
         while (iter.hasNext()) {
-            
-        	InputStream stream = iter.next();
-        	
-        	if(isLastSheet && iter.hasNext()) {
-            	continue;
-            } else {
-	
-	            Table aba = processXlsxSheet(styles, strings, stream, initialRow);
-	            if (table == null) {
-	                table = aba;
-	            } else {
-	                table.concatenateTableBelow(aba);
-	            }
-	            stream.close();
-	            //le apenas 1 aba
-	            break;
+            InputStream stream = iter.next();
+            currentSheet++;
+            if (currentSheet != sheet) {
+                continue;
             }
+
+
+            Table aba = processXlsxSheet(styles, strings, stream, initialRow);
+            if (table == null) {
+                table = aba;
+            } else {
+                table.concatenateTableBelow(aba);
+            }
+            stream.close();
+            //le apenas 1 aba
+            break;
         }
         return table.toStringMatrix();
     }
@@ -407,5 +412,8 @@ public class ExcelParser<T> implements Parser<T> {
 		return table;
 	}
 
-
+    @Override
+    public void close() throws IOException {
+        excelInputStream.close();
+    }
 }

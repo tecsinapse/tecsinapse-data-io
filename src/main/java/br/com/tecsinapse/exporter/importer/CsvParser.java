@@ -178,4 +178,9 @@ class CsvParser<T> implements Parser<T> {
 		
 		return line.replace("\"\"", "\"").trim();
 	}
+
+    @Override
+    public void close() throws IOException {
+        //nada parser é feito atualmente no construtor
+    }
 }

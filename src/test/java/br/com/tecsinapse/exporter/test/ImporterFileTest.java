@@ -4,30 +4,26 @@ package br.com.tecsinapse.exporter.test;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Charsets;
 import org.joda.time.LocalDate;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.FileType;
-import br.com.tecsinapse.exporter.Table;
-import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.TableCellType;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.BigDecimalTableCellConverter;
 import br.com.tecsinapse.exporter.converter.IntegerFromBigDecimalTableCellConverter;
-import br.com.tecsinapse.exporter.converter.LocalDateTableCellConverter;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.importer.ExcelParser;
 import br.com.tecsinapse.exporter.importer.Importer;
+import br.com.tecsinapse.exporter.importer.ImporterXLSXType;
 
 public class ImporterFileTest {
 
@@ -99,8 +95,7 @@ public class ImporterFileTest {
         return new File(getClass().getResource("/files/mock/" + name).toURI());
     }
 
-    @DataProvider(name = "arquivos")
-    public Object[][] arquivos() throws URISyntaxException {
+    private List<FileBean> getEsperados() {
         //Cidade;Estado;Data;;Número
         List<FileBean> esperados = new ArrayList<>();
         //Pernambuco;PE;01/01/14;;10
@@ -113,6 +108,12 @@ public class ImporterFileTest {
         esperados.add(new FileBean("São Paulo", "SP", new LocalDate(2014, 1, 4), "", new BigDecimal("13"), 13));
         //São Paulo;SP;05/01/14;;14
         esperados.add(new FileBean("São Paulo", "SP", new LocalDate(2014, 1, 5), "", new BigDecimal("14"), 14));
+        return esperados;
+    }
+
+    @DataProvider(name = "arquivos")
+    public Object[][] arquivos() throws URISyntaxException {
+        List<FileBean> esperados = getEsperados();
 
 
         return new Object[][]{
@@ -126,25 +127,96 @@ public class ImporterFileTest {
         };
     }
 
-
     @Test(dataProvider = "arquivos")
     public void validaArquivo(File arquivo, int afterLine, FileType esperadoFileType, List<FileBean> esperados) throws Exception {
-        final Importer<FileBean> importer = new Importer<>(FileBean.class, Charsets.UTF_8, arquivo);
-        importer.setAfterLine(afterLine);
+        try (final Importer<FileBean> importer = new Importer<>(FileBean.class, Charsets.UTF_8, arquivo)) {
+            importer.setAfterLine(afterLine);
 
-        assertEquals(importer.getFileType(), esperadoFileType);
+            assertEquals(importer.getFileType(), esperadoFileType);
 
-        final List<FileBean> beans = importer.parse();
-        for (int i = 0; i < beans.size(); i++) {
-            final FileBean atual = beans.get(i);
-            final FileBean esperado = esperados.get(i);
-
-            assertEquals(atual.cidade, esperado.cidade);
-            assertEquals(atual.estado, esperado.estado);
-            assertEquals(atual.data, esperado.data);
-            assertEquals(atual.vazia, esperado.vazia);
-            assertEquals(atual.numero.compareTo(esperado.numero), 0);
-            assertEquals(atual.numeroInteger, esperado.numeroInteger);
+            final List<FileBean> beans = importer.parse();
+            for (int i = 0; i < beans.size(); i++) {
+                assertFileBeanEquals(beans.get(i), esperados.get(i));
+            }
         }
+    }
+
+    @DataProvider(name = "arquivosLastSheet")
+    public Object[][] arquivosLastSheet() throws URISyntaxException {
+        final List<FileBean> esperados = getEsperados();
+
+        List<FileBean> reverse = getEsperados();
+        Collections.reverse(reverse);
+
+        return new Object[][]{
+                {getFile("planilha.xls"), false, 1, esperados},
+                {getFile("planilha.xlsx"), false, 1, esperados},
+
+                {getFile("planilha.xls"), false, 3, esperados.subList(2, esperados.size())},
+                {getFile("planilha.xlsx"), false, 3, esperados.subList(2, esperados.size())},
+
+
+                {getFile("planilha.xls"), true, 1, reverse},
+                {getFile("planilha.xlsx"), true, 1, reverse},
+
+                {getFile("planilha.xls"), true, 3, reverse.subList(2, reverse.size())},
+                {getFile("planilha.xlsx"), true, 3, reverse.subList(2, reverse.size())},
+        };
+    }
+
+    @Test(dataProvider = "arquivosLastSheet")
+    public void validaLastSheet(File arquivo, boolean lastSheet, int afterLine, List<FileBean> esperados) throws Exception {
+        try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine, lastSheet, ImporterXLSXType.DEFAULT)) {
+
+            final List<FileBean> beans = excelParser.parse();
+            for (int i = 0; i < beans.size(); i++) {
+                assertFileBeanEquals(beans.get(i), esperados.get(i));
+            }
+        }
+    }
+
+    @DataProvider(name = "arquivosSheet")
+    public Object[][] arquivosSheet() throws URISyntaxException {
+        final List<FileBean> esperados = getEsperados();
+
+        List<FileBean> reverse = getEsperados();
+
+        Collections.reverse(reverse);
+        List<FileBean> sheet2 = new ArrayList<>(reverse);
+        Collections.swap(sheet2, 1, 3);
+
+
+        return new Object[][]{
+                {getFile("planilha.xls"), 1, Arrays.asList(esperados, sheet2, reverse)},
+                {getFile("planilha.xlsx"), 1, Arrays.asList(esperados, sheet2, reverse)},
+                {getFile("planilha.xls"), 3, Arrays.asList(esperados.subList(2, esperados.size()), sheet2.subList(2, sheet2.size()), reverse.subList(2, reverse.size()))},
+                {getFile("planilha.xlsx"), 3, Arrays.asList(esperados.subList(2, esperados.size()), sheet2.subList(2, sheet2.size()), reverse.subList(2, reverse.size()))},
+        };
+    }
+
+    @Test(dataProvider = "arquivosSheet")
+    public void validaSheet(File arquivo, int afterLine, List<List<FileBean>> sheets) throws Exception {
+        try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
+            for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
+                excelParser.setSheetNumber(sheetNumber);
+                final List<FileBean> esperados = sheets.get(sheetNumber);
+
+                final List<FileBean> beans = excelParser.parse();
+                for (int i = 0; i < beans.size(); i++) {
+                    final FileBean atual = beans.get(i);
+                    final FileBean esperado = esperados.get(i);
+                    assertFileBeanEquals(atual, esperado);
+                }
+            }
+        }
+    }
+
+    private void assertFileBeanEquals(FileBean atual, FileBean esperado) {
+        assertEquals(atual.cidade, esperado.cidade);
+        assertEquals(atual.estado, esperado.estado);
+        assertEquals(atual.data, esperado.data);
+        assertEquals(atual.vazia, esperado.vazia);
+        assertEquals(atual.numero.compareTo(esperado.numero), 0);
+        assertEquals(atual.numeroInteger, esperado.numeroInteger);
     }
 }

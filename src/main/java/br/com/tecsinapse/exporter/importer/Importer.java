@@ -2,17 +2,18 @@ package br.com.tecsinapse.exporter.importer;
 
 import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import br.com.tecsinapse.exporter.FileType;
-
 import com.google.common.base.Strings;
 
-public class Importer<T> {
+import br.com.tecsinapse.exporter.FileType;
+
+public class Importer<T> implements Closeable {
 
     static final int DEFAULT_START_ROW = 1;
 
@@ -118,5 +119,10 @@ public class Importer<T> {
     public List<T> parse() throws Exception {
     	beforeParser();
         return parser.parse();
+    }
+
+    @Override
+    public void close() throws IOException {
+        parser.close();
     }
 }

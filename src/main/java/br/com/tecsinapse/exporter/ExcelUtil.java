@@ -8,6 +8,7 @@ import org.joda.time.LocalDateTime;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -91,7 +92,7 @@ public class ExcelUtil {
     public static File getCsvFile(Table t, String file, String charsetName) throws IOException {
 
     	File f = new File(file);
-    	try (FileOutputStream fos = new FileOutputStream(f)) {
+    	try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
     		CSVUtil.write(t.toStringMatrix(), fos, charsetName);
 		}
     	return f;
@@ -100,7 +101,7 @@ public class ExcelUtil {
     public static File getXlsFile(Table t, String file) throws IOException {
     	
     	File f = new File(file);
-    	try (FileOutputStream fos = new FileOutputStream(f)) {
+    	try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
     		t.toHSSFWorkBook().write(fos);
 		}
     	return f;
