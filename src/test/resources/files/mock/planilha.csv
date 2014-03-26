@@ -1,6 +1,6 @@
-Cidade;Estado;Data;;Número
-Pernambuco;PE;01/01/2014;;10
-Campo Grande;MS;02/01/2014;;11
-Rio de Janeiro;RJ;03/01/2014;;12
-São Paulo;SP;04/01/2014;;13
-São Paulo;SP;05/01/2014;;14
+Cidade;Estado;Data;;Inteiro;Decimal
+Pernambuco;PE;01/01/2014;;10;10.9
+Campo Grande;MS;02/01/2014;;11;11.8
+Rio de Janeiro;RJ;03/01/2014;;12;12.7
+São Paulo;SP;04/01/2014;;13;13.6
+São Paulo;SP;05/01/2014;;14;14.5

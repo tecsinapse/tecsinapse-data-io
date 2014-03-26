@@ -20,6 +20,7 @@ import br.com.tecsinapse.exporter.FileType;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.BigDecimalTableCellConverter;
 import br.com.tecsinapse.exporter.converter.IntegerFromBigDecimalTableCellConverter;
+import br.com.tecsinapse.exporter.converter.IntegerTableCellConverter;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import br.com.tecsinapse.exporter.importer.ExcelParser;
 import br.com.tecsinapse.exporter.importer.Importer;
@@ -44,19 +45,21 @@ public class ImporterFileTest {
         private String estado;
         private LocalDate data;
         private String vazia;
-        private BigDecimal numero;
+        private Integer inteiro;
+        private BigDecimal decimal;
         private Integer numeroInteger;
 
         private FileBean() {
         }
 
-        public FileBean(String cidade, String estado, LocalDate data, String vazia, BigDecimal numero, Integer numeroInteger) {
+        public FileBean(String cidade, String estado, LocalDate data, String vazia, Integer inteiro, BigDecimal decimal, Integer numeroInteger) {
             this.cidade = cidade;
             this.estado = estado;
             //TODO :36
 //            this.data = data;
             this.vazia = vazia;
-            this.numero = numero;
+            this.inteiro = inteiro;
+            this.decimal = decimal;
             this.numeroInteger = numeroInteger;
         }
 
@@ -80,9 +83,14 @@ public class ImporterFileTest {
             this.vazia = vazia;
         }
 
-        @TableCellMapping(columnIndex = 4, converter = BigDecimalTableCellConverter.class)
-        private void setNumero(BigDecimal numero) {
-            this.numero = numero;
+        @TableCellMapping(columnIndex = 4, converter = IntegerTableCellConverter.class)
+        private void setInteiro(Integer inteiro) {
+            this.inteiro = inteiro;
+        }
+
+        @TableCellMapping(columnIndex = 5, converter = BigDecimalTableCellConverter.class)
+        private void setDecimal(BigDecimal decimal) {
+            this.decimal = decimal;
         }
 
         @TableCellMapping(columnIndex = 4, converter = IntegerFromBigDecimalTableCellConverter.class)
@@ -99,15 +107,15 @@ public class ImporterFileTest {
         //Cidade;Estado;Data;;Número
         List<FileBean> esperados = new ArrayList<>();
         //Pernambuco;PE;01/01/14;;10
-        esperados.add(new FileBean("Pernambuco", "PE", new LocalDate(2014, 1, 1), "", new BigDecimal("10"), 10));
+        esperados.add(new FileBean("Pernambuco", "PE", new LocalDate(2014, 1, 1), "", 10, new BigDecimal("10.9"), 10));
         //Campo Grande;MS;02/01/14;;11
-        esperados.add(new FileBean("Campo Grande", "MS", new LocalDate(2014, 1, 2), "", new BigDecimal("11"), 11));
+        esperados.add(new FileBean("Campo Grande", "MS", new LocalDate(2014, 1, 2), "", 11, new BigDecimal("11.8"), 11));
         //Rio de Janeiro;RJ;03/01/14;;12
-        esperados.add(new FileBean("Rio de Janeiro", "RJ", new LocalDate(2014, 1, 3), "", new BigDecimal("12"), 12));
+        esperados.add(new FileBean("Rio de Janeiro", "RJ", new LocalDate(2014, 1, 3), "", 12, new BigDecimal("12.7"), 12));
         //São Paulo;SP;04/01/14;;13
-        esperados.add(new FileBean("São Paulo", "SP", new LocalDate(2014, 1, 4), "", new BigDecimal("13"), 13));
+        esperados.add(new FileBean("São Paulo", "SP", new LocalDate(2014, 1, 4), "", 13, new BigDecimal("13.6"), 13));
         //São Paulo;SP;05/01/14;;14
-        esperados.add(new FileBean("São Paulo", "SP", new LocalDate(2014, 1, 5), "", new BigDecimal("14"), 14));
+        esperados.add(new FileBean("São Paulo", "SP", new LocalDate(2014, 1, 5), "", 14, new BigDecimal("14.5"), 14));
         return esperados;
     }
 
@@ -216,7 +224,8 @@ public class ImporterFileTest {
         assertEquals(atual.estado, esperado.estado);
         assertEquals(atual.data, esperado.data);
         assertEquals(atual.vazia, esperado.vazia);
-        assertEquals(atual.numero.compareTo(esperado.numero), 0);
+        assertEquals(atual.inteiro, esperado.inteiro);
+        assertEquals(atual.decimal.compareTo(esperado.decimal), 0);
         assertEquals(atual.numeroInteger, esperado.numeroInteger);
     }
 }

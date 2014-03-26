@@ -273,7 +273,9 @@ public class ExcelParser<T> implements Parser<T> {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return new LocalDate(cell.getDateCellValue()).toString(dateStringPattern);
                 }
-                return Double.valueOf(cell.getNumericCellValue()).toString();
+                //força a tirar '.0' se for inteiro
+                cell.setCellType(Cell.CELL_TYPE_STRING);
+                return cell.getStringCellValue();
             case Cell.CELL_TYPE_STRING:
                 return cell.getStringCellValue();
             case Cell.CELL_TYPE_BLANK:
