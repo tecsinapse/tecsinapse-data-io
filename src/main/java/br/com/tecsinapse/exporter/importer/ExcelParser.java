@@ -20,9 +20,12 @@ import java.util.Set;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -61,6 +64,7 @@ public class ExcelParser<T> implements Parser<T> {
 
     //lazy somente criado ao chamar getWorkbook
     private Workbook workbook;
+    private OPCPackage opcPackage;
 
     public ExcelParser(Class<T> clazz, File file) throws IOException {
         this(clazz, new FileInputStream(file), ExcelType.getExcelType(file.getName()));
@@ -90,7 +94,16 @@ public class ExcelParser<T> implements Parser<T> {
         this.importerXLSXType = importerXLSXType;
 
         if (isLastSheet) {
-            sheetNumber = getWorkbook().getNumberOfSheets() - 1;
+            if(type==ExcelType.XLSX){
+                try {
+                    XSSFReader xssfReader = new XSSFReader(getOPCPackage());
+                    sheetNumber = Iterators.size(xssfReader.getSheetsData()) - 1;
+                } catch (IOException | OpenXML4JException e) {
+                    Throwables.propagate(e);
+                }
+            }else{
+                sheetNumber = getWorkbook().getNumberOfSheets() - 1;
+            }
         }
     }
 
@@ -304,8 +317,16 @@ public class ExcelParser<T> implements Parser<T> {
     /**
      * @deprecated metodo especifico para xlsx não é api ts-expoter pública, será alterado para privado ou removido em futuras versões
      */
-    public OPCPackage getOPCPackage() throws InvalidFormatException, IOException {
-        return ((XSSFWorkbook) getWorkbook()).getPackage();
+    public OPCPackage getOPCPackage() {
+        //não delegar para getWorkbook().getPackage() arquivo muito grande(33mb) lançariam OOME
+        if (opcPackage == null) {
+            try {
+                opcPackage = OPCPackage.open(excelInputStream);
+            } catch (IOException | InvalidFormatException e) {
+                throw Throwables.propagate(e);
+            }
+        }
+        return opcPackage;
     }
 
     /**
