@@ -121,6 +121,10 @@ public class Importer<T> implements Closeable {
         return parser.parse();
     }
 
+    public int getNumberOfSheets() {
+        return parser.getNumberOfSheets();
+    }
+
     @Override
     public void close() throws IOException {
         parser.close();

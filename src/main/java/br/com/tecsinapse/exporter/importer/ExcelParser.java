@@ -25,7 +25,6 @@ import com.google.common.collect.Lists;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -36,7 +35,6 @@ import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 import org.reflections.ReflectionUtils;
 import org.xml.sax.ContentHandler;
@@ -94,16 +92,7 @@ public class ExcelParser<T> implements Parser<T> {
         this.importerXLSXType = importerXLSXType;
 
         if (isLastSheet) {
-            if(type==ExcelType.XLSX){
-                try {
-                    XSSFReader xssfReader = new XSSFReader(getOPCPackage());
-                    sheetNumber = Iterators.size(xssfReader.getSheetsData()) - 1;
-                } catch (IOException | OpenXML4JException e) {
-                    Throwables.propagate(e);
-                }
-            }else{
-                sheetNumber = getWorkbook().getNumberOfSheets() - 1;
-            }
+            sheetNumber = getNumberOfSheets() - 1;
         }
     }
 
@@ -119,8 +108,18 @@ public class ExcelParser<T> implements Parser<T> {
         this.sheetNumber = sheetNumber;
     }
 
+    @Override
     public int getNumberOfSheets() {
-        return getWorkbook().getNumberOfSheets();
+        if (type == ExcelType.XLSX) {
+            try {
+                XSSFReader xssfReader = new XSSFReader(getOPCPackage());
+                return Iterators.size(xssfReader.getSheetsData());
+            } catch (IOException | OpenXML4JException e) {
+                throw Throwables.propagate(e);
+            }
+        } else {
+            return getWorkbook().getNumberOfSheets();
+        }
     }
 
     /**

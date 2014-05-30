@@ -1,10 +1,5 @@
 package br.com.tecsinapse.exporter.importer;
 
-import br.com.tecsinapse.exporter.CSVUtil;
-import br.com.tecsinapse.exporter.annotation.TableCellMapping;
-import br.com.tecsinapse.exporter.converter.TableCellConverter;
-import org.reflections.ReflectionUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,7 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Predicate;
+import org.reflections.ReflectionUtils;
+
+import br.com.tecsinapse.exporter.CSVUtil;
+import br.com.tecsinapse.exporter.annotation.TableCellMapping;
+import br.com.tecsinapse.exporter.converter.TableCellConverter;
 
 class CsvParser<T> implements Parser<T> {
 	private final Class<T> clazz;
@@ -55,6 +54,11 @@ class CsvParser<T> implements Parser<T> {
 			throws IOException {
 		this(clazz, CSVUtil.processCSV(inputStream, charset));
 	}
+
+    @Override
+    public int getNumberOfSheets() {
+        return 1;
+    }
 
     /**
 	 * Não lê a primeira linha
