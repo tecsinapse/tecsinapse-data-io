@@ -95,7 +95,7 @@ public class Importer<T> implements Closeable {
             return;
         }
         if(inputStream != null) {
-            parser = new CsvParser<T>(clazz, inputStream, charset);
+            parser = new CsvParser<T>(clazz, inputStream, charset, afterLine);
             return;
         }
 
