@@ -1,4 +1,4 @@
-package br.com.tecsinapse.exporter.test;
+package br.com.tecsinapse.files.test;
 
 
 import static org.testng.Assert.assertEquals;
