@@ -1,6 +1,8 @@
 package br.com.tecsinapse.files.test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joda.time.LocalDate;
 
@@ -35,6 +37,22 @@ public final class FileBean {
         this.inteiro = inteiro;
         this.decimal = decimal;
         this.numeroInteger = numeroInteger;
+    }
+
+    static List<FileBean> getBeans() {
+        //Cidade;Estado;Data;;Número
+        List<FileBean> esperados = new ArrayList<>();
+        //Pernambuco;PE;01/01/14;;10
+        esperados.add(new FileBean("Pernambuco", "PE", new LocalDate(2014, 1, 1), "", 10, new BigDecimal("10.9"), 10));
+        //Campo Grande;MS;02/01/14;;11
+        esperados.add(new FileBean("Campo Grande", "MS", new LocalDate(2014, 1, 2), "", 11, new BigDecimal("11.8"), 11));
+        //Rio de Janeiro;RJ;03/01/14;;12
+        esperados.add(new FileBean("Rio de Janeiro", "RJ", new LocalDate(2014, 1, 3), "", 12, new BigDecimal("12.7"), 12));
+        //São Paulo;SP;04/01/14;;13
+        esperados.add(new FileBean("São Paulo", "SP", new LocalDate(2014, 1, 4), "", 13, new BigDecimal("13.6"), 13));
+        //São Paulo;SP;05/01/14;;14
+        esperados.add(new FileBean("São Paulo", "SP", new LocalDate(2014, 1, 5), "", 14, new BigDecimal("14.5"), 14));
+        return esperados;
     }
 
     @TableCellMapping(columnIndex = 0)
