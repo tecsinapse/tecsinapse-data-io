@@ -1,13 +1,7 @@
 package br.com.tecsinapse.exporter;
 
-import com.google.common.base.Strings;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
-
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,6 +9,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
+
+import com.google.common.base.Strings;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 public class ExcelUtil {
 
@@ -68,8 +68,20 @@ public class ExcelUtil {
         doExport(name, ".xls", wb);
     }
 
+    /**
+     * Prefira {@link void exportSXlsx(String name, Table t)} por fazer cache em disco e ser mais otimizado
+     *
+     * @param name
+     * @param t
+     * @throws IOException
+     */
     public static void exportXlsx(String name, Table t) throws IOException {
         Workbook wb = t.toXSSFWorkBook();
+        doExport(name, ".xlsx", wb);
+    }
+
+    public static void exportSXlsx(String name, Table t) throws IOException {
+        Workbook wb = t.toWorkBook(new SXSSFWorkbook());
         doExport(name, ".xlsx", wb);
     }
 

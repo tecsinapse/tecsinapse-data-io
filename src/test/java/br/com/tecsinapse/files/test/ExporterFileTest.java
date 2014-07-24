@@ -17,6 +17,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -94,12 +95,18 @@ public class ExporterFileTest {
                 return new XSSFWorkbook();
             }
         });
+        final Function<Table, File> sxlsxExport = toWorkbookFunction(new Supplier<Workbook>() {
+            @Override
+            public Workbook get() {
+                return new SXSSFWorkbook();
+            }
+        });
 
         return new Object[][]{
                 {beans, csvExport, csvLines, "#.#", "null"},//TODO nullvalue no importer
                 {beans, xlsExport, excelLines, "#.#", ""},
                 {beans, xlsxExport, excelLines, ".#", ""},
-
+                {beans, sxlsxExport, excelLines, ".#", ""}
         };
     }
 
