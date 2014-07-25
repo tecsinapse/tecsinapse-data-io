@@ -9,17 +9,31 @@ import org.joda.time.LocalDateTime;
 
 public enum ImporterXLSXType {
 
-	DEFAULT(new DataFormatter()), UNIQUE_DATA_VALUE(new UniqueDataFormat());
+	DEFAULT(){
+        @Override
+        public DataFormatter getFormatter(ExcelParser<?> parser) {
+            return new DefaultDataFormat(parser);
+        }
+    }, UNIQUE_DATA_VALUE(){
+        @Override
+        public DataFormatter getFormatter(ExcelParser<?> parser) {
+            return new UniqueDataFormat();
+        }
+    };
 	
-	final DataFormatter formatter;
-	
-	private ImporterXLSXType(DataFormatter formatter) {
-		this.formatter = formatter;
+	private ImporterXLSXType() {
 	}
-	
+
+    /**
+     * não é api publica
+     * @deprecated
+     */
+    @Deprecated
 	public DataFormatter getFormatter() {
-		return formatter;
-	}
+        return getFormatter(null);
+    }
+
+    abstract DataFormatter getFormatter(ExcelParser<?> parser);
 	
 	private static class UniqueDataFormat extends DataFormatter {
 		
@@ -40,4 +54,24 @@ public enum ImporterXLSXType {
             }
 		}
 	}
+
+    private static class DefaultDataFormat extends DataFormatter {
+        private final ExcelParser<?> parser;
+
+        private DefaultDataFormat(ExcelParser<?> parser) {
+            this.parser = parser;
+        }
+
+        @Override
+        public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
+            // Is it a date? then always format like LocalDateTime default Formatter
+            if (parser != null && DateUtil.isADateFormat(formatIndex, formatString) && DateUtil.isValidExcelDate(value)) {
+                Date d = DateUtil.getJavaDate(value, use1904Windowing);
+
+                return LocalDateTime.fromDateFields(d).toString(parser.getDateStringPattern());
+            } else {
+                return super.formatRawCellContents(value, formatIndex, formatString, use1904Windowing);
+            }
+        }
+    }
 }

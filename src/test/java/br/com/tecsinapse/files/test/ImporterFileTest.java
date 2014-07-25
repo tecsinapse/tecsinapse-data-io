@@ -12,6 +12,8 @@ import java.util.List;
 
 import com.google.common.base.Charsets;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -23,14 +25,15 @@ import br.com.tecsinapse.exporter.importer.ImporterXLSXType;
 
 public class ImporterFileTest {
 
+    private static final String DD_MM_YYYY = "dd/MM/yyyy";
+
     public static final class LocalDateConverter implements TableCellConverter<LocalDate> {
+
+        private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern(DD_MM_YYYY);
+
         @Override
         public LocalDate apply(String input) {
-//TODO ExcelParser.dateStringPattern > Importer.dateStringPattern unificar confs em Importer ou ImporterConfigurations para utilizaçao em ExcelParser e CsvParser
-//            csv texto puro dd/MM/yyyy
-//            xls dd/MM/yyyy 03/01/2014
-//            xlsx MM/dd/yyyy 01/03/14
-            return null;
+            return FORMATTER.parseLocalDate(input);
         }
     }
 
@@ -58,6 +61,7 @@ public class ImporterFileTest {
     public void validaArquivo(File arquivo, int afterLine, FileType esperadoFileType, List<FileBean> esperados) throws Exception {
         try (final Importer<FileBean> importer = new Importer<>(FileBean.class, Charsets.UTF_8, arquivo)) {
             importer.setAfterLine(afterLine);
+            importer.setDateStringPattern(DD_MM_YYYY);
 
             assertEquals(importer.getFileType(), esperadoFileType);
 
@@ -94,6 +98,7 @@ public class ImporterFileTest {
     @Test(dataProvider = "arquivosLastSheet")
     public void validaLastSheet(File arquivo, boolean lastSheet, int afterLine, List<FileBean> esperados) throws Exception {
         try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine, lastSheet, ImporterXLSXType.DEFAULT)) {
+            excelParser.setDateStringPattern(DD_MM_YYYY);
 
             final List<FileBean> beans = excelParser.parse();
             for (int i = 0; i < beans.size(); i++) {
@@ -124,6 +129,8 @@ public class ImporterFileTest {
     @Test(dataProvider = "arquivosSheet")
     public void validaSheet(File arquivo, int afterLine, List<List<FileBean>> sheets) throws Exception {
         try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
+            excelParser.setDateStringPattern(DD_MM_YYYY);
+
             for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
                 excelParser.setSheetNumber(sheetNumber);
                 final List<FileBean> esperados = sheets.get(sheetNumber);

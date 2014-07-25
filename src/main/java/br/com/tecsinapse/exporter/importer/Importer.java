@@ -27,6 +27,7 @@ public class Importer<T> implements Closeable {
     private int afterLine = DEFAULT_START_ROW;
     private boolean isLastSheet;
     private ImporterXLSXType importerXLSXType = DEFAULT;
+    private String dateStringPattern;
 
     private Importer(Class<T> clazz, Charset charset) {
         this.clazz = clazz;
@@ -78,7 +79,14 @@ public class Importer<T> implements Closeable {
         this.isLastSheet = isLastSheet;
     }
 
-	private void beforeParser() throws IOException {
+    private void beforeParser() throws IOException {
+        doBeforeParser();
+        if (dateStringPattern != null) {
+            parser.setDateStringPattern(dateStringPattern);
+        }
+    }
+
+	private void doBeforeParser() throws IOException {
         FileType fileType = getFileType();
         if(fileType == FileType.XLSX || fileType == FileType.XLS) {
             if(file != null) {
@@ -98,7 +106,6 @@ public class Importer<T> implements Closeable {
             parser = new CsvParser<T>(clazz, inputStream, charset, afterLine);
             return;
         }
-
     }
 
     public FileType getFileType() {
@@ -114,6 +121,10 @@ public class Importer<T> implements Closeable {
 
     public void setAfterLine(int afterLine) {
         this.afterLine = afterLine;
+    }
+
+    public void setDateStringPattern(String dateStringPattern) {
+        this.dateStringPattern = dateStringPattern;
     }
 
     public List<T> parse() throws Exception {

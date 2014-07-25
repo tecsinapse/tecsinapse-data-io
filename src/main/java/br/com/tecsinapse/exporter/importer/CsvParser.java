@@ -60,6 +60,10 @@ class CsvParser<T> implements Parser<T> {
         return 1;
     }
 
+    @Override
+    public void setDateStringPattern(String dateStringPattern) {
+    }
+
     /**
 	 * Não lê a primeira linha
 	 * <p/>

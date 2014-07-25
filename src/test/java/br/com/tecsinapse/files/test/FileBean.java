@@ -31,8 +31,7 @@ public final class FileBean {
     public FileBean(String cidade, String estado, LocalDate data, String vazia, Integer inteiro, BigDecimal decimal, Integer numeroInteger) {
         this.cidade = cidade;
         this.estado = estado;
-        //TODO :36
-//            this.data = data;
+        this.data = data;
         this.vazia = vazia;
         this.inteiro = inteiro;
         this.decimal = decimal;

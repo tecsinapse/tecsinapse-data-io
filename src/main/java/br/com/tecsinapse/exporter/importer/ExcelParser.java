@@ -57,7 +57,7 @@ public class ExcelParser<T> implements Parser<T> {
 
     private int afterLine = Importer.DEFAULT_START_ROW;
     private int sheetNumber = 0;
-    private String dateStringPattern = "dd/MM/yyyy";
+    private String dateStringPattern;
     private ImporterXLSXType importerXLSXType = DEFAULT;
 
     //lazy somente criado ao chamar getWorkbook
@@ -88,6 +88,7 @@ public class ExcelParser<T> implements Parser<T> {
         this.clazz = clazz;
         this.excelInputStream = new BufferedInputStream(inputStream);
         this.type = type;
+        dateStringPattern = type.getDefaultDatePattern();
         this.afterLine = afterLine;
         this.importerXLSXType = importerXLSXType;
 
@@ -96,6 +97,11 @@ public class ExcelParser<T> implements Parser<T> {
         }
     }
 
+    public String getDateStringPattern() {
+        return dateStringPattern;
+    }
+
+    @Override
     public void setDateStringPattern(String dateStringPattern) {
         this.dateStringPattern = dateStringPattern;
     }
@@ -396,7 +402,7 @@ public class ExcelParser<T> implements Parser<T> {
 		SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 		SAXParser saxParser = saxFactory.newSAXParser();
 		XMLReader sheetParser = saxParser.getXMLReader();
-		
+
 		ContentHandler handler = new XSSFSheetXMLHandler(styles, strings, new XSSFSheetXMLHandler.SheetContentsHandler() {
 
 			@Override
@@ -425,7 +431,7 @@ public class ExcelParser<T> implements Parser<T> {
 			}
 
 		},
-				importerXLSXType.formatter,
+				importerXLSXType.getFormatter(this),
 				false//means result instead of formula
 		);
 		sheetParser.setContentHandler(handler);

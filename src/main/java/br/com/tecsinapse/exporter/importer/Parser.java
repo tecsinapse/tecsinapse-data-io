@@ -14,4 +14,6 @@ public interface Parser<T> extends Closeable {
      * @return quantidade de sheets
      */
     int getNumberOfSheets();
+
+    void setDateStringPattern(String dateStringPattern);
 }
