@@ -1,17 +1,25 @@
 package br.com.tecsinapse.exporter;
 
-import com.google.common.base.Strings;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 public class CSVUtil {
 
 	public static final String SEPARATOR = ";";
-	public static final char SEPARATOR_CHAR = ';';
+	public static final char DEFAULT_SEPARATOR_CHAR = ';';
 
     public static List<String> processInputCSV(InputStream inputStream, Charset charset) throws IOException {
         return processInputCSV(inputStream, true, charset);
@@ -75,10 +83,9 @@ public class CSVUtil {
 		return file;
 	}
 
-	public static <T> void write(List<List<T>> csv, OutputStream o, String chartsetName)
+	public static <T> void write(List<List<T>> csv, OutputStream o, String chartsetName, char separator)
 			throws UnsupportedEncodingException, IOException {
 		try (OutputStreamWriter writer = new OutputStreamWriter(o, chartsetName)) {
-			char separator = ';';
 			for (List<T> row : csv) {
 				StringBuilder line = new StringBuilder();
 				for (Iterator<T> iter = row.iterator(); iter.hasNext();) {
@@ -97,5 +104,10 @@ public class CSVUtil {
 			}
 			writer.flush();
 		}
+	}
+
+	public static <T> void write(List<List<T>> csv, OutputStream o, String chartsetName)
+			throws UnsupportedEncodingException, IOException {
+		write(csv, o, chartsetName, DEFAULT_SEPARATOR_CHAR); 
 	}
 }

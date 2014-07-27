@@ -110,6 +110,15 @@ public class ExcelUtil {
     	return f;
     }
     
+    public static File getSvFile(Table t, String file, String charsetName, char separator) throws IOException {
+
+    	File f = new File(file);
+    	try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
+    		CSVUtil.write(t.toStringMatrix(), fos, charsetName, separator);
+		}
+    	return f;
+    }
+    
     public static File getXlsFile(Table t, String file) throws IOException {
     	
     	File f = new File(file);
