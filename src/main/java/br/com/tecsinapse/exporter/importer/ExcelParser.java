@@ -2,8 +2,6 @@ package br.com.tecsinapse.exporter.importer;
 
 import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,11 +15,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -46,6 +42,12 @@ import br.com.tecsinapse.exporter.ExcelUtil;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
+
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 public class ExcelParser<T> implements Parser<T> {
 
@@ -110,9 +112,19 @@ public class ExcelParser<T> implements Parser<T> {
         this.afterLine = afterLine;
     }
 
-    public void setSheetNumber(int sheetNumber) {
-        this.sheetNumber = sheetNumber;
-    }
+	public void setSheetNumber(int sheetNumber) {
+		this.sheetNumber = sheetNumber;
+	}
+
+	public int getSheetNumber() {
+		return sheetNumber;
+	}
+
+	public void setSheetAsFirstNotHidden() {
+		while (getWorkbook().isSheetHidden(sheetNumber)) {
+			sheetNumber++;
+		}
+	}
 
     @Override
     public int getNumberOfSheets() {

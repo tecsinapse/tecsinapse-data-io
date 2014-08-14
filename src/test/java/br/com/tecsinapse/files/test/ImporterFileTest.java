@@ -4,13 +4,13 @@ package br.com.tecsinapse.files.test;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.base.Charsets;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -22,6 +22,8 @@ import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import br.com.tecsinapse.exporter.importer.ExcelParser;
 import br.com.tecsinapse.exporter.importer.Importer;
 import br.com.tecsinapse.exporter.importer.ImporterXLSXType;
+
+import com.google.common.base.Charsets;
 
 public class ImporterFileTest {
 
@@ -154,4 +156,24 @@ public class ImporterFileTest {
         assertEquals(atual.decimal.compareTo(esperado.decimal), 0);
         assertEquals(atual.numeroInteger, esperado.numeroInteger);
     }
+    
+    @DataProvider(name = "filesWithHiddenSheet")
+    public Object[][] filesWithHiddenSheet() throws URISyntaxException {
+
+        return new Object[][]{
+                {getFile("excel-with-hidden-sheet.xls"), 1},
+                {getFile("excel-with-hidden-sheet.xlsx"), 2}
+        };
+    }
+    
+	@Test(dataProvider = "filesWithHiddenSheet")
+	public void validateFilesWithHiddenSheet(File file, int expectedSheetNumber) throws IOException {
+
+		try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, file, 1)) {
+			assertEquals(excelParser.getSheetNumber(), 0);
+
+			excelParser.setSheetAsFirstNotHidden();
+			assertEquals(excelParser.getSheetNumber(), expectedSheetNumber);
+		}
+	}
 }
