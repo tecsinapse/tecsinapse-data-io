@@ -121,9 +121,7 @@ public class ExcelParser<T> implements Parser<T> {
 	}
 
 	public void setSheetAsFirstNotHidden() {
-		while (getWorkbook().isSheetHidden(sheetNumber)) {
-			sheetNumber++;
-		}
+		sheetNumber = getWorkbook().getFirstVisibleTab();
 	}
 
     @Override
