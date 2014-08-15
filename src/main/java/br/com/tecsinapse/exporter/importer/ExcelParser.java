@@ -31,6 +31,7 @@ import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 import org.reflections.ReflectionUtils;
 import org.xml.sax.ContentHandler;
@@ -120,8 +121,16 @@ public class ExcelParser<T> implements Parser<T> {
 		return sheetNumber;
 	}
 
-	public void setSheetAsFirstNotHidden() {
-		sheetNumber = getWorkbook().getFirstVisibleTab();
+	public void setSheetNumberAsFirstNotHidden() {
+		if (type == ExcelType.XLSX) {
+			try {
+				sheetNumber = new XSSFWorkbook(getOPCPackage()).getFirstVisibleTab();
+			} catch (IOException e) {
+				throw Throwables.propagate(e);
+			}
+		} else {
+			sheetNumber = getWorkbook().getFirstVisibleTab();
+		}
 	}
 
     @Override

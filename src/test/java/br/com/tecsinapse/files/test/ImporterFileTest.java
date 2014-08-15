@@ -14,6 +14,7 @@ import java.util.List;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -161,8 +162,8 @@ public class ImporterFileTest {
     public Object[][] filesWithHiddenSheet() throws URISyntaxException {
 
         return new Object[][]{
-                {getFile("excel-with-hidden-sheet.xls"), 1},
-                {getFile("excel-with-hidden-sheet.xlsx"), 2}
+                {getFile("planilha-com-primeira-aba-invisivel.xls"), 1},
+                {getFile("planilha-com-primeira-aba-invisivel.xlsx"), 2}
         };
     }
     
@@ -172,8 +173,14 @@ public class ImporterFileTest {
 		try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, file, 1)) {
 			assertEquals(excelParser.getSheetNumber(), 0);
 
-			excelParser.setSheetAsFirstNotHidden();
+			excelParser.setSheetNumberAsFirstNotHidden();
 			assertEquals(excelParser.getSheetNumber(), expectedSheetNumber);
+			
+			try {
+				excelParser.parse();
+			} catch (Exception e) {
+				Assert.fail("Fail while reading first not hidden sheet.", e);
+			}
 		}
 	}
 }
