@@ -2,6 +2,8 @@ package br.com.tecsinapse.exporter.importer;
 
 import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,14 +17,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -43,12 +49,6 @@ import br.com.tecsinapse.exporter.ExcelUtil;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
-
-import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 public class ExcelParser<T> implements Parser<T> {
 
@@ -194,8 +194,9 @@ public class ExcelParser<T> implements Parser<T> {
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
 				  ReflectionUtils.withAnnotation(TableCellMapping.class));
         Workbook wb = getWorkbook();
-        
         Sheet sheet = wb.getSheetAt(this.sheetNumber);
+
+        final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
 		final Constructor<T> constructor = clazz.getDeclaredConstructor();
 		constructor.setAccessible(true);
@@ -215,7 +216,7 @@ public class ExcelParser<T> implements Parser<T> {
                 method.setAccessible(true);
 
                 TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
-                String value = getValueOrEmpty(row.getCell(tcm.columnIndex()));
+                String value = getValueOrEmpty(evaluator, row.getCell(tcm.columnIndex()));
                 TableCellConverter<?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
                 method.invoke(instance, obj);
@@ -249,6 +250,7 @@ public class ExcelParser<T> implements Parser<T> {
     	Workbook wb = getWorkbook();
 
     	Sheet sheet = wb.getSheetAt(this.sheetNumber);
+        final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
         List<List<String>> lines = Lists.newArrayList();
         List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
@@ -257,7 +259,7 @@ public class ExcelParser<T> implements Parser<T> {
             List<String> cellsAsString = Lists.newArrayList(Collections2.transform(cells, new Function<Cell, String>() {
                 @Override
                 public String apply(Cell input) {
-                    return getValueOrEmpty(input);
+                    return getValueOrEmpty(evaluator, input);
                 }
             }));
             lines.add(cellsAsString);
@@ -269,6 +271,7 @@ public class ExcelParser<T> implements Parser<T> {
     private List<List<String>> getXlsLinesIncludingEmptyCells() throws InvalidFormatException, IOException {
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(this.sheetNumber);
+        final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
         List<List<String>> lines = Lists.newArrayList();
         List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
@@ -282,30 +285,21 @@ public class ExcelParser<T> implements Parser<T> {
             List<String> cellsStringValues = Lists.newArrayList();
             for(int index = 0; index < row.getLastCellNum(); index++) {
                 Cell cell = row.getCell(index, Row.CREATE_NULL_AS_BLANK);
-                cellsStringValues.add(getValueOrEmpty(cell));
+                cellsStringValues.add(getValueOrEmpty(evaluator, cell));
             }
             lines.add(cellsStringValues);
         }
         return lines;
     }
 
-    private List<String> getFields(Row row) {
-        List<String> values = new ArrayList<>();
-        Iterator<Cell> cellIterator = row.cellIterator();
-        while (cellIterator.hasNext()) {
-            Cell cell = cellIterator.next();
-            values.add(getValueOrEmpty(cell));
-        }
-        return values;
-    }
-
-    private String getValueOrEmpty(Cell cell) {
-        if (cell == null) {
+    private String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell) {
+        final CellValue cellValue = evaluator.evaluate(cell);
+        if (cellValue == null) {
             return "";
         }
-        switch (cell.getCellType()) {
+        switch (cellValue.getCellType()) {
             case Cell.CELL_TYPE_BOOLEAN:
-                return Boolean.valueOf(cell.getBooleanCellValue()).toString();
+                return Boolean.valueOf(cellValue.getBooleanValue()).toString();
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return new LocalDate(cell.getDateCellValue()).toString(dateStringPattern);
@@ -314,13 +308,12 @@ public class ExcelParser<T> implements Parser<T> {
                 cell.setCellType(Cell.CELL_TYPE_STRING);
                 return cell.getStringCellValue();
             case Cell.CELL_TYPE_STRING:
-                return cell.getStringCellValue();
+                return cellValue.getStringValue();
             case Cell.CELL_TYPE_BLANK:
                 return "";
             case Cell.CELL_TYPE_ERROR:
                 return "ERRO";
-            case Cell.CELL_TYPE_FORMULA:
-                return cell.getCellFormula();
+            case Cell.CELL_TYPE_FORMULA://nunca será formula após evaluator
             default:
                 return "";
         }
