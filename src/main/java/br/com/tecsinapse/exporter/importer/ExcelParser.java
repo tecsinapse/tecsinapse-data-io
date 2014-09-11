@@ -297,9 +297,9 @@ public class ExcelParser<T> implements Parser<T> {
         if (cellValue == null) {
             return "";
         }
-        switch (cell.getCellType()) {
+        switch (cellValue.getCellType()) {
             case Cell.CELL_TYPE_BOOLEAN:
-                return Boolean.valueOf(cell.getBooleanCellValue()).toString();
+                return Boolean.valueOf(cellValue.getBooleanValue()).toString();
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return new LocalDate(cell.getDateCellValue()).toString(dateStringPattern);
@@ -308,7 +308,7 @@ public class ExcelParser<T> implements Parser<T> {
                 cell.setCellType(Cell.CELL_TYPE_STRING);
                 return cell.getStringCellValue();
             case Cell.CELL_TYPE_STRING:
-                return cell.getStringCellValue();
+                return cellValue.getStringValue();
             case Cell.CELL_TYPE_BLANK:
                 return "";
             case Cell.CELL_TYPE_ERROR:
