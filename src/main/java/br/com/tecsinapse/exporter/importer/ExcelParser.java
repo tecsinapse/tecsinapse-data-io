@@ -22,7 +22,9 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -66,6 +68,7 @@ public class ExcelParser<T> implements Parser<T> {
     //lazy somente criado ao chamar getWorkbook
     private Workbook workbook;
     private OPCPackage opcPackage;
+    private FormulaEvaluator evaluator;
 
     public ExcelParser(Class<T> clazz, File file) throws IOException {
         this(clazz, new FileInputStream(file), ExcelType.getExcelType(file.getName()));
@@ -194,7 +197,7 @@ public class ExcelParser<T> implements Parser<T> {
         Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
 				  ReflectionUtils.withAnnotation(TableCellMapping.class));
         Workbook wb = getWorkbook();
-        
+
         Sheet sheet = wb.getSheetAt(this.sheetNumber);
 
 		final Constructor<T> constructor = clazz.getDeclaredConstructor();
@@ -215,7 +218,7 @@ public class ExcelParser<T> implements Parser<T> {
                 method.setAccessible(true);
 
                 TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
-                String value = getValueOrEmpty(row.getCell(tcm.columnIndex()));
+                String value = (String) getValueOrEmpty(evaluator, row.getCell(tcm.columnIndex()));
                 TableCellConverter<?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
                 method.invoke(instance, obj);
@@ -257,7 +260,7 @@ public class ExcelParser<T> implements Parser<T> {
             List<String> cellsAsString = Lists.newArrayList(Collections2.transform(cells, new Function<Cell, String>() {
                 @Override
                 public String apply(Cell input) {
-                    return getValueOrEmpty(input);
+                    return (String) getValueOrEmpty(evaluator, input);
                 }
             }));
             lines.add(cellsAsString);
@@ -282,7 +285,7 @@ public class ExcelParser<T> implements Parser<T> {
             List<String> cellsStringValues = Lists.newArrayList();
             for(int index = 0; index < row.getLastCellNum(); index++) {
                 Cell cell = row.getCell(index, Row.CREATE_NULL_AS_BLANK);
-                cellsStringValues.add(getValueOrEmpty(cell));
+                cellsStringValues.add((String) getValueOrEmpty(evaluator, cell));
             }
             lines.add(cellsStringValues);
         }
@@ -294,35 +297,36 @@ public class ExcelParser<T> implements Parser<T> {
         Iterator<Cell> cellIterator = row.cellIterator();
         while (cellIterator.hasNext()) {
             Cell cell = cellIterator.next();
-            values.add(getValueOrEmpty(cell));
+            values.add((String) getValueOrEmpty(evaluator, cell));
         }
         return values;
     }
 
-    private String getValueOrEmpty(Cell cell) {
-        if (cell == null) {
-            return "";
+    private Object getValueOrEmpty(FormulaEvaluator evaluator, Cell cell) {
+
+        final CellValue cellValue = evaluator.evaluate(cell);
+        if (cellValue == null) {
+            return null;
         }
-        switch (cell.getCellType()) {
+
+        switch (cellValue.getCellType()) {
             case Cell.CELL_TYPE_BOOLEAN:
-                return Boolean.valueOf(cell.getBooleanCellValue()).toString();
+                return cellValue.getBooleanValue();
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    return new LocalDate(cell.getDateCellValue()).toString(dateStringPattern);
+                    return cell.getDateCellValue();
                 }
-                //força a tirar '.0' se for inteiro
-                cell.setCellType(Cell.CELL_TYPE_STRING);
-                return cell.getStringCellValue();
+
+                return cellValue.getNumberValue();
             case Cell.CELL_TYPE_STRING:
-                return cell.getStringCellValue();
+                return cellValue.getStringValue();
+
             case Cell.CELL_TYPE_BLANK:
-                return "";
             case Cell.CELL_TYPE_ERROR:
-                return "ERRO";
             case Cell.CELL_TYPE_FORMULA:
-                return cell.getCellFormula();
             default:
-                return "";
+                return null;
+
         }
     }
 
@@ -330,6 +334,7 @@ public class ExcelParser<T> implements Parser<T> {
         if (workbook == null) {
             try {
                 workbook = WorkbookFactory.create(excelInputStream);
+                evaluator = workbook.getCreationHelper().createFormulaEvaluator();
             } catch (IOException | InvalidFormatException e) {
                 throw Throwables.propagate(e);
             }
