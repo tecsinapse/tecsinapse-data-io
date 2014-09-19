@@ -8,8 +8,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FixedLengthFileUtil {
+public final class FixedLengthFileUtil {
 
+    private FixedLengthFileUtil() {
+    }
+    
     public static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, Charset charset)
             throws IOException {
         List<String> lines = new ArrayList<>();

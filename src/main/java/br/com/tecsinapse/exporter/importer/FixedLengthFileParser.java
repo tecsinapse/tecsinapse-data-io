@@ -106,55 +106,6 @@ public class FixedLengthFileParser<T> {
         return methodsAndAnnotations;
     }
 
-    /*
-     * private String getValueOrEmpty(List<String> fields, int index) { if
-     * (fields.isEmpty() || fields.size() <= index) { return ""; } return
-     * fields.get(index); }
-     * 
-     * private List<String> split(String line) { int index = 0; int lastIndex =
-     * 0;
-     * 
-     * List<String> linhaParseadaPorAspas = new ArrayList<>();
-     * 
-     * while (lastIndex != -1 && lastIndex < line.length()) { index =
-     * line.indexOf(";", lastIndex);
-     * 
-     * if (index == -1) { // ultima coluna
-     * linhaParseadaPorAspas.add(line.substring(lastIndex).replace(";", ""));
-     * break; } else { String coluna = line.substring(lastIndex, index + 1);
-     * 
-     * if (temAspas(coluna)) { index = getFinalColuna(line.substring(lastIndex),
-     * lastIndex); if (index == -1) { // ultima coluna
-     * linhaParseadaPorAspas.add(line.substring(lastIndex).replace("\"\"",
-     * "\"").trim()); break; } coluna = substringNormalizada(line, lastIndex,
-     * index - 1); linhaParseadaPorAspas.add(coluna); lastIndex = index; } else
-     * { linhaParseadaPorAspas.add(coluna.replace(";", "")); lastIndex = index
-     * == -1 ? -1 : index + 1; } } }
-     * 
-     * return linhaParseadaPorAspas; }
-     * 
-     * private int getFinalColuna(String substring, int inicio) { char[] chars =
-     * substring.toCharArray();
-     * 
-     * for (int i = 0; i < chars.length; i++) { if (chars[i] == '\"') { for (int
-     * j = i + 1; j < chars.length; j++) { if (chars[j] == '\"') { return
-     * getFinalColuna(substring.substring(j + 1), inicio + j + 1); } } }
-     * 
-     * if (chars[i] == ';') { return i + inicio + 1; } }
-     * 
-     * return -1; }
-     * 
-     * private boolean temAspas(String column) { return column.indexOf("\"") !=
-     * -1; }
-     * 
-     * private String substringNormalizada(String line, int i, int f) { line =
-     * line.substring(i, f - 1).trim(); if (line.startsWith("\"")) { line =
-     * line.substring(1); } if (line.endsWith("\"")) { line = line.substring(0,
-     * line.length() - 1); }
-     * 
-     * return line.replace("\"\"", "\"").trim(); }
-     */
-
     private static class AnnotationMethod implements Comparable<AnnotationMethod> {
         private final Method method;
         private final FixedLengthColumn flc;
