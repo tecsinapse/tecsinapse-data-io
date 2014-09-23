@@ -27,6 +27,7 @@ public class FixedLengthFileParser<T> {
     private Charset charset = Charset.defaultCharset();
     private boolean ignoreFirstLine = false;
     private boolean ignoreMalformedLines = false;
+    private boolean removeDuplicatedSpaces = true;
 
     public FixedLengthFileParser(Class<T> clazz) {
         this.clazz = clazz;
@@ -44,6 +45,11 @@ public class FixedLengthFileParser<T> {
 
     public FixedLengthFileParser<T> withIgnoreMalformedLines(boolean ignoreMalformedLines) {
         this.ignoreMalformedLines = ignoreMalformedLines;
+        return this;
+    }
+    
+    public FixedLengthFileParser<T> withRemoveDuplicatedSpaces(boolean removeDuplicatedSpaces) {
+        this.removeDuplicatedSpaces = removeDuplicatedSpaces;
         return this;
     }
 
@@ -81,6 +87,9 @@ public class FixedLengthFileParser<T> {
                     }
                 }
                 String value = workingLine.substring(0, flc.columnSize()).trim();
+                if (removeDuplicatedSpaces) {
+                    value = value.replaceAll("\\s+", " ");
+                }
                 TableCellConverter<?> converter = flc.converter().newInstance();
                 Object obj = converter.apply(value);
                 method.invoke(instance, obj);
