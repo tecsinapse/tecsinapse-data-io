@@ -26,7 +26,7 @@ public class FixedLengthFileParser<T> {
 
     private Charset charset = Charset.defaultCharset();
     private boolean ignoreFirstLine = false;
-    private boolean errorWhenMalformedLines = false;
+    private boolean ignoreLineWhenError = false;
     private boolean removeDuplicatedSpaces = true;
 
     public FixedLengthFileParser(Class<T> clazz) {
@@ -43,8 +43,8 @@ public class FixedLengthFileParser<T> {
         return this;
     }
 
-    public FixedLengthFileParser<T> withErrorWhenMalformedLines(boolean errorWhenMalformedLines) {
-        this.errorWhenMalformedLines = errorWhenMalformedLines;
+    public FixedLengthFileParser<T> withIgnoreLineWhenErrors(boolean ignoreLineWhenError) {
+        this.ignoreLineWhenError = ignoreLineWhenError;
         return this;
     }
 
@@ -73,18 +73,23 @@ public class FixedLengthFileParser<T> {
         for (int i = 0; i < lines.size(); i++) {
             T instance = constructor.newInstance();
             String workingLine = lines.get(i);
+            boolean ignoreLine = false;
             for (AnnotationMethod annotationMethod : methodsAndAnnotations) {
                 if (workingLine.length() == 0) {
                     break;
                 }
-                
                 Method method = annotationMethod.getMethod();
                 FixedLengthColumn flc = annotationMethod.getFlc();
-                if (workingLine.length() < flc.columnSize() && errorWhenMalformedLines) {
-                    int line = ignoreFirstLine ? i + 1 : i;
-                    throw new IllegalStateException(String.format(
-                            "Malformed file or wrong configuration. Line %s size doesn't match the configuration.",
-                            line));
+                if (workingLine.length() < flc.columnSize()) {
+                    if (ignoreLineWhenError) {
+                        ignoreLine = true;
+                        break;
+                    } else {
+                        int line = ignoreFirstLine ? i + 1 : i;
+                        throw new IllegalStateException(String.format(
+                                "Malformed file or wrong configuration. Line %s size doesn't match the configuration.",
+                                line));
+                    }
                 }
                 int length = workingLine.length() >= flc.columnSize() ? flc.columnSize() : workingLine.length();
                 String value = workingLine.substring(0, length).trim();
@@ -92,11 +97,23 @@ public class FixedLengthFileParser<T> {
                     value = value.replaceAll("\\s+", " ");
                 }
                 TableCellConverter<?> converter = flc.converter().newInstance();
-                Object obj = converter.apply(value);
+                Object obj = null;
+                try {
+                    obj = converter.apply(value);
+                } catch (Exception e) {
+                    if (ignoreLineWhenError) {
+                        ignoreLine = true;
+                        break;
+                    } else {
+                        throw e;
+                    }
+                }
                 method.invoke(instance, obj);
                 workingLine = workingLine.substring(length, workingLine.length());
             }
-            list.add(instance);
+            if (!ignoreLine) {
+                list.add(instance);
+            }
         }
         return list;
     }
