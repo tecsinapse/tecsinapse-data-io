@@ -1,6 +1,8 @@
 package br.com.tecsinapse.exporter.importer;
 
 import br.com.tecsinapse.exporter.FileType;
+import br.com.tecsinapse.exporter.converter.group.Default;
+
 import com.google.common.base.Strings;
 
 import java.io.File;
@@ -20,15 +22,26 @@ public class Importer<T> {
     private Charset charset;
     private Parser<T> parser;
     private int initialRow;
+    private Class<?> group = Default.class;
+
+    private Importer(Class<T> clazz) {
+        this(clazz, Charset.defaultCharset());
+    }
 
     private Importer(Class<T> clazz, Charset charset) {
         this.clazz = clazz;
         this.charset = charset;
     }
 
-    private Importer(Class<T> clazz) {
-        this.clazz = clazz;
-        this.charset = Charset.defaultCharset();
+    public Importer(Class<T> clazz, File file) throws IOException {
+        this(clazz, file, Default.class);
+    }
+
+    public Importer(Class<T> clazz, File file, Class<?> group) throws IOException {
+        this(clazz);
+        this.file = file;
+        this.group = group;
+        prepareParser();
     }
 
     public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
@@ -44,21 +57,20 @@ public class Importer<T> {
         prepareParser();
     }
 
-    public Importer(Class<T> clazz, File file) throws IOException {
-        this(clazz);
-        this.file = file;
-        prepareParser();
-    }
-
     public Importer(Class<T> clazz, InputStream inputStream, String filename) throws IOException {
-        this(clazz, inputStream, filename, DEFAULT_START_ROW);
+        this(clazz, inputStream, filename, DEFAULT_START_ROW, Default.class);
     }
 
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, int initialRow) throws IOException {
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, Class<?> group) throws IOException {
+        this(clazz, inputStream, filename, DEFAULT_START_ROW, group);
+    }
+
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, int initialRow, Class<?> group) throws IOException {
         this(clazz);
         this.inputStream = inputStream;
         this.filename = filename;
         this.initialRow = initialRow;
+        this.group = group;
         prepareParser();
     }
 
@@ -66,20 +78,20 @@ public class Importer<T> {
         FileType fileType = getFileType();
         if(fileType == FileType.XLSX || fileType == FileType.XLS) {
             if(file != null) {
-                parser = new ExcelParser<T>(clazz, file, initialRow);
+                parser = new ExcelParser<T>(clazz, file, initialRow, group);
                 return;
             }
             if(inputStream != null) {
-                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), initialRow);
+                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), initialRow, group);
                 return;
             }
         }
         if(file != null) {
-            parser = new CsvParser<T>(clazz, file, charset);
+            parser = new CsvParser<T>(clazz, file, charset, group);
             return;
         }
         if(inputStream != null) {
-            parser = new CsvParser<T>(clazz, inputStream, charset);
+            parser = new CsvParser<T>(clazz, inputStream, charset, group);
             return;
         }
 

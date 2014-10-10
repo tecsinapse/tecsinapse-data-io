@@ -3,6 +3,8 @@ package br.com.tecsinapse.exporter.importer;
 import br.com.tecsinapse.exporter.CSVUtil;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.converter.group.Default;
+
 import org.reflections.ReflectionUtils;
 
 import java.io.File;
@@ -21,24 +23,33 @@ import com.google.common.base.Predicate;
 class CsvParser<T> implements Parser<T> {
 	private final Class<T> clazz;
 	private List<String> csvLines;
+    private final Class<?>[] groups;
 
-	public CsvParser(Class<T> clazz, List<String> csvLines) {
-		this(clazz);
-		this.csvLines = csvLines;
+	public CsvParser(Class<T> clazz, File file, Charset charset) throws IOException {
+		this(clazz, file, charset, Default.class);
 	}
 
-	public CsvParser(Class<T> clazz, File file, Charset charset) throws
-			IOException {
-		this(clazz, CSVUtil.processInputCSV(new FileInputStream(file), charset));
+	public CsvParser(Class<T> clazz, File file, Charset charset, Class<?>... groups) throws IOException {
+		this(clazz, CSVUtil.processInputCSV(new FileInputStream(file), charset), groups);
 	}
 
-	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset)
-			throws IOException {
-		this(clazz, CSVUtil.processInputCSV(inputStream, charset));
+	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset) throws IOException {
+		this(clazz, inputStream, charset, Default.class);
 	}
 
-	private CsvParser(Class<T> clazz) {
+	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset, Class<?>... groups) throws IOException {
+		this(clazz, CSVUtil.processInputCSV(inputStream, charset), groups);
+	}
+
+    public CsvParser(Class<T> clazz, List<String> csvLines, Class<?>... groups) {
+        this(clazz, groups);
+        this.csvLines = csvLines;
+
+    }
+
+	private CsvParser(Class<T> clazz, Class<?>... groups) {
 		this.clazz = clazz;
+        this.groups = groups;
 	}
 
 	/**
@@ -51,6 +62,7 @@ class CsvParser<T> implements Parser<T> {
 	public List<T> parse() throws IllegalAccessException, InstantiationException,
 			InvocationTargetException {
 		List<T> list = new ArrayList<>();
+
 		@SuppressWarnings("unchecked")
 		Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
 				ReflectionUtils.<Method>withAnnotation(TableCellMapping.class));

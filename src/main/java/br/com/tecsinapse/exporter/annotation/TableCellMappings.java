@@ -6,17 +6,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import br.com.tecsinapse.exporter.converter.group.Default;
 import br.com.tecsinapse.exporter.converter.StringTableCellConverter;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.converter.group.Default;
 
 @Retention(RUNTIME)
 @Target({METHOD})
-public @interface TableCellMapping {
+public @interface TableCellMappings {
 
-    int columnIndex();
-
-    Class<? extends TableCellConverter<?>> converter() default StringTableCellConverter.class;
-
-    Class<?>[] groups() default { Default.class };
+    TableCellMapping[] value();
 }

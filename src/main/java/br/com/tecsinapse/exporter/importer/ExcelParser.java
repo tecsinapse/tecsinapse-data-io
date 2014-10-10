@@ -1,5 +1,9 @@
 package br.com.tecsinapse.exporter.importer;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.assignableFrom;
+import static com.google.common.collect.Iterables.any;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +18,10 @@ import java.util.Set;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -37,7 +45,9 @@ import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.ExcelUtil;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
+import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.converter.group.Default;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -50,28 +60,38 @@ public class ExcelParser<T> implements Parser<T> {
     private InputStream excelInputStream;
     private ExcelType type;
     private int initialRow;
+    private final Class<?> group;
 
     public ExcelParser(Class<T> clazz, File file) throws IOException {
-        this(clazz);
-        this.excel = file;
-        this.type = ExcelType.getExcelType(excel.getName());
+        this(clazz, file, null, ExcelType.getExcelType(file.getName()), 0, Default.class);
     }
 
     public ExcelParser(Class<T> clazz, File file, int initialRow) throws IOException {
-        this(clazz, file);
-        this.initialRow = initialRow;
+        this(clazz, file, initialRow, Default.class);
+    }
+
+    public ExcelParser(Class<T> clazz, File file, int initialRow, Class<?> group) throws IOException {
+        this(clazz, file, null, null, initialRow, group);
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow) {
-        this(clazz);
-        this.excelInputStream = inputStream;
-        this.type = type;
-        this.initialRow = initialRow;
+        this(clazz, inputStream, type, initialRow, Default.class);
     }
 
-    private ExcelParser(Class<T> clazz) {
-        this.clazz = clazz;
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int initialRow, Class<?> group) {
+        this(clazz, null, inputStream, type, initialRow, group);
     }
+
+    private ExcelParser(Class<T> clazz, File excel, InputStream excelInputStream, ExcelType type, int initialRow, Class<?> group) {
+        checkNotNull(group);
+        this.clazz = clazz;
+        this.excel = excel;
+        this.excelInputStream = excelInputStream;
+        this.type = type;
+        this.initialRow = initialRow;
+        this.group = group;
+    }
+
 
     /**
      * Não lê a primeira linha
@@ -92,13 +112,12 @@ public class ExcelParser<T> implements Parser<T> {
 
         List<T> list = new ArrayList<>();
 		  @SuppressWarnings("unchecked")
-        Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
-				  ReflectionUtils.withAnnotation(TableCellMapping.class));
+        Set<Method> methods = getMappedMethods();
 
 			final Constructor<T> constructor = clazz.getDeclaredConstructor();
 			constructor.setAccessible(true);
         for (List<String> fields : xlsxLines) {
-			   T instance = constructor.newInstance();
+			T instance = constructor.newInstance();
 
             for (Method method : methods) {
                 TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
@@ -114,9 +133,9 @@ public class ExcelParser<T> implements Parser<T> {
 
     private List<T> parseXls() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException, NoSuchMethodException {
         List<T> list = new ArrayList<>();
-		  @SuppressWarnings("unchecked")
-        Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
-				  ReflectionUtils.withAnnotation(TableCellMapping.class));
+
+
+        Set<Method> methods = getMappedMethods();
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(0);
 
@@ -340,5 +359,38 @@ public class ExcelParser<T> implements Parser<T> {
 		return table;
 	}
 
+    private Set<Method> getMappedMethods() {
+        Set<Method> cellMappingMethods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
+        cellMappingMethods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMappings.class)));
+
+        return FluentIterable.from(cellMappingMethods)
+                .filter(new Predicate<Method>() {
+                    @Override
+                    public boolean apply(Method method) {
+                        TableCellMapping tcm = Objects.firstNonNull(
+                                method.getAnnotation(TableCellMapping.class),
+                                getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class)));
+
+                        return any(Lists.newArrayList(tcm.groups()), assignableFrom(group));
+                    }
+                })
+                .toSet();
+    }
+
+    private TableCellMapping getFirstTableCellMapping(TableCellMappings tcms) {
+        if (tcms == null) {
+            return null;
+        }
+
+        return FluentIterable.from(Lists.newArrayList(tcms.value()))
+                .filter(new Predicate<TableCellMapping>() {
+                    @Override
+                    public boolean apply(TableCellMapping tcm) {
+                        return any(Lists.newArrayList(tcm.groups()), assignableFrom(group));
+                    }
+                })
+                .first()
+                .orNull();
+    }
 
 }
