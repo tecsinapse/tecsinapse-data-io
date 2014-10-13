@@ -5,13 +5,6 @@ import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Multimaps.filterEntries;
 import static com.google.common.collect.Multimaps.transformValues;
 
-import br.com.tecsinapse.exporter.FileType;
-
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +17,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
@@ -52,25 +48,10 @@ public class Importer<T> implements Closeable {
     private boolean isLastSheet;
     private ImporterXLSXType importerXLSXType = DEFAULT;
     private String dateStringPattern;
-    private Class<?> group = Default.class;
-
-    private Importer(Class<T> clazz, Charset charset) {
-        this.clazz = clazz;
-        this.charset = charset;
-    }
-
-    private Importer(Class<T> clazz) {
-    	this(clazz, Charset.defaultCharset());
-    }
-
-    public Importer(Class<T> clazz, File file, Class<?> group) throws IOException {
-        this(clazz);
-        this.file = file;
-        this.group = group;
-    }
+    private final Class<?> group;
 
     public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
-        this(clazz, charset);
+        this(clazz, charset, Default.class);
         this.file = file;
     }
 
@@ -79,35 +60,57 @@ public class Importer<T> implements Closeable {
         this.charset = charset;
     }
 
-    public Importer(Class<T> clazz, File file) throws IOException {
-        this(clazz);
-        this.file = file;
-    }
-    
     public Importer(Class<T> clazz, File file, ImporterXLSXType importerXLSXType) throws IOException {
     	this(clazz, file);
         this.importerXLSXType = importerXLSXType;
     }
 
-    public Importer(Class<T> clazz, InputStream inputStream, String filename) throws IOException {
-        this(clazz, inputStream, filename, false);
+    public Importer(Class<T> clazz, File file) throws IOException {
+        this(clazz, Default.class);
+        this.file = file;
     }
-    
+
+    public Importer(Class<T> clazz, InputStream inputStream, String filename) throws IOException {
+        this(clazz, inputStream, filename, Default.class);
+    }
+
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, Class<?> group) throws IOException {
+        this(clazz, inputStream, filename, false, group);
+    }
+
     public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) throws IOException {
         this(clazz, inputStream, filename, false);
         this.importerXLSXType = importerXLSXType;
     }
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet) throws IOException {
-        this(clazz, inputStream, filename, DEFAULT_START_ROW, isLastSheet);
+        this(clazz, inputStream, filename, isLastSheet, Default.class);
     }
-    
+
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet, Class<?> group) throws IOException {
+        this(clazz, inputStream, filename, DEFAULT_START_ROW, isLastSheet, group);
+    }
+
     public Importer(Class<T> clazz, InputStream inputStream, String filename, int afterLine, boolean isLastSheet) throws IOException {
-        this(clazz);
+        this(clazz, inputStream, filename, afterLine, isLastSheet, Default.class);
+    }
+
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, int afterLine, boolean isLastSheet, Class<?> group) throws IOException {
+        this(clazz, group);
         this.inputStream = inputStream;
         this.filename = filename;
         this.afterLine = afterLine;
         this.isLastSheet = isLastSheet;
+    }
+
+    private Importer(Class<T> clazz, Class<?> group) {
+        this(clazz, Charset.defaultCharset(), group);
+    }
+
+    private Importer(Class<T> clazz, Charset charset, Class<?> group) {
+        this.clazz = clazz;
+        this.charset = charset;
+        this.group = group;
     }
 
     private void beforeParser() throws IOException {
