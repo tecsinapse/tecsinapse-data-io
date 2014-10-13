@@ -1,9 +1,6 @@
 package br.com.tecsinapse.exporter.importer;
 
-import br.com.tecsinapse.exporter.CSVUtil;
-import br.com.tecsinapse.exporter.annotation.TableCellMapping;
-import br.com.tecsinapse.exporter.converter.TableCellConverter;
-import org.reflections.ReflectionUtils;
+import static br.com.tecsinapse.exporter.importer.Importer.getMappedMethods;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,17 +11,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-
-import org.reflections.ReflectionUtils;
 
 import br.com.tecsinapse.exporter.CSVUtil;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.converter.group.Default;
 
 class CsvParser<T> implements Parser<T> {
 	private final Class<T> clazz;
@@ -33,30 +27,35 @@ class CsvParser<T> implements Parser<T> {
 
     private int afterLine = Importer.DEFAULT_START_ROW;
 
-    private CsvParser(Class<T> clazz) {
-        this.clazz = clazz;
-    }
 
-    CsvParser(Class<T> clazz, File file, Charset charset, int afterLine) throws IOException {
+    CsvParser(Class<T> clazz, File file, Charset charset, int afterLine, Class<?> group) throws IOException {
         this(clazz, file, charset);
 
         this.afterLine = afterLine;
     }
 
-    CsvParser(Class<T> clazz, InputStream input, Charset charset, int afterLine) throws IOException {
+    CsvParser(Class<T> clazz, InputStream input, Charset charset, int afterLine, Class<?> group) throws IOException {
         this(clazz, input, charset);
 
         this.afterLine = afterLine;
     }
 
 	public CsvParser(Class<T> clazz, List<String> csvLines) {
-		this(clazz);
-		this.csvLines = csvLines;
+        this(clazz, csvLines, Default.class);
 	}
 
-	public CsvParser(Class<T> clazz, File file, Charset charset) throws
-			IOException {
-		this(clazz, CSVUtil.processCSV(new FileInputStream(file), charset));
+	public CsvParser(Class<T> clazz, List<String> csvLines, Class<?> group) {
+		this.clazz = clazz;
+		this.csvLines = csvLines;
+        this.group = group;
+	}
+
+	public CsvParser(Class<T> clazz, File file, Charset charset) throws IOException {
+		this(clazz, file, charset, Default.class);
+	}
+
+	public CsvParser(Class<T> clazz, File file, Charset charset, Class<?> group) throws IOException {
+		this(clazz, CSVUtil.processCSV(new FileInputStream(file), charset), group);
 	}
 
 	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset)

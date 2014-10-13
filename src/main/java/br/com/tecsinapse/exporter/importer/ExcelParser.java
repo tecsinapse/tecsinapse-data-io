@@ -1,5 +1,6 @@
 package br.com.tecsinapse.exporter.importer;
 
+import static br.com.tecsinapse.exporter.importer.Importer.getMappedMethods;
 import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
 
 import javax.xml.parsers.SAXParser;
@@ -13,12 +14,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -42,7 +41,6 @@ import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
-import org.reflections.ReflectionUtils;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -51,7 +49,6 @@ import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.ExcelUtil;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
-import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import br.com.tecsinapse.exporter.converter.group.Default;
 
@@ -82,24 +79,41 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     public ExcelParser(Class<T> clazz, File file, int afterLine, boolean lastSheet, ImporterXLSXType importerXLSXType) throws IOException {
-        this(clazz, new FileInputStream(file), ExcelType.getExcelType(file.getName()), afterLine, lastSheet, importerXLSXType);
+        this(clazz, file, afterLine, lastSheet, importerXLSXType, Default.class);
+    }
+
+    public ExcelParser(Class<T> clazz, File file, int afterLine, boolean lastSheet, ImporterXLSXType importerXLSXType, Class<?> group) throws IOException {
+        this(clazz, new FileInputStream(file), ExcelType.getExcelType(file.getName()), afterLine, lastSheet, importerXLSXType, group);
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type) {
-        this(clazz, inputStream, type, Importer.DEFAULT_START_ROW);
+        this(clazz, inputStream, type, Default.class);
+    }
+
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, Class<?> group) {
+        this(clazz, inputStream, type, Importer.DEFAULT_START_ROW, group);
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine) {
-		this(clazz, inputStream, type, afterLine, false, ImporterXLSXType.DEFAULT);
+		this(clazz, inputStream, type, afterLine, Default.class);
+    }
+
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, Class<?> group) {
+		this(clazz, inputStream, type, afterLine, false, ImporterXLSXType.DEFAULT, group);
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet, ImporterXLSXType importerXLSXType) {
+        this(clazz, inputStream, type, afterLine, isLastSheet, importerXLSXType, Default.class);
+    }
+
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet, ImporterXLSXType importerXLSXType, Class<?> group) {
         this.clazz = clazz;
         this.excelInputStream = new BufferedInputStream(inputStream);
         this.type = type;
         dateStringPattern = type.getDefaultDatePattern();
         this.afterLine = afterLine;
         this.importerXLSXType = importerXLSXType;
+        this.group = group;
 
         if (isLastSheet) {
             sheetNumber = getNumberOfSheets() - 1;
@@ -224,7 +238,7 @@ public class ExcelParser<T> implements Parser<T> {
                 Method method = methodTcm.getKey();
                 method.setAccessible(true);
                 
-                String value = getValueOrEmpty(row.getCell(tcm.columnIndex()));
+                String value = getValueOrEmpty(evaluator, row.getCell(tcm.columnIndex()));
                 TableCellConverter<?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
                 method.invoke(instance, obj);

@@ -1,6 +1,15 @@
 package br.com.tecsinapse.exporter.importer;
 
+import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Multimaps.filterEntries;
+import static com.google.common.collect.Multimaps.transformValues;
+
 import br.com.tecsinapse.exporter.FileType;
+
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
 import java.io.Closeable;
@@ -16,8 +25,17 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import org.reflections.ReflectionUtils;
 
 import br.com.tecsinapse.exporter.FileType;
+import br.com.tecsinapse.exporter.annotation.TableCellMapping;
+import br.com.tecsinapse.exporter.annotation.TableCellMappings;
+import br.com.tecsinapse.exporter.converter.group.Default;
 
 public class Importer<T> implements Closeable {
 
@@ -49,7 +67,6 @@ public class Importer<T> implements Closeable {
         this(clazz);
         this.file = file;
         this.group = group;
-        prepareParser();
     }
 
     public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
@@ -104,20 +121,20 @@ public class Importer<T> implements Closeable {
         FileType fileType = getFileType();
         if(fileType == FileType.XLSX || fileType == FileType.XLS) {
             if(file != null) {
-                parser = new ExcelParser<T>(clazz, file, afterLine, isLastSheet, importerXLSXType);
+                parser = new ExcelParser<T>(clazz, file, afterLine, isLastSheet, importerXLSXType, group);
                 return;
             }
             if(inputStream != null) {
-                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), afterLine, isLastSheet, importerXLSXType);
+                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), afterLine, isLastSheet, importerXLSXType, group);
                 return;
             }
         }
         if(file != null) {
-            parser = new CsvParser<T>(clazz, file, charset, afterLine);
+            parser = new CsvParser<T>(clazz, file, charset, afterLine, group);
             return;
         }
         if(inputStream != null) {
-            parser = new CsvParser<T>(clazz, inputStream, charset, afterLine);
+            parser = new CsvParser<T>(clazz, inputStream, charset, afterLine, group);
             return;
         }
     }
