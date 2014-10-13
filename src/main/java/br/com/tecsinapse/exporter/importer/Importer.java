@@ -66,7 +66,11 @@ public class Importer<T> implements Closeable {
     }
 
     public Importer(Class<T> clazz, File file) throws IOException {
-        this(clazz, Default.class);
+        this(clazz, file, Default.class);
+    }
+
+    public Importer(Class<T> clazz, File file, Class<?> group) throws IOException {
+        this(clazz, group);
         this.file = file;
     }
 
