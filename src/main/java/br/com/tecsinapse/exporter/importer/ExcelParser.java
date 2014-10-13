@@ -13,8 +13,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.base.Function;
@@ -48,7 +51,9 @@ import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.ExcelUtil;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
+import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.converter.group.Default;
 
 public class ExcelParser<T> implements Parser<T> {
 
@@ -57,6 +62,7 @@ public class ExcelParser<T> implements Parser<T> {
     private final Class<T> clazz;
     private final InputStream excelInputStream;
     private final ExcelType type;
+    private final Class<?> group;
 
     private int afterLine = Importer.DEFAULT_START_ROW;
     private int sheetNumber = 0;
@@ -165,23 +171,23 @@ public class ExcelParser<T> implements Parser<T> {
         List<List<String>> xlsxLines = getXlsxLines(afterLine, sheetNumber);
 
         List<T> list = new ArrayList<>();
-		  @SuppressWarnings("unchecked")
-        Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
-				  ReflectionUtils.withAnnotation(TableCellMapping.class));
+        Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods(clazz, group);
 
         final Constructor<T> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         for (List<String> fields : xlsxLines) {
-			   T instance = constructor.newInstance();
+            T instance = constructor.newInstance();
 
-            for (Method method : methods) {
+            for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
+
+                Method method = methodTcm.getKey();
                 method.setAccessible(true);
-
-                TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
+                
+                TableCellMapping tcm = methodTcm.getValue();
                 String value = getValueOrEmpty(fields, tcm.columnIndex());
                 TableCellConverter<?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
-                method.invoke(instance, obj);
+                methodTcm.getKey().invoke(instance, obj);
             }
             list.add(instance);
         }
@@ -190,9 +196,9 @@ public class ExcelParser<T> implements Parser<T> {
 
     private List<T> parseXls() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException, NoSuchMethodException {
         List<T> list = new ArrayList<>();
-		  @SuppressWarnings("unchecked")
-        Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
-				  ReflectionUtils.withAnnotation(TableCellMapping.class));
+
+
+        Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods(clazz, group);
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(this.sheetNumber);
 
@@ -212,11 +218,13 @@ public class ExcelParser<T> implements Parser<T> {
             }
             T instance = constructor.newInstance();
 
-            for (Method method : methods) {
+            for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
+                
+                TableCellMapping tcm = methodTcm.getValue();
+                Method method = methodTcm.getKey();
                 method.setAccessible(true);
-
-                TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
-                String value = getValueOrEmpty(evaluator, row.getCell(tcm.columnIndex()));
+                
+                String value = getValueOrEmpty(row.getCell(tcm.columnIndex()));
                 TableCellConverter<?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
                 method.invoke(instance, obj);

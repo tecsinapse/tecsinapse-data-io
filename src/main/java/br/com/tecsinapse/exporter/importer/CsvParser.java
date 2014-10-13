@@ -1,5 +1,10 @@
 package br.com.tecsinapse.exporter.importer;
 
+import br.com.tecsinapse.exporter.CSVUtil;
+import br.com.tecsinapse.exporter.annotation.TableCellMapping;
+import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import org.reflections.ReflectionUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,7 +14,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.reflections.ReflectionUtils;
@@ -21,6 +29,7 @@ import br.com.tecsinapse.exporter.converter.TableCellConverter;
 class CsvParser<T> implements Parser<T> {
 	private final Class<T> clazz;
     private List<String> csvLines;
+    private final Class<?> group;
 
     private int afterLine = Importer.DEFAULT_START_ROW;
 
@@ -74,10 +83,9 @@ class CsvParser<T> implements Parser<T> {
 	public List<T> parse() throws IllegalAccessException, InstantiationException,
             InvocationTargetException, NoSuchMethodException {
 		List<T> list = new ArrayList<>();
-		@SuppressWarnings("unchecked")
-		Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
-				ReflectionUtils.<Method>withAnnotation(TableCellMapping.class));
 
+        Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods(clazz, group);
+        
         final Constructor<T> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         for (int i = 0; i < csvLines.size(); i++) {
@@ -89,14 +97,15 @@ class CsvParser<T> implements Parser<T> {
             List<String> fields = split(line);
             T instance = constructor.newInstance();
 
-			for (Method method : methods) {
+            for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
+                Method method = methodTcm.getKey();
                 method.setAccessible(true);
 
-				TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
+				TableCellMapping tcm = methodTcm.getValue();
 				String value = getValueOrEmpty(fields, tcm.columnIndex());
 				TableCellConverter<?> converter = tcm.converter().newInstance();
 				Object obj = converter.apply(value);
-				method.invoke(instance, obj);
+                method.invoke(instance, obj);
 			}
 			list.add(instance);
 		}

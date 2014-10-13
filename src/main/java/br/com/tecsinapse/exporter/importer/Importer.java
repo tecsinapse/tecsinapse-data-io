@@ -1,13 +1,19 @@
 package br.com.tecsinapse.exporter.importer;
 
-import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
+import br.com.tecsinapse.exporter.FileType;
+import com.google.common.base.Strings;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import com.google.common.base.Strings;
 
@@ -28,6 +34,7 @@ public class Importer<T> implements Closeable {
     private boolean isLastSheet;
     private ImporterXLSXType importerXLSXType = DEFAULT;
     private String dateStringPattern;
+    private Class<?> group = Default.class;
 
     private Importer(Class<T> clazz, Charset charset) {
         this.clazz = clazz;
@@ -36,6 +43,13 @@ public class Importer<T> implements Closeable {
 
     private Importer(Class<T> clazz) {
     	this(clazz, Charset.defaultCharset());
+    }
+
+    public Importer(Class<T> clazz, File file, Class<?> group) throws IOException {
+        this(clazz);
+        this.file = file;
+        this.group = group;
+        prepareParser();
     }
 
     public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
@@ -117,6 +131,66 @@ public class Importer<T> implements Closeable {
             name = file.getName();
         }
         return FileType.getFileType(name);
+    }
+
+    //FIXME Refatorar: deixar método comum para ExcelParser e CsvParser
+    protected static final Map<Method, TableCellMapping> getMappedMethods(Class<?> clazz, final Class<?> group) {
+
+        Set<Method> cellMappingMethods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
+        cellMappingMethods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMappings.class)));
+
+
+        Multimap<Method, Optional<TableCellMapping>> tableCellMappingByMethod = FluentIterable.from(cellMappingMethods)
+                .index(new Function<Method, Optional<TableCellMapping>>() {
+                    @Override
+                    public Optional<TableCellMapping> apply(Method method) {
+                        return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
+                                .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class), group));
+                    }})
+                .inverse();
+
+        tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, new Predicate<Entry<Method, Optional<TableCellMapping>>>() {
+            @Override
+            public boolean apply(Entry<Method, Optional<TableCellMapping>> entry) {
+                return entry.getValue().isPresent()
+                        && any(Lists.newArrayList(entry.getValue().get().groups()), assignableTo(group));
+            }
+        });
+
+        Multimap<Method, TableCellMapping> methodByTableCellMapping = transformValues(tableCellMappingByMethod, new Function<Optional<TableCellMapping>, TableCellMapping>() {
+            @Override
+            public TableCellMapping apply(Optional<TableCellMapping> tcmOptional) {
+                return tcmOptional.get();
+            }});
+
+        return Maps.transformValues(methodByTableCellMapping.asMap(), new Function<Collection<TableCellMapping>, TableCellMapping>() {
+            @Override
+            public TableCellMapping apply(Collection<TableCellMapping> tcms) {
+                return Iterables.getFirst(tcms, null);
+            }
+        });
+    }
+
+    private static Optional<TableCellMapping> getFirstTableCellMapping(TableCellMappings tcms, final Class<?> group) {
+        if (tcms == null) {
+            return Optional.absent();
+        }
+
+        return FluentIterable.from(Lists.newArrayList(tcms.value()))
+                .filter(new Predicate<TableCellMapping>() {
+                    @Override
+                    public boolean apply(TableCellMapping tcm) {
+                        return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
+                    }})
+                .first();
+    }
+
+    private static Predicate<? super Class<?>> assignableTo(final Class<?> group) {
+        return new Predicate<Class<?>>() {
+            @Override
+            public boolean apply(Class<?> g) {
+                return g.isAssignableFrom(group);
+            }};
     }
 
     public void setAfterLine(int afterLine) {
