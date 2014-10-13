@@ -1,9 +1,12 @@
 package br.com.tecsinapse.exporter.importer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.assignableFrom;
 import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Multimaps.filterEntries;
+import static com.google.common.collect.Multimaps.transformValues;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,17 +14,22 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -48,10 +56,6 @@ import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import br.com.tecsinapse.exporter.converter.group.Default;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 public class ExcelParser<T> implements Parser<T> {
 
@@ -112,19 +116,19 @@ public class ExcelParser<T> implements Parser<T> {
 
         List<T> list = new ArrayList<>();
 		  @SuppressWarnings("unchecked")
-        Set<Method> methods = getMappedMethods();
+          Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods();
 
 			final Constructor<T> constructor = clazz.getDeclaredConstructor();
 			constructor.setAccessible(true);
         for (List<String> fields : xlsxLines) {
 			T instance = constructor.newInstance();
 
-            for (Method method : methods) {
-                TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
+            for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
+                TableCellMapping tcm = methodTcm.getValue();
                 String value = getValueOrEmpty(fields, tcm.columnIndex());
                 TableCellConverter<?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
-                method.invoke(instance, obj);
+                methodTcm.getKey().invoke(instance, obj);
             }
             list.add(instance);
         }
@@ -135,7 +139,7 @@ public class ExcelParser<T> implements Parser<T> {
         List<T> list = new ArrayList<>();
 
 
-        Set<Method> methods = getMappedMethods();
+        Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods();
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(0);
 
@@ -153,12 +157,12 @@ public class ExcelParser<T> implements Parser<T> {
             }
             T instance = constructor.newInstance();
 
-            for (Method method : methods) {
-                TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
+            for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
+                TableCellMapping tcm = methodTcm.getValue();
                 String value = getValueOrEmpty(row.getCell(tcm.columnIndex()));
                 TableCellConverter<?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
-                method.invoke(instance, obj);
+                methodTcm.getKey().invoke(instance, obj);
             }
             list.add(instance);
         }
@@ -359,38 +363,64 @@ public class ExcelParser<T> implements Parser<T> {
 		return table;
 	}
 
-    private Set<Method> getMappedMethods() {
+    private Map<Method, TableCellMapping> getMappedMethods() {
+
         Set<Method> cellMappingMethods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
         cellMappingMethods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMappings.class)));
 
-        return FluentIterable.from(cellMappingMethods)
-                .filter(new Predicate<Method>() {
-                    @Override
-                    public boolean apply(Method method) {
-                        TableCellMapping tcm = Objects.firstNonNull(
-                                method.getAnnotation(TableCellMapping.class),
-                                getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class)));
 
-                        return any(Lists.newArrayList(tcm.groups()), assignableFrom(group));
-                    }
-                })
-                .toSet();
+        Multimap<Method, Optional<TableCellMapping>> tableCellMappingByMethod = FluentIterable.from(cellMappingMethods)
+                .index(new Function<Method, Optional<TableCellMapping>>() {
+                    @Override
+                    public Optional<TableCellMapping> apply(Method method) {
+                        return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
+                                .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class)));
+                    }})
+                .inverse();
+
+        tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, new Predicate<Entry<Method, Optional<TableCellMapping>>>() {
+            @Override
+            public boolean apply(Entry<Method, Optional<TableCellMapping>> entry) {
+                return entry.getValue().isPresent()
+                        && any(Lists.newArrayList(entry.getValue().get().groups()), assignableTo(group));
+            }
+        });
+
+        Multimap<Method, TableCellMapping> methodByTableCellMapping = transformValues(tableCellMappingByMethod, new Function<Optional<TableCellMapping>, TableCellMapping>() {
+            @Override
+            public TableCellMapping apply(Optional<TableCellMapping> tcmOptional) {
+                return tcmOptional.get();
+            }});
+
+        return Maps.transformValues(methodByTableCellMapping.asMap(), new Function<Collection<TableCellMapping>, TableCellMapping>() {
+            @Override
+            public TableCellMapping apply(Collection<TableCellMapping> tcms) {
+                return Iterables.getFirst(tcms, null);
+            }
+        });
     }
 
-    private TableCellMapping getFirstTableCellMapping(TableCellMappings tcms) {
+
+    private Optional<TableCellMapping> getFirstTableCellMapping(TableCellMappings tcms) {
         if (tcms == null) {
-            return null;
+            return Optional.absent();
         }
 
         return FluentIterable.from(Lists.newArrayList(tcms.value()))
                 .filter(new Predicate<TableCellMapping>() {
                     @Override
                     public boolean apply(TableCellMapping tcm) {
-                        return any(Lists.newArrayList(tcm.groups()), assignableFrom(group));
-                    }
-                })
-                .first()
-                .orNull();
+                        return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
+                    }})
+                .first();
+    }
+
+    private Predicate<? super Class<?>> assignableTo(final Class<?> group) {
+        return new Predicate<Class<?>>() {
+            @Override
+            public boolean apply(Class<?> g) {
+                return g.isAssignableFrom(group);
+            }};
     }
 
 }
