@@ -2,6 +2,7 @@ package br.com.tecsinapse.exporter.test;
 
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.annotation.TableCellMappings;
+import br.com.tecsinapse.exporter.converter.group.Default;
 
 public class FakePojoGroups {
 
@@ -27,7 +28,7 @@ public class FakePojoGroups {
     }
 
 
-    @TableCellMapping(columnIndex = 2, groups = TestDefaultExtendedGroup.class)
+    @TableCellMapping(columnIndex = 2, groups = {TestDefaultExtendedGroup.class, Default.class})
     public void setThree(String three) {
         this.three = three;
     }

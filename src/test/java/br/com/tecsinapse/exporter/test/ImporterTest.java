@@ -100,11 +100,11 @@ public class ImporterTest {
     }
 
     private String getResultadoSemRazaoDefaultGroupXls() {
-        return "FakePojoGroups{one='01582044000725', two='null', three='null'}FakePojoGroups{one='71444475001600', two='null', three='null'}";
+        return "FakePojoGroups{one='01582044000725', two='null', three='02/07/2012'}FakePojoGroups{one='71444475001600', two='null', three='02/07/2012'}";
     }
 
     private String getResultadoDefaultGroupExcel() {
-        return "FakePojoGroups{one='ABC', two='null', three='null'}FakePojoGroups{one='XXX', two='null', three='null'}";
+        return "FakePojoGroups{one='ABC', two='null', three='GHI'}FakePojoGroups{one='XXX', two='null', three='XXX'}";
     }
 
     private String getResultadoSemRazaoExtendedGroupXls() {
