@@ -1,5 +1,6 @@
 package br.com.tecsinapse.exporter.importer;
 
+import static br.com.tecsinapse.exporter.importer.Importer.getMappedMethods;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Multimaps.filterEntries;
@@ -115,13 +116,12 @@ public class ExcelParser<T> implements Parser<T> {
         List<List<String>> xlsxLines = getXlsxLines(initialRow);
 
         List<T> list = new ArrayList<>();
-		  @SuppressWarnings("unchecked")
-          Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods();
+        Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods(clazz, group);
 
-			final Constructor<T> constructor = clazz.getDeclaredConstructor();
-			constructor.setAccessible(true);
+        final Constructor<T> constructor = clazz.getDeclaredConstructor();
+        constructor.setAccessible(true);
         for (List<String> fields : xlsxLines) {
-			T instance = constructor.newInstance();
+            T instance = constructor.newInstance();
 
             for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
                 TableCellMapping tcm = methodTcm.getValue();
@@ -139,13 +139,13 @@ public class ExcelParser<T> implements Parser<T> {
         List<T> list = new ArrayList<>();
 
 
-        Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods();
+        Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods(clazz, group);
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(0);
 
-		  final Constructor<T> constructor = clazz.getDeclaredConstructor();
-		  constructor.setAccessible(true);
-		 
+        final Constructor<T> constructor = clazz.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
         Iterator<Row> rowIterator = sheet.iterator();
 
         boolean header = true;
@@ -362,65 +362,4 @@ public class ExcelParser<T> implements Parser<T> {
 
 		return table;
 	}
-
-    private Map<Method, TableCellMapping> getMappedMethods() {
-
-        Set<Method> cellMappingMethods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
-        cellMappingMethods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMappings.class)));
-
-
-        Multimap<Method, Optional<TableCellMapping>> tableCellMappingByMethod = FluentIterable.from(cellMappingMethods)
-                .index(new Function<Method, Optional<TableCellMapping>>() {
-                    @Override
-                    public Optional<TableCellMapping> apply(Method method) {
-                        return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
-                                .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class)));
-                    }})
-                .inverse();
-
-        tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, new Predicate<Entry<Method, Optional<TableCellMapping>>>() {
-            @Override
-            public boolean apply(Entry<Method, Optional<TableCellMapping>> entry) {
-                return entry.getValue().isPresent()
-                        && any(Lists.newArrayList(entry.getValue().get().groups()), assignableTo(group));
-            }
-        });
-
-        Multimap<Method, TableCellMapping> methodByTableCellMapping = transformValues(tableCellMappingByMethod, new Function<Optional<TableCellMapping>, TableCellMapping>() {
-            @Override
-            public TableCellMapping apply(Optional<TableCellMapping> tcmOptional) {
-                return tcmOptional.get();
-            }});
-
-        return Maps.transformValues(methodByTableCellMapping.asMap(), new Function<Collection<TableCellMapping>, TableCellMapping>() {
-            @Override
-            public TableCellMapping apply(Collection<TableCellMapping> tcms) {
-                return Iterables.getFirst(tcms, null);
-            }
-        });
-    }
-
-
-    private Optional<TableCellMapping> getFirstTableCellMapping(TableCellMappings tcms) {
-        if (tcms == null) {
-            return Optional.absent();
-        }
-
-        return FluentIterable.from(Lists.newArrayList(tcms.value()))
-                .filter(new Predicate<TableCellMapping>() {
-                    @Override
-                    public boolean apply(TableCellMapping tcm) {
-                        return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
-                    }})
-                .first();
-    }
-
-    private Predicate<? super Class<?>> assignableTo(final Class<?> group) {
-        return new Predicate<Class<?>>() {
-            @Override
-            public boolean apply(Class<?> g) {
-                return g.isAssignableFrom(group);
-            }};
-    }
-
 }

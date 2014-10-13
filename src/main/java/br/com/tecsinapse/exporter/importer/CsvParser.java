@@ -1,10 +1,23 @@
 package br.com.tecsinapse.exporter.importer;
 
+import static br.com.tecsinapse.exporter.importer.Importer.getMappedMethods;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Multimaps.filterEntries;
+import static com.google.common.collect.Multimaps.transformValues;
+
 import br.com.tecsinapse.exporter.CSVUtil;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
+import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import br.com.tecsinapse.exporter.converter.group.Default;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import org.reflections.ReflectionUtils;
 
 import java.io.File;
@@ -15,7 +28,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.base.Predicate;
@@ -23,33 +39,33 @@ import com.google.common.base.Predicate;
 class CsvParser<T> implements Parser<T> {
 	private final Class<T> clazz;
 	private List<String> csvLines;
-    private final Class<?>[] groups;
+    private final Class<?> group;
 
 	public CsvParser(Class<T> clazz, File file, Charset charset) throws IOException {
 		this(clazz, file, charset, Default.class);
 	}
 
-	public CsvParser(Class<T> clazz, File file, Charset charset, Class<?>... groups) throws IOException {
-		this(clazz, CSVUtil.processInputCSV(new FileInputStream(file), charset), groups);
+	public CsvParser(Class<T> clazz, File file, Charset charset, Class<?> group) throws IOException {
+		this(clazz, CSVUtil.processInputCSV(new FileInputStream(file), charset), group);
 	}
 
 	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset) throws IOException {
 		this(clazz, inputStream, charset, Default.class);
 	}
 
-	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset, Class<?>... groups) throws IOException {
-		this(clazz, CSVUtil.processInputCSV(inputStream, charset), groups);
+	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset, Class<?> group) throws IOException {
+		this(clazz, CSVUtil.processInputCSV(inputStream, charset), group);
 	}
 
-    public CsvParser(Class<T> clazz, List<String> csvLines, Class<?>... groups) {
-        this(clazz, groups);
+    public CsvParser(Class<T> clazz, List<String> csvLines, Class<?> group) {
+        this(clazz, group);
         this.csvLines = csvLines;
 
     }
 
-	private CsvParser(Class<T> clazz, Class<?>... groups) {
+	private CsvParser(Class<T> clazz, Class<?> group) {
 		this.clazz = clazz;
-        this.groups = groups;
+        this.group = group;
 	}
 
 	/**
@@ -63,20 +79,18 @@ class CsvParser<T> implements Parser<T> {
 			InvocationTargetException {
 		List<T> list = new ArrayList<>();
 
-		@SuppressWarnings("unchecked")
-		Set<Method> methods = ReflectionUtils.getAllMethods(clazz, 
-				ReflectionUtils.<Method>withAnnotation(TableCellMapping.class));
+        Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods(clazz, group);
 
 		for (String line : csvLines) {
 			List<String> fields = split(line);
 			T instance = clazz.newInstance();
 
-			for (Method method : methods) {
-				TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
+            for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
+				TableCellMapping tcm = methodTcm.getValue();
 				String value = getValueOrEmpty(fields, tcm.columnIndex());
 				TableCellConverter<?> converter = tcm.converter().newInstance();
 				Object obj = converter.apply(value);
-				method.invoke(instance, obj);
+                methodTcm.getKey().invoke(instance, obj);
 			}
 			list.add(instance);
 		}
