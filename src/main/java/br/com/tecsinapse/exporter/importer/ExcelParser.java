@@ -201,7 +201,7 @@ public class ExcelParser<T> implements Parser<T> {
                 String value = getValueOrEmpty(fields, tcm.columnIndex());
                 TableCellConverter<?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
-                methodTcm.getKey().invoke(instance, obj);
+                method.invoke(instance, obj);
             }
             list.add(instance);
         }

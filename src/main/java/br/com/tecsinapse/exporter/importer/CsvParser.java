@@ -29,25 +29,19 @@ class CsvParser<T> implements Parser<T> {
 
 
     CsvParser(Class<T> clazz, File file, Charset charset, int afterLine, Class<?> group) throws IOException {
-        this(clazz, file, charset);
+        this(clazz, file, charset, group);
 
         this.afterLine = afterLine;
     }
 
     CsvParser(Class<T> clazz, InputStream input, Charset charset, int afterLine, Class<?> group) throws IOException {
-        this(clazz, input, charset);
+        this(clazz, input, charset, group);
 
         this.afterLine = afterLine;
     }
 
 	public CsvParser(Class<T> clazz, List<String> csvLines) {
         this(clazz, csvLines, Default.class);
-	}
-
-	public CsvParser(Class<T> clazz, List<String> csvLines, Class<?> group) {
-		this.clazz = clazz;
-		this.csvLines = csvLines;
-        this.group = group;
 	}
 
 	public CsvParser(Class<T> clazz, File file, Charset charset) throws IOException {
@@ -58,10 +52,19 @@ class CsvParser<T> implements Parser<T> {
 		this(clazz, CSVUtil.processCSV(new FileInputStream(file), charset), group);
 	}
 
-	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset)
-			throws IOException {
-		this(clazz, CSVUtil.processCSV(inputStream, charset));
+	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset) throws IOException {
+        this(clazz, inputStream, charset, Default.class);
 	}
+
+	public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset, Class<?> group) throws IOException {
+		this(clazz, CSVUtil.processCSV(inputStream, charset), group);
+	}
+
+    public CsvParser(Class<T> clazz, List<String> csvLines, Class<?> group) {
+        this.clazz = clazz;
+        this.csvLines = csvLines;
+        this.group = group;
+    }
 
     @Override
     public int getNumberOfSheets() {
