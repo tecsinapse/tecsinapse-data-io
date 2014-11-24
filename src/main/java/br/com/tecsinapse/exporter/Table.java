@@ -4,7 +4,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -364,13 +366,14 @@ public class Table {
 		int r = titleRows;
 		int c = 0;
 		int maxColumns = -1;
-
+		Map<Integer,Integer> defaultColumnWidth = new HashMap<>();
 		CellStyle styleHeader = header(getDefaultCellStyle(wb));
 		CellStyle styleBody = body(getDefaultCellStyle(wb));
 		CellStyle styleFooter = footer(getDefaultCellStyle(wb));
 
 		for (List<TableCell> row : matrix) {
 			Row sheetRow = sheet.createRow(r);
+			
 			for (TableCell tableCell : row) {
 				while (matrixFull.get(r - titleRows)
 						.get(c) == EmptyTableCell.EMPTY_CELL) {
@@ -400,7 +403,17 @@ public class Table {
                     RegionUtil.setBorderRight(1, cellRange, sheet, wb);
                     RegionUtil.setBorderBottom(1, cellRange, sheet, wb);
                     RegionUtil.setBorderLeft(1, cellRange, sheet, wb);
-                }
+            }else{
+					Integer maxColumnWidth = defaultColumnWidth.get(c);
+					if(maxColumnWidth == null){
+						defaultColumnWidth.put(c, tableCell.getDefaultColumnWidth());
+					}else{
+						int defaultWidth = tableCell.getDefaultColumnWidth();
+						if(defaultWidth > maxColumnWidth){
+							defaultColumnWidth.put(c, defaultWidth);
+						}
+					}
+				}
 
 				this.setConvertedValue(cell, tableCell);
                 this.setCellStyle(styleHeader, styleBody, styleFooter, cell, tableCell, wb);
@@ -411,9 +424,13 @@ public class Table {
 		}
 		
 		for(int i = 0 ; i <= maxColumns ; ++i) {
-			sheet.autoSizeColumn(i, true);
+			//#workaround para resolver o problema do tamanho das colunas com valor zero
+			if(defaultColumnWidth.get(i) == null){
+				sheet.autoSizeColumn(i, true);
+			}else{
+				sheet.setColumnWidth(i, defaultColumnWidth.get(i));
+			}
 		}
-		
 		return wb;
 	}
 

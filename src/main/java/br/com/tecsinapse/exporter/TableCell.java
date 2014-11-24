@@ -4,6 +4,7 @@ import com.google.common.primitives.Doubles;
 
 public class TableCell {
 	
+	private static final int COLUMN_WIDTH = 256;
 	private String content = "";
 	private Integer colspan = 1;
 	private Integer rowspan = 1;
@@ -15,6 +16,10 @@ public class TableCell {
 
 	public TableCell() {
 		super();
+	}
+	
+	public int getDefaultColumnWidth(){
+		return content == null || content.trim().length() == 0 ? 0 : content.length() * COLUMN_WIDTH;
 	}
 
 	public TableCell(String content) {
