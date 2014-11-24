@@ -18,7 +18,7 @@ public class TableCell {
 		super();
 	}
 	
-	public int getDefaultColumnWidth(){
+	int getDefaultColumnWidth(){
 		return content == null || content.trim().length() == 0 ? 0 : content.length() * COLUMN_WIDTH;
 	}
 
