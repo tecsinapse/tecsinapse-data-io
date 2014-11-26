@@ -403,7 +403,7 @@ public class Table {
                     RegionUtil.setBorderRight(1, cellRange, sheet, wb);
                     RegionUtil.setBorderBottom(1, cellRange, sheet, wb);
                     RegionUtil.setBorderLeft(1, cellRange, sheet, wb);
-            }else{
+            }else if (!isAutoSizeColumnSheet()) {
 					Integer maxColumnWidth = defaultColumnWidth.get(c);
 					if(maxColumnWidth == null){
 						defaultColumnWidth.put(c, tableCell.getDefaultColumnWidth());
@@ -423,12 +423,17 @@ public class Table {
 			c = 0;
 		}
 		
-		for(int i = 0 ; i <= maxColumns ; ++i) {
-			//#workaround para resolver o problema do tamanho das colunas com valor zero
-			if(defaultColumnWidth.get(i) == null){
+		if(isAutoSizeColumnSheet()){
+			for(int i = 0 ; i <= maxColumns ; ++i) {
 				sheet.autoSizeColumn(i, true);
-			}else{
-				sheet.setColumnWidth(i, defaultColumnWidth.get(i));
+			}
+		}else{
+			for(int i = 0 ; i <= maxColumns ; ++i) {
+				if(defaultColumnWidth.get(i) == null){
+					sheet.autoSizeColumn(i, true);
+				}else{
+					sheet.setColumnWidth(i, defaultColumnWidth.get(i));
+				}
 			}
 		}
 		return wb;
@@ -642,4 +647,17 @@ public class Table {
     public int getNextColumnIndexOfLastRow() {
         return getLastColumnIndex(getLastRow()) + 1;
     }
+	 
+	 
+	 /**
+	  * <p>Este método identifica se ao escrever as colunas da planilha deve ser 
+	  * utilizado o método <code>autoSizeColumn</code> do objeto 
+	  * <code>org.apache.poi.ss.usermodel.Sheet</code>.</p>
+	  * <p>Se retornar false as colunas serão redimencionadas realizando um 
+	  * cálculo considerando o maior número de caracteres existente em uma coluna</p>
+	  */
+	 //#workaround para resolver o problema do tamanho das colunas com valor zero
+	 public boolean isAutoSizeColumnSheet(){
+		 return true;
+	 }
 }

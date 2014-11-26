@@ -1,5 +1,9 @@
 package br.com.tecsinapse.exporter.test;
 
+
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -9,6 +13,60 @@ import br.com.tecsinapse.exporter.TableCellType;
 
 public class TableTest {
 
+	@Test
+	public void testAutoSizeColumn_ComprovaErroMetodoAutoSizeColumn_de_Sheet_QuandoUltimasLinhasSaoVazias() {
+		final int tamanhoIncorretoColuna = 236;
+		final int tamanhoCorretoColuna = 2048;
+		
+		Table t = new Table();
+		//após escrever certo número de linhas com o conteúdo vazio, 
+		//a coluna não é ajustada para o tamanho equivalente a linha
+		//com maior número de caracteres
+		for(int i = 1; i < 130; i++){
+			t.addNewRow();
+			if(i < 20){
+				t.add("Teste erro " + i);
+			}else{
+				t.add(" ");
+			}
+		}
+
+		Workbook wb = t.toWorkBook(new SXSSFWorkbook());
+		Sheet sheet = wb.getSheetAt(0);
+		
+		Assert.assertEquals(sheet.getColumnWidth(0), tamanhoIncorretoColuna);
+		Assert.assertEquals(sheet.getColumnWidth(1), tamanhoCorretoColuna);
+	}
+
+	@Test
+	public void testAutoSizeColumn_GeraTamanhoConformeMaiorQuantidadeCaracteresColuna() {
+		final int tamanhoUmCaracter = 256;
+		final int tamanhoDefaultColuna = 2048;
+		final int maiorNumeroCaracteresColuna = 13;
+		
+		Table t = new Table(){
+			@Override
+			public boolean isAutoSizeColumnSheet() {
+				return false;
+			}
+		};
+		
+		for(int i = 1; i < 130; i++){
+			t.addNewRow();
+			if(i < 20){
+				t.add("Teste erro " + i);
+			}else{
+				t.add(" ");
+			}
+		}
+
+		Workbook wb = t.toWorkBook(new SXSSFWorkbook());
+		Sheet sheet = wb.getSheetAt(0);
+		Assert.assertEquals(sheet.getColumnWidth(0), maiorNumeroCaracteresColuna * tamanhoUmCaracter);
+		Assert.assertEquals(sheet.getColumnWidth(1), tamanhoDefaultColuna);
+	}
+	
+	
     @Test
     public void testColspanFirstLine() {
         Table t = new Table();
