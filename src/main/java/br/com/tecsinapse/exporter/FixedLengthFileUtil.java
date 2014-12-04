@@ -13,6 +13,11 @@ public final class FixedLengthFileUtil {
     private FixedLengthFileUtil() {
     }
     
+    public static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, Charset charset)
+            throws IOException {
+    	return getLines(inputStream, ignoreFirstLine, 0, null, charset);
+    }
+        
     public static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, int afterLine, String eofCharacter, Charset charset) throws IOException{
     	
         List<String> lines = new ArrayList<>();
