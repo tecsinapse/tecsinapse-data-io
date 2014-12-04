@@ -23,9 +23,8 @@ public final class FixedLengthFileUtil {
         List<String> lines = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset))) {
             String line = null;
-            if (ignoreFirstLine) {
-                line = br.readLine();
-            }
+            
+            afterLine += (ignoreFirstLine ? 1 : 0);
             
             for(int i = 0; i < afterLine; i++){
             	line = br.readLine();

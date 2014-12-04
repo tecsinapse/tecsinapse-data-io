@@ -36,6 +36,11 @@ public class FixedLengthFileParser<T> {
         this.clazz = clazz;
     }
     
+    /**
+     * Ignora <b>n</b> linhas informadas pelo parâmetro <code>afterLine</code>
+     * @param clazz
+     * @param afterLine - 
+     */
     public FixedLengthFileParser(Class<T> clazz, int afterLine){
     	this.clazz = clazz;
     	this.afterLine = afterLine;
