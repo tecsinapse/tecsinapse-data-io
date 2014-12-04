@@ -21,6 +21,7 @@ import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import com.google.common.primitives.Ints;
 
 public class FixedLengthFileParser<T> {
+	
 
     private final Class<T> clazz;
 
@@ -28,9 +29,16 @@ public class FixedLengthFileParser<T> {
     private boolean ignoreFirstLine = false;
     private boolean ignoreLineWhenError = false;
     private boolean removeDuplicatedSpaces = true;
+    private int afterLine = 0;
+    private String eof = null;
 
     public FixedLengthFileParser(Class<T> clazz) {
         this.clazz = clazz;
+    }
+    
+    public FixedLengthFileParser(Class<T> clazz, int afterLine){
+    	this.clazz = clazz;
+    	this.afterLine = afterLine;
     }
 
     public FixedLengthFileParser<T> withCharset(Charset charset) {
@@ -52,6 +60,11 @@ public class FixedLengthFileParser<T> {
         this.removeDuplicatedSpaces = removeDuplicatedSpaces;
         return this;
     }
+    
+    public FixedLengthFileParser<T> withEOFCharacter(String eof){
+    	this.eof = eof;
+    	return this;
+    }
 
     public List<T> parse(File file) throws IOException, ReflectiveOperationException {
         return parse(new FileInputStream(file));
@@ -60,7 +73,7 @@ public class FixedLengthFileParser<T> {
     public List<T> parse(InputStream inputStream) throws IOException, ReflectiveOperationException {
 
         final List<T> list = new ArrayList<>();
-        final List<String> lines = FixedLengthFileUtil.getLines(inputStream, ignoreFirstLine, charset);
+        final List<String> lines = FixedLengthFileUtil.getLines(inputStream, ignoreFirstLine, afterLine, eof, charset);
 
         @SuppressWarnings("unchecked")
         final Set<Method> methods = ReflectionUtils.getAllMethods(clazz,
