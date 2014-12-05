@@ -36,14 +36,9 @@ public class FixedLengthFileParser<T> {
         this.clazz = clazz;
     }
     
-    /**
-     * Ignora <b>n</b> linhas informadas pelo parâmetro <code>afterLine</code>
-     * @param clazz
-     * @param afterLine - 
-     */
-    public FixedLengthFileParser(Class<T> clazz, int afterLine){
-    	this.clazz = clazz;
+    public FixedLengthFileParser<T> withAfterLine(int afterLine){
     	this.afterLine = afterLine;
+    	return this;
     }
 
     public FixedLengthFileParser<T> withCharset(Charset charset) {
@@ -66,7 +61,7 @@ public class FixedLengthFileParser<T> {
         return this;
     }
     
-    public FixedLengthFileParser<T> withEOFCharacter(String eof){
+    public FixedLengthFileParser<T> withEofCharacter(String eof){
     	this.eof = eof;
     	return this;
     }

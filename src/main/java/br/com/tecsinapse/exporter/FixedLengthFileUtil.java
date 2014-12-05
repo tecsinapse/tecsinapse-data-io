@@ -31,7 +31,7 @@ public final class FixedLengthFileUtil {
             }
 
             line = br.readLine();
-            while (!isEOF(line, eofCharacter)) {
+            while (!isEof(line, eofCharacter)) {
                 if (!line.isEmpty()) {
                     lines.add(line);
                 }
@@ -43,7 +43,7 @@ public final class FixedLengthFileUtil {
         return lines;
     }
     
-    private static boolean isEOF(String line, String eofCharacter){
+    private static boolean isEof(String line, String eofCharacter){
     	return line == null || (eofCharacter != null && line.contains(eofCharacter));
     }
 }

@@ -45,8 +45,8 @@ public class FixedLengthFileTest {
     	return new Object[][] { { pojos, getFile("fixed-length-file-with-long-header.txt") } };
     }
 
-    @DataProvider(name = "dataWithLongHeaderAndEOF")
-    public Object[][] dataWithLongHeaderAndEOF() throws URISyntaxException{
+    @DataProvider(name = "dataWithLongHeaderAndEof")
+    public Object[][] dataWithLongHeaderAndEof() throws URISyntaxException{
     	final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
     	return new Object[][] { { pojos, getFile("fixed-length-file-with-long-header-and-eof.txt") } };
     }
@@ -82,26 +82,27 @@ public class FixedLengthFileTest {
     public void validarImpotacaoComCabecalhoLongo(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException{
     	
     	List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
-    			FakeFixedLengthFilePojo.class, 3).withIgnoreFirstLine(true).withCharset(Charset.forName("UTF-8")).parse(file);
+    			FakeFixedLengthFilePojo.class).withAfterLine(3)
+    			.withIgnoreFirstLine(true).withCharset(Charset.forName("UTF-8")).parse(file);
     	
     	validaImportacao(pojos, importedPojos);
     }
 
-    @Test(dataProvider = "dataWithLongHeaderAndEOF")
+    @Test(dataProvider = "dataWithLongHeaderAndEof")
     public void validarImpotacaoComCabecalhoLongoEFimDeArquivo(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException{
     	final String eof = "";
     	List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
-    			FakeFixedLengthFilePojo.class, 3).withIgnoreFirstLine(true).withEOFCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
+    			FakeFixedLengthFilePojo.class).withAfterLine(3).withIgnoreFirstLine(true).withEofCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
     	
     	validaImportacao(pojos, importedPojos);
     }
     
 
-    @Test(dataProvider = "dataWithLongHeaderAndEOF", expectedExceptions=IllegalArgumentException.class)
+    @Test(dataProvider = "dataWithLongHeaderAndEof", expectedExceptions=IllegalArgumentException.class)
     public void validarImpotacaoComCabecalhoLongoEFimDeArquivoErro(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException{
     	final String eof = "-";
     	List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
-    			FakeFixedLengthFilePojo.class, 3).withIgnoreFirstLine(true).withEOFCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
+    			FakeFixedLengthFilePojo.class).withAfterLine(3).withIgnoreFirstLine(true).withEofCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
     	
     	validaImportacao(pojos, importedPojos);
     }
