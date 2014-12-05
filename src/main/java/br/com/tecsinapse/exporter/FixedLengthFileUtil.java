@@ -32,7 +32,7 @@ public final class FixedLengthFileUtil {
 
             line = br.readLine();
             while (!isEof(line, eofCharacter)) {
-                if (!line.isEmpty()) {
+                if (!line.trim().isEmpty()) {
                     lines.add(line);
                 }
                 line = br.readLine();
