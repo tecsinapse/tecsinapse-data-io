@@ -34,8 +34,9 @@ public class TableTest {
 		Workbook wb = t.toWorkBook(new SXSSFWorkbook());
 		Sheet sheet = wb.getSheetAt(0);
 		
-		Assert.assertEquals(sheet.getColumnWidth(0), tamanhoIncorretoColuna);
-		Assert.assertEquals(sheet.getColumnWidth(1), tamanhoCorretoColuna);
+//		alterado o modo de validação devido a diferneça de plataformas(Windows, Linux, Mac) esses valores podem mudar, porém devem respeitar o mínimo. Por isso usado assertTrue e não assertEquals
+		Assert.assertTrue(sheet.getColumnWidth(0) >= tamanhoIncorretoColuna);
+		Assert.assertTrue(sheet.getColumnWidth(1) >= tamanhoCorretoColuna);
 	}
 
 	@Test
