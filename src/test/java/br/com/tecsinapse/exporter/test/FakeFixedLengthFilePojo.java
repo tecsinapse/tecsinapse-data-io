@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.joda.time.LocalDate;
 
 import br.com.tecsinapse.exporter.annotation.FixedLengthColumn;
+import br.com.tecsinapse.exporter.annotation.LineFixedLengthFile;
 import br.com.tecsinapse.exporter.converter.IntegerTableCellConverter;
 import br.com.tecsinapse.exporter.converter.LocalDateTableCellConverter;
 
@@ -13,14 +14,16 @@ public class FakeFixedLengthFilePojo {
     private int one;
     private String two;
     private LocalDate three;
+    private String line;
 
     public FakeFixedLengthFilePojo() {
     }
 
-    public FakeFixedLengthFilePojo(int one, String two, LocalDate three) {
-        this.one = one;
-        this.two = two;
-        this.three = three;
+    public FakeFixedLengthFilePojo(int one, String two, LocalDate three, String line) {
+    	this.one = one;
+    	this.two = two;
+    	this.three = three;
+    	this.line = line;
     }
 
     @FixedLengthColumn(columnIndex = 0, columnSize = 2, converter = IntegerTableCellConverter.class)
@@ -38,6 +41,15 @@ public class FakeFixedLengthFilePojo {
         this.three = three;
     }
 
+    @LineFixedLengthFile
+    public void setLine(String line) {
+		this.line = line;
+	}
+    
+    public String getLine() {
+		return line;
+	}
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -56,6 +68,6 @@ public class FakeFixedLengthFilePojo {
     @Override
     public String toString() {
         return "FakeFixedLengthFilePojo{" + "one='" + one + '\'' + ", two='" + two + '\'' + ", three='" + three + '\''
-                + '}';
+                + "line='" + line + '\'' + '}';
     }
 }

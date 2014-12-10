@@ -60,10 +60,10 @@ public class FixedLengthFileTest {
     
     private List<FakeFixedLengthFilePojo> expectedPojos() {
         final List<FakeFixedLengthFilePojo> pojos = new ArrayList<>();
-        pojos.add(new FakeFixedLengthFilePojo(1, "String 01", new LocalDate(2014, 9, 19)));
-        pojos.add(new FakeFixedLengthFilePojo(2, "Str02", new LocalDate(2014, 9, 20)));
-        pojos.add(new FakeFixedLengthFilePojo(3, "0303030303", new LocalDate(2014, 9, 21)));
-        pojos.add(new FakeFixedLengthFilePojo(4, "Acentuação", new LocalDate(2014, 9, 21)));
+        pojos.add(new FakeFixedLengthFilePojo(1, "String 01", new LocalDate(2014, 9, 19), "01String 01 2014-09-19"));
+        pojos.add(new FakeFixedLengthFilePojo(2, "Str02", new LocalDate(2014, 9, 20), "02Str02     2014-09-20"));
+        pojos.add(new FakeFixedLengthFilePojo(3, "0303030303", new LocalDate(2014, 9, 21), "0303030303032014-09-21"));
+        pojos.add(new FakeFixedLengthFilePojo(4, "Acentuação", new LocalDate(2014, 9, 21), "4Acentuação2014-09-21"));
         return pojos;
     }
 
@@ -111,6 +111,24 @@ public class FixedLengthFileTest {
     			FakeFixedLengthFilePojo.class).withAfterLine(3).withIgnoreFirstLine(true).withEofCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
     	
     	validaImportacao(pojos, importedPojos);
+    }
+
+    @Test(dataProvider = "dataWithSpaceLineAndLongHeaderAndEof")
+    public void validarImpotacaoComLinhasComEspacoECabecalhoLongoEFimDeArquivoRetornandoLinhaProcessada(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException{
+    	final String eof = "";
+    	List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
+    			FakeFixedLengthFilePojo.class).withAfterLine(3)
+    			.withIgnoreFirstLine(true)
+    			.withEofCharacter(eof)
+    			.withCharset(Charset.forName("UTF-8"))
+    			.withProcessedLineReturned(true)
+    			.parse(file);
+    	
+    	validaImportacao(pojos, importedPojos);
+    	
+    	for (FakeFixedLengthFilePojo pojo : importedPojos) {
+			Assert.assertNotNull(pojo.getLine());
+		}
     }
 
     @Test(dataProvider = "dataWithLongHeaderAndEof", expectedExceptions=IllegalArgumentException.class)
