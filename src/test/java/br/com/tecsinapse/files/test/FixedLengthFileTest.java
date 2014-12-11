@@ -121,7 +121,6 @@ public class FixedLengthFileTest {
     			.withIgnoreFirstLine(true)
     			.withEofCharacter(eof)
     			.withCharset(Charset.forName("UTF-8"))
-    			.withProcessedLineReturned(true)
     			.parse(file);
     	
     	validaImportacao(pojos, importedPojos);

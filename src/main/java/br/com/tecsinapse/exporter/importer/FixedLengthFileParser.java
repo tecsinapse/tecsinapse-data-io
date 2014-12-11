@@ -19,7 +19,6 @@ import br.com.tecsinapse.exporter.annotation.FixedLengthColumn;
 import br.com.tecsinapse.exporter.annotation.LineFixedLengthFile;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Ints;
 
@@ -32,7 +31,6 @@ public class FixedLengthFileParser<T> {
     private boolean ignoreFirstLine = false;
     private boolean ignoreLineWhenError = false;
     private boolean removeDuplicatedSpaces = true;
-    private boolean returningProcessedLine = false;
     private int afterLine = 0;
     private String eof = null;
 
@@ -70,11 +68,6 @@ public class FixedLengthFileParser<T> {
     	return this;
     }
     
-    public FixedLengthFileParser<T> withProcessedLineReturned(boolean returningProcessedLine){
-    	this.returningProcessedLine = returningProcessedLine;
-    	return this;
-    }
-
     public List<T> parse(File file) throws IOException, ReflectiveOperationException {
         return parse(new FileInputStream(file));
     }
@@ -88,10 +81,8 @@ public class FixedLengthFileParser<T> {
         final Set<Method> methods = ReflectionUtils.getAllMethods(clazz,
                 ReflectionUtils.<Method> withAnnotation(FixedLengthColumn.class));
         
-        Method lineMethod = null;
-        if(returningProcessedLine){
-        	lineMethod = Iterables.getFirst(ReflectionUtils.getMethods(clazz, ReflectionUtils.<Method> withAnnotation(LineFixedLengthFile.class)), null);
-        }
+        @SuppressWarnings("unchecked")
+        Method lineMethod = Iterables.getFirst(ReflectionUtils.getMethods(clazz, ReflectionUtils.<Method> withAnnotation(LineFixedLengthFile.class)), null);
 
         final List<AnnotationMethod> methodsAndAnnotations = orderedAnnotationsAndMethods(methods);
 
