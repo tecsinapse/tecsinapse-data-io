@@ -225,6 +225,10 @@ public class Importer<T> implements Closeable {
         this.dateStringPattern = dateStringPattern;
     }
 
+    public void setCharset(Charset charset) {
+        this.charset = charset;
+    }
+
     public List<T> parse() throws Exception {
     	beforeParser();
         return parser.parse();
