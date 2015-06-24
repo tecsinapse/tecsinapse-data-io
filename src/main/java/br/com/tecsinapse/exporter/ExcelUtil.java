@@ -1,20 +1,16 @@
 package br.com.tecsinapse.exporter;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Date;
-import java.util.List;
-
 import com.google.common.base.Strings;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.Date;
+import java.util.List;
 
 public class ExcelUtil {
 
@@ -85,6 +81,17 @@ public class ExcelUtil {
         doExport(name, ".xlsx", wb);
     }
 
+    public static void exportCsvZip(String name, Table t, String charsetName) throws IOException {
+        String filename = name + "_";
+        filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            exportCsv(t, charsetName, baos);
+
+            ZIPUtil.exportZip(filename, "csv", baos);
+        }
+    }
+
     public static void exportCsv(String name, Table t, String chartsetName) throws IOException {
         String filename = name + "_";
         filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
@@ -100,10 +107,12 @@ public class ExcelUtil {
         List<List<String>> csv = t.toStringMatrix();
         CSVUtil.write(csv, out, chartsetName);
     }
-    
-    public static File getCsvFile(Table t, String file, String charsetName) throws IOException {
 
-    	File f = new File(file);
+    public static File getCsvFile(Table t, String fileName, String charsetName) throws IOException {
+        return getCsvFile(t, new File(fileName), charsetName);
+    }
+
+    public static File getCsvFile(Table t, File f, String charsetName) throws IOException {
     	try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
     		CSVUtil.write(t.toStringMatrix(), fos, charsetName);
 		}
