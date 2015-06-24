@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.tecsinapse</groupId>
 	<artifactId>tecsinapse-exporter</artifactId>
-	<version>1.1.41-SNAPSHOT</version>
+	<version>1.1.41</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -97,7 +97,7 @@
 	</distributionManagement>
 	<scm>
 		<developerConnection>scm:git:ssh://git@bitbucket.org/tecsinapse/tecsinapse-exporter.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>tecsinapse-exporter-1.1.41</tag>
   </scm>
 	<profiles>
 		<profile>
