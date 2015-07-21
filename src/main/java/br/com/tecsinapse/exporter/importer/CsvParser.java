@@ -75,7 +75,15 @@ class CsvParser<T> implements Parser<T> {
     public void setDateStringPattern(String dateStringPattern) {
     }
 
-    /**
+	@Override
+	public void setDateAsLocalDateTime(boolean considerarLocalDateTime) {
+	}
+
+	@Override
+	public void setDateTimeStringPattern(String dateTimeStringPattern) {
+	}
+
+	/**
 	 * Não lê a primeira linha
 	 * <p/>
 	 * @return

@@ -41,6 +41,7 @@ import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -64,7 +65,9 @@ public class ExcelParser<T> implements Parser<T> {
     private int afterLine = Importer.DEFAULT_START_ROW;
     private int sheetNumber = 0;
     private String dateStringPattern;
+    private String dateTimeStringPattern;
     private ImporterXLSXType importerXLSXType = DEFAULT;
+    private boolean dateAsLocalDateTime = false;
 
     //lazy somente criado ao chamar getWorkbook
     private Workbook workbook;
@@ -110,7 +113,8 @@ public class ExcelParser<T> implements Parser<T> {
         this.clazz = clazz;
         this.excelInputStream = new BufferedInputStream(inputStream);
         this.type = type;
-        dateStringPattern = type.getDefaultDatePattern();
+        this.dateStringPattern = type.getDefaultDatePattern();
+        this.dateTimeStringPattern = type.getDefaultDateTimePattern();
         this.afterLine = afterLine;
         this.importerXLSXType = importerXLSXType;
         this.group = group;
@@ -127,6 +131,11 @@ public class ExcelParser<T> implements Parser<T> {
     @Override
     public void setDateStringPattern(String dateStringPattern) {
         this.dateStringPattern = dateStringPattern;
+    }
+
+    @Override
+    public void setDateTimeStringPattern(String dateTimeStringPattern) {
+        this.dateTimeStringPattern = dateTimeStringPattern;
     }
 
     public void setAfterLine(int afterLine) {
@@ -324,6 +333,9 @@ public class ExcelParser<T> implements Parser<T> {
                 return Boolean.valueOf(cellValue.getBooleanValue()).toString();
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
+                    if (dateAsLocalDateTime) {
+                        return LocalDateTime.fromDateFields(cell.getDateCellValue()).toString(dateTimeStringPattern);
+                    }
                     return new LocalDate(cell.getDateCellValue()).toString(dateStringPattern);
                 }
                 //força a tirar '.0' se for inteiro
@@ -477,5 +489,9 @@ public class ExcelParser<T> implements Parser<T> {
     @Override
     public void close() throws IOException {
         excelInputStream.close();
+    }
+
+    public void setDateAsLocalDateTime(boolean dateAsLocalDateTime) {
+        this.dateAsLocalDateTime = dateAsLocalDateTime;
     }
 }

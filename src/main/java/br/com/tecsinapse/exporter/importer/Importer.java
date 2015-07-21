@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.reflections.ReflectionUtils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -26,7 +27,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import org.reflections.ReflectionUtils;
 
 import br.com.tecsinapse.exporter.FileType;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
@@ -48,7 +48,9 @@ public class Importer<T> implements Closeable {
     private boolean isLastSheet;
     private ImporterXLSXType importerXLSXType = DEFAULT;
     private String dateStringPattern;
+    private String dateTimeStringPattern;
     private final Class<?> group;
+    private boolean dateAsLocalDateTime = false;
 
     public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
         this(clazz, charset, Default.class);
@@ -119,9 +121,13 @@ public class Importer<T> implements Closeable {
 
     private void beforeParser() throws IOException {
         doBeforeParser();
+        if (dateTimeStringPattern != null) {
+            parser.setDateTimeStringPattern(dateTimeStringPattern);
+        }
         if (dateStringPattern != null) {
             parser.setDateStringPattern(dateStringPattern);
         }
+        parser.setDateAsLocalDateTime(dateAsLocalDateTime);
     }
 
 	private void doBeforeParser() throws IOException {
@@ -225,8 +231,16 @@ public class Importer<T> implements Closeable {
         this.dateStringPattern = dateStringPattern;
     }
 
+    public void setDateTimeStringPattern(String dateTimeStringPattern) {
+        this.dateTimeStringPattern = dateTimeStringPattern;
+    }
+
     public void setCharset(Charset charset) {
         this.charset = charset;
+    }
+
+    public void setDateAsLocalDateTime(boolean dateAsLocalDateTime) {
+        this.dateAsLocalDateTime = dateAsLocalDateTime;
     }
 
     public List<T> parse() throws Exception {
