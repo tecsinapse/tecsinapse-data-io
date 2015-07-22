@@ -4,11 +4,11 @@ public enum FileType {
 	XLS, XLSX, XLSM, CSV;
 
     public static FileType getFileType(String filename) {
-        if (filename.endsWith("xlsx")) {
+        if (filename.toLowerCase().endsWith("xlsx")) {
             return FileType.XLSX;
-        } else if(filename.endsWith("xls")) {
+        } else if(filename.toLowerCase().endsWith("xls")) {
             return FileType.XLS;
-        } else if(filename.endsWith("xlsm")) {
+        } else if(filename.toLowerCase().endsWith("xlsm")) {
             return FileType.XLSM;
         }
         return CSV;
