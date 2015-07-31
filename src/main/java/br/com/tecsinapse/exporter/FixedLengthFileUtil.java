@@ -19,7 +19,11 @@ public final class FixedLengthFileUtil {
     }
         
     public static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, int afterLine, String eofCharacter, Charset charset) throws IOException{
-    	
+        return getLines(inputStream, ignoreFirstLine, afterLine, 0, eofCharacter, charset);
+    }
+
+    public static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, int afterLine, int ignoreLastLines, String eofCharacter, Charset charset) throws IOException{
+
         List<String> lines = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset))) {
             String line = null;
@@ -40,6 +44,11 @@ public final class FixedLengthFileUtil {
         } catch (IOException e) {
             throw e;
         }
+
+        if (ignoreLastLines > 0 && lines.size() >= ignoreLastLines) {
+            lines = lines.subList(0, lines.size() - ignoreLastLines);
+        }
+
         return lines;
     }
     

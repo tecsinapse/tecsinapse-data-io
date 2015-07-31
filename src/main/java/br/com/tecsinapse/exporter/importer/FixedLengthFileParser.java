@@ -12,15 +12,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
+import com.google.common.primitives.Ints;
 import org.reflections.ReflectionUtils;
 
 import br.com.tecsinapse.exporter.FixedLengthFileUtil;
 import br.com.tecsinapse.exporter.annotation.FixedLengthColumn;
 import br.com.tecsinapse.exporter.annotation.LineFixedLengthFile;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
-
-import com.google.common.collect.Iterables;
-import com.google.common.primitives.Ints;
 
 public class FixedLengthFileParser<T> {
 	
@@ -33,6 +32,7 @@ public class FixedLengthFileParser<T> {
     private boolean removeDuplicatedSpaces = true;
     private int afterLine = 0;
     private String eof = null;
+    private int ignoreLastLines = 0;
 
     public FixedLengthFileParser(Class<T> clazz) {
         this.clazz = clazz;
@@ -67,6 +67,11 @@ public class FixedLengthFileParser<T> {
     	this.eof = eof;
     	return this;
     }
+
+    public FixedLengthFileParser<T> withIgnoreLastLines(int linesToIgnore) {
+        this.ignoreLastLines = linesToIgnore;
+        return this;
+    }
     
     public List<T> parse(File file) throws IOException, ReflectiveOperationException {
         return parse(new FileInputStream(file));
@@ -75,7 +80,7 @@ public class FixedLengthFileParser<T> {
     public List<T> parse(InputStream inputStream) throws IOException, ReflectiveOperationException {
 
         final List<T> list = new ArrayList<>();
-        final List<String> lines = FixedLengthFileUtil.getLines(inputStream, ignoreFirstLine, afterLine, eof, charset);
+        final List<String> lines = FixedLengthFileUtil.getLines(inputStream, ignoreFirstLine, afterLine, ignoreLastLines, eof, charset);
 
         @SuppressWarnings("unchecked")
         final Set<Method> methods = ReflectionUtils.getAllMethods(clazz,
