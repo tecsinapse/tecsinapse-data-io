@@ -103,7 +103,7 @@ public class ExporterFileTest {
         });
 
         return new Object[][]{
-                {beans, csvExport, csvLines, "#.#", "null"},//TODO nullvalue no importer
+                {beans, csvExport, csvLines, "#.#", ""},
                 {beans, xlsExport, excelLines, "#.#", ""},
                 {beans, xlsxExport, excelLines, ".#", ""},
                 {beans, sxlsxExport, excelLines, ".#", ""}

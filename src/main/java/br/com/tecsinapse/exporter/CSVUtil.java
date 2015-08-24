@@ -89,12 +89,16 @@ public class CSVUtil {
 			for (List<T> row : csv) {
 				StringBuilder line = new StringBuilder();
 				for (Iterator<T> iter = row.iterator(); iter.hasNext();) {
-					String field = String.valueOf(iter.next())
-							.replace("\"", "\"\"");
-					if (field.indexOf(separator) > -1 || field.indexOf('"') > -1) {
-						field = '"' + field + '"';
-					}
-					line.append(field);
+                    final T next = iter.next();
+                    String field = "";
+                    if (next != null) {
+                        field = String.valueOf(next != null ? next : "")
+                                .replace("\"", "\"\"");
+                        if (field.indexOf(separator) > -1 || field.indexOf('"') > -1) {
+                            field = '"' + field + '"';
+                        }
+                    }
+                    line.append(field);
 					if (iter.hasNext()) {
 						line.append(separator);
 					}
