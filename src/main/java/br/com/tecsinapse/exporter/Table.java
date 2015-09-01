@@ -31,9 +31,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class Table {
 	private String title;
 	List<List<TableCell>> cells = new ArrayList<List<TableCell>>();
+    private boolean autoSizeColumnSheet = true;
 
-	public void replace(TableCell cell, Integer row, Integer column) {
-		cells.get(row).set(column, cell);
+    public void replace(TableCell cell, Integer row, Integer column) {
+        cells.get(row).set(column, cell);
 	}
 
 	public void replaceLastCell(TableCell cell) {
@@ -658,6 +659,10 @@ public class Table {
 	  */
 	 //#workaround para resolver o problema do tamanho das colunas com valor zero
 	 public boolean isAutoSizeColumnSheet(){
-		 return true;
-	 }
+         return autoSizeColumnSheet;
+     }
+
+    public void setAutoSizeColumnSheet(boolean autoSizeColumnSheet) {
+        this.autoSizeColumnSheet = autoSizeColumnSheet;
+    }
 }
