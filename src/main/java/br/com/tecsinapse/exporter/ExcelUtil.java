@@ -1,20 +1,32 @@
 package br.com.tecsinapse.exporter;
 
-import com.google.common.base.Strings;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.Date;
-import java.util.List;
+import com.google.common.base.Strings;
 
 public class ExcelUtil {
 
-    private static HttpServletResponse getResponseForExcel(String filenameWithExtension,
+	private static final String JAVA_TEMP_DIR = System.getProperty("java.io.tmpdir");
+
+	private static HttpServletResponse getResponseForExcel(String filenameWithExtension,
                                                            FacesContext context) {
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext()
                 .getResponse();
@@ -38,7 +50,7 @@ public class ExcelUtil {
                 "must-revalidate, post-check=0, pre-check=0");
         response.setHeader("Pragma", "public");
         response.setHeader("Content-disposition", "attachment;filename="
-                + filename + ".csv");
+				+ filename + ".csv");
         return response;
     }
 
@@ -109,7 +121,7 @@ public class ExcelUtil {
     }
 
     public static File getCsvFile(Table t, String fileName, String charsetName) throws IOException {
-        return getCsvFile(t, new File(fileName), charsetName);
+        return getCsvFile(t, createFile(fileName), charsetName);
     }
 
     public static File getCsvFile(Table t, File f, String charsetName) throws IOException {
@@ -121,7 +133,7 @@ public class ExcelUtil {
     
     public static File getSvFile(Table t, String file, String charsetName, char separator) throws IOException {
 
-    	File f = new File(file);
+    	File f = createFile(file);
     	try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
     		CSVUtil.write(t.toStringMatrix(), fos, charsetName, separator);
 		}
@@ -130,7 +142,7 @@ public class ExcelUtil {
     
     public static File getXlsFile(Table t, String file) throws IOException {
     	
-    	File f = new File(file);
+    	File f = createFile(file);
     	try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
     		t.toHSSFWorkBook().write(fos);
 		}
@@ -163,4 +175,10 @@ public class ExcelUtil {
         } while (columnIndex-- > 0);
         return s;
     }
+
+	private static File createFile(String fileName) throws IOException {
+		Path path = Paths.get(String.format("%s/%s", JAVA_TEMP_DIR, fileName));
+		Files.deleteIfExists(path);
+		return Files.createFile(path).toFile();
+	}
 }
