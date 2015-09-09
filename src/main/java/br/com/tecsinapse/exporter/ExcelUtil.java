@@ -7,8 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
@@ -23,8 +21,6 @@ import org.joda.time.LocalDateTime;
 import com.google.common.base.Strings;
 
 public class ExcelUtil {
-
-	private static final String JAVA_TEMP_DIR = System.getProperty("java.io.tmpdir");
 
 	private static HttpServletResponse getResponseForExcel(String filenameWithExtension,
                                                            FacesContext context) {
@@ -177,8 +173,8 @@ public class ExcelUtil {
     }
 
 	private static File createFile(String fileName) throws IOException {
-		Path path = Paths.get(String.format("%s/%s", JAVA_TEMP_DIR, fileName));
-		Files.deleteIfExists(path);
-		return Files.createFile(path).toFile();
+		String ext = com.google.common.io.Files.getFileExtension(fileName);
+		String name = com.google.common.io.Files.getNameWithoutExtension(fileName);
+		return Files.createTempFile(name, ext.isEmpty() ? "" : "." + ext).toFile();
 	}
 }
