@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 
 import br.com.tecsinapse.exporter.importer.FixedLengthFileParser;
 import br.com.tecsinapse.exporter.test.FakeFixedLengthFilePojo;
+import br.com.tecsinapse.exporter.test.FakeFixedLengthFilePojoUseLineLength;
 
 public class FixedLengthFileTest {
 
@@ -24,6 +25,12 @@ public class FixedLengthFileTest {
     @DataProvider(name = "data")
     public Object[][] data() throws URISyntaxException {
         final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
+        return new Object[][] { { pojos, getFile("fixed-length-file.txt") } };
+    }
+
+    @DataProvider(name = "dataUseLineLength")
+    public Object[][] dataUseLineLength() throws URISyntaxException {
+        final List<FakeFixedLengthFilePojoUseLineLength> pojos = expectedPojosUseLineLength();
         return new Object[][] { { pojos, getFile("fixed-length-file.txt") } };
     }
 
@@ -64,6 +71,15 @@ public class FixedLengthFileTest {
         pojos.add(new FakeFixedLengthFilePojo(2, "Str02", new LocalDate(2014, 9, 20), "02Str02     2014-09-20"));
         pojos.add(new FakeFixedLengthFilePojo(3, "0303030303", new LocalDate(2014, 9, 21), "0303030303032014-09-21"));
         pojos.add(new FakeFixedLengthFilePojo(4, "Acentuação", new LocalDate(2014, 9, 21), "4Acentuação2014-09-21"));
+        return pojos;
+    }
+
+    private List<FakeFixedLengthFilePojoUseLineLength> expectedPojosUseLineLength() {
+        final List<FakeFixedLengthFilePojoUseLineLength> pojos = new ArrayList<>();
+        pojos.add(new FakeFixedLengthFilePojoUseLineLength(1, "String 01 2014-09-19"));
+        pojos.add(new FakeFixedLengthFilePojoUseLineLength(2, "Str02 2014-09-20"));
+        pojos.add(new FakeFixedLengthFilePojoUseLineLength(3, "03030303032014-09-21"));
+        pojos.add(new FakeFixedLengthFilePojoUseLineLength(4, "Acentuação2014-09-21"));
         return pojos;
     }
 
@@ -156,8 +172,17 @@ public class FixedLengthFileTest {
         validaImportacao(pojos, importedPojos);
     }
 
-	private void validaImportacao(List<FakeFixedLengthFilePojo> pojos,
-			List<FakeFixedLengthFilePojo> importedPojos) {
+    @Test(dataProvider = "dataUseLineLength")
+    public void validaImportacaoComUseLineLength(List<FakeFixedLengthFilePojoUseLineLength> pojos, File file) throws IOException,
+            ReflectiveOperationException {
+        List<FakeFixedLengthFilePojoUseLineLength> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojoUseLineLength>(
+                FakeFixedLengthFilePojoUseLineLength.class).withCharset(Charset.forName("UTF-8")).parse(file);
+
+        validaImportacao(pojos, importedPojos);
+    }
+
+	private void validaImportacao(List<?> pojos,
+			List<?> importedPojos) {
 		Assert.assertEquals(importedPojos.size(), pojos.size());
 
         for (int i = 0; i < pojos.size(); i++) {

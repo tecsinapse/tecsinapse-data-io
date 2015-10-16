@@ -103,7 +103,7 @@ public class FixedLengthFileParser<T> {
                 }
                 Method method = annotationMethod.getMethod();
                 FixedLengthColumn flc = annotationMethod.getFlc();
-                if (workingLine.length() < flc.columnSize()) {
+                if (!flc.useLineLength() && workingLine.length() < flc.columnSize()) {
                     if (ignoreLineWhenError) {
                         ignoreLine = true;
                         break;
@@ -114,7 +114,7 @@ public class FixedLengthFileParser<T> {
                                 line));
                     }
                 }
-                int length = workingLine.length() >= flc.columnSize() ? flc.columnSize() : workingLine.length();
+                int length = flc.useLineLength() ? workingLine.length() : flc.columnSize();
                 String value = workingLine.substring(0, length).trim();
                 if (removeDuplicatedSpaces) {
                     value = value.replaceAll("\\s+", " ");
