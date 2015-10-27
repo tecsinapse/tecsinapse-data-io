@@ -139,7 +139,7 @@ public class ExporterFileTest {
             Function<Table, File> toFile, Function<File, List<List<String>>> toLines,
             String decimalPattern, String nullValue) throws IOException {
         final String dataPattern = "dd/MM/yyyy";
-        final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern, new DecimalFormatSymbols(Locale.US));
+        final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern, new DecimalFormatSymbols(Locale.getDefault()));
 
 
         final Table table = new Table();
