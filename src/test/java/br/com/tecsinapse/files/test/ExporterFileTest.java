@@ -7,8 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -137,7 +139,7 @@ public class ExporterFileTest {
             Function<Table, File> toFile, Function<File, List<List<String>>> toLines,
             String decimalPattern, String nullValue) throws IOException {
         final String dataPattern = "dd/MM/yyyy";
-        final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern);
+        final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern, new DecimalFormatSymbols(Locale.US));
 
 
         final Table table = new Table();
