@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -460,11 +461,21 @@ public class Table {
             font.setBoldweight(Font.BOLDWEIGHT_BOLD);
             style.setFont(font);
         }
-        cell.setCellStyle(style);
+
+		if (tableCell.getCellType() == CellType.BRL_TYPE) {
+			final DataFormat dataFormat = wb.createDataFormat();
+			final CellStyle cellStyle = wb.createCellStyle();
+			cellStyle.cloneStyleFrom(style);
+			cellStyle.setDataFormat(dataFormat.getFormat("[$R$-416] #.##0,00;[RED]-[$R$-416] #.##0,00"));
+			cell.setCellStyle(cellStyle);
+		} else {
+			cell.setCellStyle(style);
+		}
+
     }
 
 	private void setConvertedValue(Cell cell, TableCell tableCell){
-		if(tableCell.getCellType() == CellType.NUMERIC_TYPE){
+		if(tableCell.getCellType() == CellType.NUMERIC_TYPE || tableCell.getCellType() == CellType.BRL_TYPE){
 			Double dValue = tableCell.getContentAsDoubleOrNull();
 			if(dValue != null){
 				cell.setCellValue(dValue.doubleValue());
