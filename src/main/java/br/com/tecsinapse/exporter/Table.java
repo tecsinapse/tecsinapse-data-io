@@ -508,7 +508,7 @@ public class Table {
 
 	private CellStyle getBrlCellStyle(DataFormat dataFormat, CellStyle styleFrom, CellStyle style) {
 		style.cloneStyleFrom(styleFrom);
-		style.setDataFormat(dataFormat.getFormat("_$R$ 0.00"));
+		style.setDataFormat(dataFormat.getFormat("_$R$ #,##0.00"));
 		return style;
 	}
 
