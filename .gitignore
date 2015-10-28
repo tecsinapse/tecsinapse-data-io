@@ -1,13 +1,28 @@
+# Eclipse
 .project
 .classpath
-.settings
+.settings/*
+!.settings/org.eclipse.jdt.core.prefs
+!.settings/org.eclipse.jdt.ui.prefs
 .springBeans
 .metadata
-target
-bin
+.externalToolBuilders
 test-output
-/src/main/resources/rebel.xml
+
+#JRebel
+rebel.xml
+
+# Maven
+target
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+
+# Idea
 *.iml
-.idea/*
+**/.idea/*
 !.idea/codeStyleSettings.xml
 !.idea/encodings.xml
