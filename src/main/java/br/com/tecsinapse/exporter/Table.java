@@ -373,6 +373,9 @@ public class Table {
 		CellStyle styleBody = body(getDefaultCellStyle(wb));
 		CellStyle styleFooter = footer(getDefaultCellStyle(wb));
 
+		final DataFormat dataFormat = wb.createDataFormat();
+		CellStyle cellStyle = wb.createCellStyle();
+
 		for (List<TableCell> row : matrix) {
 			Row sheetRow = sheet.createRow(r);
 			
@@ -418,7 +421,7 @@ public class Table {
 				}
 
 				this.setConvertedValue(cell, tableCell);
-                this.setCellStyle(styleHeader, styleBody, styleFooter, cell, tableCell, wb);
+                this.setCellStyle(styleHeader, styleBody, styleFooter, cell, tableCell, wb, dataFormat, cellStyle);
 				c++;
 			}
 			r++;
@@ -441,7 +444,8 @@ public class Table {
 		return wb;
 	}
 
-    private void setCellStyle(CellStyle defaultHeader, CellStyle defaultBody, CellStyle defaultFooter, Cell cell, TableCell tableCell, Workbook wb){
+    private void setCellStyle(CellStyle defaultHeader, CellStyle defaultBody, CellStyle defaultFooter, Cell cell,
+							  TableCell tableCell, Workbook wb, DataFormat dataFormat, CellStyle cellStyle){
 
         CellStyle style = null;
         switch (tableCell.getTableCellType()) {
@@ -463,10 +467,7 @@ public class Table {
         }
 
 		if (tableCell.getCellType() == CellType.BRL_TYPE) {
-			final DataFormat dataFormat = wb.createDataFormat();
-			final CellStyle cellStyle = wb.createCellStyle();
-			cellStyle.cloneStyleFrom(style);
-			cellStyle.setDataFormat(dataFormat.getFormat("[$R$-416] #.##0,00;[RED]-[$R$-416] #.##0,00"));
+			cellStyle = getBrlCellStyle(dataFormat, style, cellStyle);
 			cell.setCellStyle(cellStyle);
 		} else {
 			cell.setCellStyle(style);
@@ -502,6 +503,12 @@ public class Table {
 
 	private CellStyle footer(CellStyle style) {
 		style.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
+		return style;
+	}
+
+	private CellStyle getBrlCellStyle(DataFormat dataFormat, CellStyle styleFrom, CellStyle style) {
+		style.cloneStyleFrom(styleFrom);
+		style.setDataFormat(dataFormat.getFormat("_$R$ 0.00"));
 		return style;
 	}
 
