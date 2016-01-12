@@ -50,6 +50,20 @@ public class ExcelUtil {
         return response;
     }
 
+    private static HttpServletResponse getResponseForTxt(String filename,
+                                                         FacesContext context) {
+        HttpServletResponse response = (HttpServletResponse) context
+                .getExternalContext().getResponse();
+        response.setContentType("text/plain");
+        response.setHeader("Expires", "0");
+        response.setHeader("Cache-Control",
+                "must-revalidate, post-check=0, pre-check=0");
+        response.setHeader("Pragma", "public");
+        response.setHeader("Content-disposition", "attachment;filename="
+                + filename + ".txt");
+        return response;
+    }
+
     private static void doExport(String name, String extension, Workbook wb) throws IOException {
         String filename = name + "_";
         filename += LocalDateTime.now().toString("dd-MM-yyyy_HH-mm");
@@ -60,7 +74,7 @@ public class ExcelUtil {
     }
 
     /**
-     * @deprecated use {@link void exportXls(String name, Table t)} instead.
+     * @deprecated use {@link static void exportXls(String name, Table t)} instead.
      */
     @Deprecated
     public static void export(String name, Table t) throws IOException {
@@ -73,7 +87,7 @@ public class ExcelUtil {
     }
 
     /**
-     * Prefira {@link void exportSXlsx(String name, Table t)} por fazer cache em disco e ser mais otimizado
+     * Prefira {@link static void exportSXlsx(String name, Table t)} por fazer cache em disco e ser mais otimizado
      *
      * @param name
      * @param t
@@ -108,6 +122,17 @@ public class ExcelUtil {
         
 		  exportCsv(t, chartsetName, response.getOutputStream());
 		  
+        context.responseComplete();
+    }
+
+    public static void exportTxt(String name, Table t, String chartsetName) throws IOException {
+        String filename = name + "_";
+        filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletResponse response = getResponseForTxt(filename, context);
+        
+        exportCsv(t, chartsetName, response.getOutputStream());
+          
         context.responseComplete();
     }
 	 
