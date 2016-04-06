@@ -87,12 +87,12 @@
 		<repository>
 			<id>tecsinapse-releases</id>
 			<name>Internal Releases</name>
-			<url>http://tools.portaltecsinapse.com.br/nexus/content/repositories/releases</url>
+			<url>https://nexus.portaltecsinapse.com.br/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>tecsinapse-snapshots</id>
 			<name>Internal Snapshots</name>
-			<url>http://tools.portaltecsinapse.com.br/nexus/content/repositories/snapshots</url>
+			<url>https://nexus.portaltecsinapse.com.br/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<scm>
