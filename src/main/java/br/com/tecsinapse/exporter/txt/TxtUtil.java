@@ -32,7 +32,7 @@ public class TxtUtil {
 						line.append(field.getSeparator());
 					}
 				}
-				line.append("\n");
+				line.append("\r\n");
 				writer.write(line.toString());
 			}
 			writer.flush();
