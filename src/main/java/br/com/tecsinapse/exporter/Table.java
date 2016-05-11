@@ -458,6 +458,8 @@ public class Table {
             case FOOTER:
                 style = tableCell.isBold() ? footer(getDefaultCellStyle(wb)) : defaultFooter;
                 break;
+			default:
+				throw new IllegalStateException("CellStyle " + tableCell.getTableCellType() + " is not supported.");
         }
 
         if(tableCell.isBold()){

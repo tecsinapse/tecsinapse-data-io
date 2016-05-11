@@ -92,8 +92,7 @@ public class CSVUtil {
                     final T next = iter.next();
                     String field = "";
                     if (next != null) {
-                        field = String.valueOf(next != null ? next : "")
-                                .replace("\"", "\"\"");
+                        field = String.valueOf(next).replace("\"", "\"\"");
                         if (field.indexOf(separator) > -1 || field.indexOf('"') > -1) {
                             field = '"' + field + '"';
                         }
