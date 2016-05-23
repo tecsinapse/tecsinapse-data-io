@@ -430,18 +430,14 @@ public class ExcelParser<T> implements Parser<T> {
                 continue;
             }
 
+			table = processXlsxSheet(styles, strings, stream, initialRow);
 
-            Table aba = processXlsxSheet(styles, strings, stream, initialRow);
-            if (table == null) {
-                table = aba;
-            } else {
-                table.concatenateTableBelow(aba);
-            }
             stream.close();
             //le apenas 1 aba
             break;
         }
-        return table.toStringMatrix();
+
+        return table != null ? table.toStringMatrix() : null;
     }
 
     protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, boolean ignoreFirstRow) throws Exception {

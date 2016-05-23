@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.tecsinapse</groupId>
 	<artifactId>tecsinapse-exporter</artifactId>
-	<version>1.1.54-SNAPSHOT</version>
+	<version>1.1.55-SNAPSHOT</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -63,12 +63,12 @@
 		<repository>
 			<id>tecsinapse</id>
 			<name>Tecsinapse</name>
-			<url>http://tools.portaltecsinapse.com.br/nexus/content/groups/public</url>
+			<url>http://nexus.portaltecsinapse.com.br/content/groups/public</url>
 		</repository>
 		<repository>
 			<id>tecsinapse-snapshots</id>
 			<name>Tecsinapse Snapshots</name>
-			<url>http://tools.portaltecsinapse.com.br/nexus/content/repositories/snapshots</url>
+			<url>http://nexus.portaltecsinapse.com.br/content/repositories/snapshots</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>

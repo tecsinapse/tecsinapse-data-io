@@ -12,9 +12,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.reflections.ReflectionUtils;
+
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Ints;
-import org.reflections.ReflectionUtils;
 
 import br.com.tecsinapse.exporter.FixedLengthFileUtil;
 import br.com.tecsinapse.exporter.annotation.FixedLengthColumn;
@@ -33,6 +34,7 @@ public class FixedLengthFileParser<T> {
     private int afterLine = 0;
     private String eof = null;
     private int ignoreLastLines = 0;
+    private boolean ignoreColumnLengthError = false;
 
     public FixedLengthFileParser(Class<T> clazz) {
         this.clazz = clazz;
@@ -72,7 +74,12 @@ public class FixedLengthFileParser<T> {
         this.ignoreLastLines = linesToIgnore;
         return this;
     }
-    
+
+    public FixedLengthFileParser<T> withIgnoreColumnLengthError(boolean ignoreColumnLengthError) {
+        this.ignoreColumnLengthError = ignoreColumnLengthError;
+        return this;
+    }
+
     public List<T> parse(File file) throws IOException, ReflectiveOperationException {
         return parse(new FileInputStream(file));
     }
@@ -103,7 +110,8 @@ public class FixedLengthFileParser<T> {
                 }
                 Method method = annotationMethod.getMethod();
                 FixedLengthColumn flc = annotationMethod.getFlc();
-                if (!flc.useLineLength() && workingLine.length() < flc.columnSize()) {
+                final boolean naoValidouTamanhoDaLinha = !flc.useLineLength() && workingLine.length() < flc.columnSize() && !ignoreColumnLengthError;
+                if (naoValidouTamanhoDaLinha) {
                     if (ignoreLineWhenError) {
                         ignoreLine = true;
                         break;
@@ -114,7 +122,7 @@ public class FixedLengthFileParser<T> {
                                 line));
                     }
                 }
-                int length = flc.useLineLength() ? workingLine.length() : flc.columnSize();
+                int length = flc.useLineLength() || workingLine.length() < flc.columnSize() ? workingLine.length() : flc.columnSize();
                 String value = workingLine.substring(0, length).trim();
                 if (removeDuplicatedSpaces) {
                     value = value.replaceAll("\\s+", " ");

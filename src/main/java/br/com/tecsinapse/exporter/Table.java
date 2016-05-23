@@ -447,7 +447,7 @@ public class Table {
     private void setCellStyle(CellStyle defaultHeader, CellStyle defaultBody, CellStyle defaultFooter, Cell cell,
 							  TableCell tableCell, Workbook wb, DataFormat dataFormat, CellStyle cellStyle){
 
-        CellStyle style = null;
+        CellStyle style;
         switch (tableCell.getTableCellType()) {
             case HEADER:
                 style = tableCell.isBold() ? header(getDefaultCellStyle(wb)) : defaultHeader;
@@ -458,6 +458,8 @@ public class Table {
             case FOOTER:
                 style = tableCell.isBold() ? footer(getDefaultCellStyle(wb)) : defaultFooter;
                 break;
+			default:
+				throw new IllegalStateException("CellStyle " + tableCell.getTableCellType() + " is not supported.");
         }
 
         if(tableCell.isBold()){
