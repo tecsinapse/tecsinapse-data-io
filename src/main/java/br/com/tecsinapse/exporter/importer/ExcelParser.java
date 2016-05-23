@@ -3,8 +3,6 @@ package br.com.tecsinapse.exporter.importer;
 import static br.com.tecsinapse.exporter.importer.Importer.getMappedMethods;
 import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,11 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -45,6 +41,12 @@ import org.joda.time.LocalDateTime;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
+
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.ExcelUtil;
@@ -68,6 +70,7 @@ public class ExcelParser<T> implements Parser<T> {
     private String dateTimeStringPattern;
     private ImporterXLSXType importerXLSXType = DEFAULT;
     private boolean dateAsLocalDateTime = false;
+	private boolean dateAsString = true;
 
     //lazy somente criado ao chamar getWorkbook
     private Workbook workbook;
@@ -247,15 +250,30 @@ public class ExcelParser<T> implements Parser<T> {
                 Method method = methodTcm.getKey();
                 method.setAccessible(true);
                 
-                String value = getValueOrEmpty(evaluator, row.getCell(tcm.columnIndex()));
-                TableCellConverter<?> converter = tcm.converter().newInstance();
-                Object obj = converter.apply(value);
-                method.invoke(instance, obj);
+                Object value = getValueOrEmptyAsObject(evaluator, row.getCell(tcm.columnIndex()));
+				try {
+					if (!dateAsString && isSameType(value, tcm.converter())) {
+						method.invoke(instance, value);
+					} else {
+						TableCellConverter<?> converter = tcm.converter().newInstance();
+						method.invoke(instance, converter.apply(value.toString()));
+					}
+				} catch (NoSuchMethodException e) {
+					TableCellConverter<?> converter = tcm.converter().newInstance();
+					method.invoke(instance, converter.apply(value.toString()));
+				}
             }
             list.add(instance);
         }
         return list;
     }
+
+	private boolean isSameType(Object value, Class<?> converter) throws NoSuchMethodException {
+		Method converterMethod = converter.getMethod("apply", String.class);
+		Class<?> returnType = converterMethod.getReturnType();
+		boolean isInstance = value != null && returnType.isInstance(value);
+		return isInstance;
+	}
 
     private String getValueOrEmpty(List<String> fields, int index) {
         if (fields.isEmpty() || fields.size() <= index) {
@@ -323,7 +341,11 @@ public class ExcelParser<T> implements Parser<T> {
         return lines;
     }
 
-    private String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell) {
+	private String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell) {
+		return getValueOrEmptyAsObject(evaluator, cell).toString();
+	}
+
+    private Object getValueOrEmptyAsObject(FormulaEvaluator evaluator, Cell cell) {
         final CellValue cellValue = evaluator.evaluate(cell);
         if (cellValue == null) {
             return "";
@@ -334,9 +356,11 @@ public class ExcelParser<T> implements Parser<T> {
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
                     if (dateAsLocalDateTime) {
-                        return LocalDateTime.fromDateFields(cell.getDateCellValue()).toString(dateTimeStringPattern);
+						LocalDateTime localDateTime = LocalDateTime.fromDateFields(cell.getDateCellValue());
+                        return dateAsString ? localDateTime.toString(dateTimeStringPattern) : localDateTime;
                     }
-                    return new LocalDate(cell.getDateCellValue()).toString(dateStringPattern);
+					LocalDate localDate = new LocalDate(cell.getDateCellValue());
+                    return  dateAsString ? localDate.toString(dateStringPattern) : localDate;
                 }
                 //força a tirar '.0' se for inteiro
                 cell.setCellType(Cell.CELL_TYPE_STRING);
@@ -494,4 +518,12 @@ public class ExcelParser<T> implements Parser<T> {
     public void setDateAsLocalDateTime(boolean dateAsLocalDateTime) {
         this.dateAsLocalDateTime = dateAsLocalDateTime;
     }
+
+	public void setDateAsString(boolean dateAsString) {
+		this.dateAsString = dateAsString;
+	}
+
+	public boolean isDateAsString() {
+		return dateAsString;
+	}
 }

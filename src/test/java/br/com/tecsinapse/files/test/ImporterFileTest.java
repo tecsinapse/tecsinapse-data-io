@@ -18,13 +18,13 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
+
 import br.com.tecsinapse.exporter.FileType;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import br.com.tecsinapse.exporter.importer.ExcelParser;
 import br.com.tecsinapse.exporter.importer.Importer;
 import br.com.tecsinapse.exporter.importer.ImporterXLSXType;
-
-import com.google.common.base.Charsets;
 
 public class ImporterFileTest {
 
@@ -70,7 +70,7 @@ public class ImporterFileTest {
 
             final List<FileBean> beans = importer.parse();
             for (int i = 0; i < beans.size(); i++) {
-                assertFileBeanEquals(beans.get(i), esperados.get(i));
+                assertFileBeanEquals(beans.get(i), esperados.get(i), arquivo);
             }
         }
     }
@@ -105,7 +105,7 @@ public class ImporterFileTest {
 
             final List<FileBean> beans = excelParser.parse();
             for (int i = 0; i < beans.size(); i++) {
-                assertFileBeanEquals(beans.get(i), esperados.get(i));
+                assertFileBeanEquals(beans.get(i), esperados.get(i), arquivo);
             }
         }
     }
@@ -142,20 +142,39 @@ public class ImporterFileTest {
                 for (int i = 0; i < beans.size(); i++) {
                     final FileBean atual = beans.get(i);
                     final FileBean esperado = esperados.get(i);
-                    assertFileBeanEquals(atual, esperado);
+                    assertFileBeanEquals(atual, esperado, arquivo);
                 }
             }
         }
     }
 
-    private void assertFileBeanEquals(FileBean atual, FileBean esperado) {
-        assertEquals(atual.cidade, esperado.cidade);
-        assertEquals(atual.estado, esperado.estado);
-        assertEquals(atual.data, esperado.data);
-        assertEquals(atual.vazia, esperado.vazia);
-        assertEquals(atual.inteiro, esperado.inteiro);
-        assertEquals(atual.decimal.compareTo(esperado.decimal), 0);
-        assertEquals(atual.numeroInteger, esperado.numeroInteger);
+	@Test(dataProvider = "arquivosSheet")
+	public void validaSheetWithDate(File arquivo, int afterLine, List<List<FileBean>> sheets) throws Exception {
+		try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
+			excelParser.setDateAsString(false);
+
+			for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
+				excelParser.setSheetNumber(sheetNumber);
+				final List<FileBean> esperados = sheets.get(sheetNumber);
+
+				final List<FileBean> beans = excelParser.parse();
+				for (int i = 0; i < beans.size(); i++) {
+					final FileBean atual = beans.get(i);
+					final FileBean esperado = esperados.get(i);
+					assertFileBeanEquals(atual, esperado, arquivo);
+				}
+			}
+		}
+	}
+
+    private void assertFileBeanEquals(FileBean atual, FileBean esperado, File file) {
+        assertEquals(atual.cidade, esperado.cidade, file.getName());
+        assertEquals(atual.estado, esperado.estado, file.getName());
+        assertEquals(atual.data, esperado.data, file.getName());
+        assertEquals(atual.vazia, esperado.vazia, file.getName());
+        assertEquals(atual.inteiro, esperado.inteiro, file.getName());
+        assertEquals(atual.decimal.compareTo(esperado.decimal), 0, file.getName());
+        assertEquals(atual.numeroInteger, esperado.numeroInteger, file.getName());
     }
     
     @DataProvider(name = "filesWithHiddenSheet")
