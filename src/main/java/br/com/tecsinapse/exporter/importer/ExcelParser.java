@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -258,7 +259,12 @@ public class ExcelParser<T> implements Parser<T> {
 			@Override
 			public boolean apply(PropertyDescriptor propertyDescriptor) {
 				final Method writeMethod = propertyDescriptor.getWriteMethod();
-				return writeMethod.getDeclaredAnnotation(TableCellMapping.class) != null;
+				for (Annotation annotation : writeMethod.getDeclaredAnnotations()) {
+					if (annotation instanceof TableCellMapping) {
+						return true;
+					}
+				}
+				return false;
 			}
 		};
 	}
