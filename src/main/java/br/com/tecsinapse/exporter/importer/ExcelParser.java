@@ -219,7 +219,7 @@ public class ExcelParser<T> implements Parser<T> {
 		final Iterator<T> iterator = resultList.iterator();
 		while(iterator.hasNext()) {
 			final T instance = iterator.next();
-			if (allProperiesHasNoValue(instance, readMethodsOfWriteMethodsWithTableCellMapping)) {
+			if (allPropertiesHasNoValue(instance, readMethodsOfWriteMethodsWithTableCellMapping)) {
 				iterator.remove();
 			} else {
 				break;
@@ -237,7 +237,7 @@ public class ExcelParser<T> implements Parser<T> {
 		};
 	}
 
-	private boolean allProperiesHasNoValue(T instance, Set<Method> readMethodsOfWriteMethodsWithTableCellMapping) throws InvocationTargetException, IllegalAccessException {
+	private boolean allPropertiesHasNoValue(T instance, Set<Method> readMethodsOfWriteMethodsWithTableCellMapping) throws InvocationTargetException, IllegalAccessException {
 		for (Method method : readMethodsOfWriteMethodsWithTableCellMapping) {
 			final Object value = method.invoke(instance);
 			if (method.getReturnType().equals(String.class)) {
