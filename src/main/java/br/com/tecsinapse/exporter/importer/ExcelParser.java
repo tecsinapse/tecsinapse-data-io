@@ -2,9 +2,13 @@ package br.com.tecsinapse.exporter.importer;
 
 import static br.com.tecsinapse.exporter.importer.Importer.getMappedMethods;
 import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.nonNull;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,16 +18,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -45,6 +50,14 @@ import org.joda.time.LocalDateTime;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.ExcelUtil;
@@ -184,11 +197,79 @@ public class ExcelParser<T> implements Parser<T> {
      */
     @Override
     public List<T> parse() throws Exception {
+        List<T> resultList;
         if (ExcelType.XLSX == type) {
-            return parseXlsx();
+            resultList = parseXlsx();
+        } else {
+            resultList = parseXls();
         }
-        return parseXls();
+        removeBlankLinesOfEnd(resultList);
+        return resultList;
     }
+
+	private void removeBlankLinesOfEnd(List<T> resultList) throws InvocationTargetException, IllegalAccessException, IntrospectionException {
+        Collections.reverse(resultList);
+		final PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
+		final Set<Method> readMethodsOfWriteMethodsWithTableCellMapping = FluentIterable.from(Arrays.asList(propertyDescriptors))
+				.filter(hasWriteMethod())
+				.filter(hasAnnotationTableCellMapping())
+				.transform(toReadMethod())
+				.toSet();
+
+		final Iterator<T> iterator = resultList.iterator();
+		while(iterator.hasNext()) {
+			final T instance = iterator.next();
+			if (allProperiesHasNoValue(instance, readMethodsOfWriteMethodsWithTableCellMapping)) {
+				iterator.remove();
+			} else {
+				break;
+			}
+		}
+        Collections.reverse(resultList);
+	}
+
+	private static Function<PropertyDescriptor, Method> toReadMethod() {
+		return new Function<PropertyDescriptor, Method>() {
+			@Override
+			public Method apply(PropertyDescriptor propertyDescriptor) {
+				return propertyDescriptor.getReadMethod();
+			}
+		};
+	}
+
+	private boolean allProperiesHasNoValue(T instance, Set<Method> readMethodsOfWriteMethodsWithTableCellMapping) throws InvocationTargetException, IllegalAccessException {
+		for (Method method : readMethodsOfWriteMethodsWithTableCellMapping) {
+			final Object value = method.invoke(instance);
+			if (method.getReturnType().equals(String.class)) {
+				String valueStr = nullToEmpty((String) value).trim();
+				if (!isNullOrEmpty(valueStr)) {
+					return false;
+				}
+			} else if (nonNull(value)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private Predicate<PropertyDescriptor> hasAnnotationTableCellMapping() {
+		return new Predicate<PropertyDescriptor>() {
+			@Override
+			public boolean apply(PropertyDescriptor propertyDescriptor) {
+				final Method writeMethod = propertyDescriptor.getWriteMethod();
+				return writeMethod.getDeclaredAnnotation(TableCellMapping.class) != null;
+			}
+		};
+	}
+
+	private Predicate<PropertyDescriptor> hasWriteMethod() {
+		return new Predicate<PropertyDescriptor>() {
+			@Override
+			public boolean apply(PropertyDescriptor propertyDescriptor) {
+				return propertyDescriptor.getWriteMethod() != null;
+			}
+		};
+	}
 
     private List<T> parseXlsx() throws Exception {
         List<List<String>> xlsxLines = getXlsxLines(afterLine, sheetNumber);
