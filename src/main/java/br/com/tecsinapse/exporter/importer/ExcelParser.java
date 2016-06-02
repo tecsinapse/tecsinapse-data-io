@@ -211,18 +211,20 @@ public class ExcelParser<T> implements Parser<T> {
         Collections.reverse(resultList);
 		final PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
 		final Set<Method> readMethodsOfWriteMethodsWithTableCellMapping = FluentIterable.from(Arrays.asList(propertyDescriptors))
-				.filter(hasWriteMethod())
+				.filter(hasWriteAndReadMethod())
 				.filter(hasAnnotationTableCellMapping())
 				.transform(toReadMethod())
 				.toSet();
 
-		final Iterator<T> iterator = resultList.iterator();
-		while(iterator.hasNext()) {
-			final T instance = iterator.next();
-			if (allPropertiesHasNoValue(instance, readMethodsOfWriteMethodsWithTableCellMapping)) {
-				iterator.remove();
-			} else {
-				break;
+		if (!readMethodsOfWriteMethodsWithTableCellMapping.isEmpty()) {
+			final Iterator<T> iterator = resultList.iterator();
+			while(iterator.hasNext()) {
+				final T instance = iterator.next();
+				if (allPropertiesHasNoValue(instance, readMethodsOfWriteMethodsWithTableCellMapping)) {
+					iterator.remove();
+				} else {
+					break;
+				}
 			}
 		}
         Collections.reverse(resultList);
@@ -262,11 +264,12 @@ public class ExcelParser<T> implements Parser<T> {
 		};
 	}
 
-	private Predicate<PropertyDescriptor> hasWriteMethod() {
+	private Predicate<PropertyDescriptor> hasWriteAndReadMethod() {
 		return new Predicate<PropertyDescriptor>() {
 			@Override
 			public boolean apply(PropertyDescriptor propertyDescriptor) {
-				return propertyDescriptor.getWriteMethod() != null;
+				return propertyDescriptor.getWriteMethod() != null &&
+						propertyDescriptor.getReadMethod() != null;
 			}
 		};
 	}
