@@ -4,7 +4,6 @@ import static br.com.tecsinapse.exporter.importer.Importer.getMappedMethods;
 import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static java.util.Objects.nonNull;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -247,7 +246,7 @@ public class ExcelParser<T> implements Parser<T> {
 				if (!isNullOrEmpty(valueStr)) {
 					return false;
 				}
-			} else if (nonNull(value)) {
+			} else if (value != null) {
 				return false;
 			}
 		}
