@@ -1,0 +1,21 @@
+sudo:
+  false
+language:
+  java
+jdk:
+  - oraclejdk7
+
+notifications:
+  email:
+    recipients:
+      - dev@tecsinapse.com.br
+    on_success: change
+    on_failure: always
+
+after_success:
+  - mvn -B clean test jacoco:report coveralls:report
+  #- bash .travis_after_success.sh (waiting for sonatype user/pass)
+
+cache:
+  directories:
+    - $HOME/.m2
