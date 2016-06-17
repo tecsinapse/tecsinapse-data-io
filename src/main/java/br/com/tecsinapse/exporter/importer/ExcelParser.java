@@ -192,8 +192,8 @@ public class ExcelParser<T> implements Parser<T> {
     /**
      * Não lê a primeira linha
      *
-     * @return
-     * @throws Exception
+     * @return lista represetando as linhas da planilha
+     * @throws Exception em caso de erro
      */
     @Override
     public List<T> parse() throws Exception {
@@ -309,7 +309,6 @@ public class ExcelParser<T> implements Parser<T> {
     private List<T> parseXls() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException, NoSuchMethodException {
         List<T> list = new ArrayList<>();
 
-
         Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods(clazz, group);
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(this.sheetNumber);
@@ -318,7 +317,7 @@ public class ExcelParser<T> implements Parser<T> {
 
 		final Constructor<T> constructor = clazz.getDeclaredConstructor();
 		constructor.setAccessible(true);
-		 
+
         Iterator<Row> rowIterator = sheet.iterator();
 
         int i = 0;
@@ -360,16 +359,18 @@ public class ExcelParser<T> implements Parser<T> {
         return getXlsLinesIncludingEmptyCells();
     }
 
-    @Deprecated
+
     /**
-     * @deprecated
-     * Não traz na lista as ceulas que estão vazias no arquivo.
+     * @return lista representando as linhas da planilha
+     * @see #getXlsLinesIncludingEmptyCells()
+     * @deprecated Não traz na lista as ceulas que estão vazias no arquivo.
      * O método getXlsLinesIncludingEmptyCells faz esse tratamento e deve ser acessado através do método getLines.
      */
-    public List<List<String>> getXlsLines() throws InvalidFormatException, IOException {
-    	Workbook wb = getWorkbook();
+    @Deprecated
+    public List<List<String>> getXlsLines() {
+        Workbook wb = getWorkbook();
 
-    	Sheet sheet = wb.getSheetAt(this.sheetNumber);
+        Sheet sheet = wb.getSheetAt(this.sheetNumber);
         final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
         List<List<String>> lines = Lists.newArrayList();
@@ -470,6 +471,9 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     /**
+     * @return lista contendo as linhas da planilha
+     * @throws Exception em caso de erro
+     * @see #getLines()
      * @deprecated Use getLines() mais afterLine 0 nao deveria importar se e xls ou xlsx
      */
     @Deprecated

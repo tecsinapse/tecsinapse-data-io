@@ -1,28 +1,33 @@
 package br.com.tecsinapse.exporter.txt;
 
 /**
- * Representa os tipos de separadores possíveis para utilizar entre as colunas do arquivo .txt gerado.<br/>
- * <b>Separadores:</b><br/>
- * <li>TAB: \t (Tabulação)<br/></li>
- * <li>NONE: '' (Vazio)<br/></li>
- * <li>SPACE: ' ' (Espaço em branco)<br/></li>
- * <li>SEMICOLON: ';' (Ponto e vírgula)<br/></li>
- * <li>COMMA: ',' (Vírgula)<br/></li>
+ * Representa os tipos de separadores possíveis para utilizar entre as colunas do arquivo {@code .txt} gerado.
+ * <br><br>
+ * <b>Separadores:</b>
+ * <ul>
+ * <li>TAB: \t (Tabulação)</li>
+ * <li>NONE: '' (Vazio)</li>
+ * <li>SPACE: ' ' (Espaço em branco)</li>
+ * <li>SEMICOLON: ';' (Ponto e vírgula)</li>
+ * <li>COMMA: ',' (Vírgula)</li>
+ * </ul>
  */
 public enum SeparatorTxt {
-	TAB("\t"),
-	NONE(""),
-	SPACE(" "),
-	SEMICOLON(";"),
-	COMMA(",");
 
-	SeparatorTxt(String separator) {
-		this.separator = separator;
-	}
+    TAB("\t"),
+    NONE(""),
+    SPACE(" "),
+    SEMICOLON(";"),
+    COMMA(",");
 
-	private final String separator;
+    SeparatorTxt(String separator) {
+        this.separator = separator;
+    }
 
-	public String getSeparator() {
-		return separator;
-	}
+    private final String separator;
+
+    public String getSeparator() {
+        return separator;
+    }
+
 }

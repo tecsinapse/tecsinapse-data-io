@@ -74,7 +74,11 @@ public class ExcelUtil {
     }
 
     /**
-     * @deprecated use {@link static void exportXls(String name, Table t)} instead.
+     * @param name nome do arquivo a ser gerado
+     * @param t    {@link Table} a ser exportada
+     * @throws IOException em caso de algum problema de {@code I/O}
+     * @see #exportXls(String, Table)
+     * @deprecated use {@code static void exportXls(String name, Table t)} instead.
      */
     @Deprecated
     public static void export(String name, Table t) throws IOException {
@@ -87,11 +91,11 @@ public class ExcelUtil {
     }
 
     /**
-     * Prefira {@link static void exportSXlsx(String name, Table t)} por fazer cache em disco e ser mais otimizado
+     * Prefira {@code static void exportSXlsx(String name, Table t)} por fazer cache em disco e ser mais otimizado
      *
-     * @param name
-     * @param t
-     * @throws IOException
+     * @param name nome do arquivo a ser gerado
+     * @param t {@link Table} a ser exportada
+     * @throws IOException em caso de algum problema de {@code I/O}
      */
     public static void exportXlsx(String name, Table t) throws IOException {
         Workbook wb = t.toXSSFWorkBook();
@@ -119,9 +123,9 @@ public class ExcelUtil {
         filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletResponse response = getResponseForCsv(filename, context);
-        
-		  exportCsv(t, chartsetName, response.getOutputStream());
-		  
+
+        exportCsv(t, chartsetName, response.getOutputStream());
+
         context.responseComplete();
     }
 
@@ -135,7 +139,7 @@ public class ExcelUtil {
           
         context.responseComplete();
     }
-	 
+
     public static void exportCsv(Table t, String chartsetName, OutputStream out) throws IOException {
         List<List<String>> csv = t.toStringMatrix();
         CSVUtil.write(csv, out, chartsetName);
