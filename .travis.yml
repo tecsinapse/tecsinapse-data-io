@@ -14,8 +14,14 @@ notifications:
 
 after_success:
   - mvn -B clean test jacoco:report coveralls:report
-  #- bash .travis_after_success.sh (waiting for sonatype user/pass)
+
+# waiting for sonatype user/pass
+#  - bash .travis_after_success.sh (waiting for sonatype user/pass)
 
 cache:
   directories:
     - $HOME/.m2
+
+install:
+# waiting for sonatype user/pass
+  - mvn install -DskipTests=true -Dgpg.skip=true
