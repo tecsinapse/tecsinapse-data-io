@@ -1,7 +1,7 @@
 tecsinapse-exporter
 ==========
 [![Build Status](https://travis-ci.org/tecsinapse/tecsinapse-exporter.svg?branch=master)](https://travis-ci.org/tecsinapse/tecsinapse-exporter)
-[![Coverage Status](https://img.shields.io/coveralls/tecsinapse/tecsinapse-exporter.svg)](https://www.google.com)
+[![Coverage Status](https://img.shields.io/coveralls/tecsinapse/tecsinapse-exporter.svg?branch=master)](https://coveralls.io/github/tecsinapse/tecsinapse-exporter?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/br.com.tecsinapse/tecsinapse-exporter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/br.com.tecsinapse/tecsinapse-exporter/)
 [![Javadocs](http://www.javadoc.io/badge/br.com.tecsinapse/tecsinapse-exporter.svg)](http://www.javadoc.io/doc/br.com.tecsinapse/tecsinapse-exporter)
 
