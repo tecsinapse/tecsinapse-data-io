@@ -1,12 +1,15 @@
 package br.com.tecsinapse.exporter;
 
 public enum ExcelType {
-	XLS("dd/MM/yyyy", "dd/MM/yyyy HH:mm:ss"), XLSX("MM/dd/yyyy", "MM/dd/yyyy HH:mm:ss"), XLSM("MM/dd/yyyy", "MM/dd/yyyy HH:mm:ss");
+
+    XLS("dd/MM/yyyy", "dd/MM/yyyy HH:mm:ss"),
+    XLSX("MM/dd/yyyy", "MM/dd/yyyy HH:mm:ss"),
+    XLSM("MM/dd/yyyy", "MM/dd/yyyy HH:mm:ss");
 
     private final String defaultDatePattern;
     private final String defaultDateTimePattern;
 
-    private ExcelType(String defaultDatePattern, String defaultDateTimePattern) {
+    ExcelType(String defaultDatePattern, String defaultDateTimePattern) {
         this.defaultDatePattern = defaultDatePattern;
         this.defaultDateTimePattern = defaultDateTimePattern;
     }
@@ -28,4 +31,5 @@ public enum ExcelType {
         }
         return ExcelType.XLS;
     }
+
 }

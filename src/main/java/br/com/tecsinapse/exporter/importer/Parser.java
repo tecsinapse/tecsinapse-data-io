@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public interface Parser<T> extends Closeable {
+
     List<T> parse() throws IllegalAccessException, InstantiationException, InvocationTargetException, Exception;
 
     /**
@@ -20,4 +21,5 @@ public interface Parser<T> extends Closeable {
     void setDateTimeStringPattern(String dateTimeStringPattern);
 
     void setDateAsLocalDateTime(boolean considerarLocalDateTime);
+
 }

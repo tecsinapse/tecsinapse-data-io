@@ -1,7 +1,11 @@
 package br.com.tecsinapse.exporter;
 
 public enum FileType {
-	XLS, XLSX, XLSM, CSV;
+
+    XLS,
+    XLSX,
+    XLSM,
+    CSV;
 
     public static FileType getFileType(String filename) {
         if (filename.toLowerCase().endsWith("xlsx")) {
@@ -26,4 +30,5 @@ public enum FileType {
         }
         return null;
     }
+
 }
