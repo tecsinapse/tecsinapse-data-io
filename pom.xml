@@ -131,11 +131,25 @@
         </plugins>
     </build>
 
+    <organization>
+        <name>TecSinapse</name>
+        <url>http://www.tecsinapse.com.br</url>
+    </organization>
+
     <developers>
+        <developer>
+            <id>tecsinapse</id>
+            <name>TecSinapse</name>
+            <email>dev@tecsinapse.com.br</email>
+            <organization>${project.organization.name}</organization>
+            <organizationUrl>${project.organization.url}</organizationUrl>
+        </developer>
         <developer>
             <id>filipe.nevola</id>
             <name>Filipe Nevola</name>
             <email>filipe.nevola@tecsinapse.com.br</email>
+            <organization>${project.organization.name}</organization>
+            <organizationUrl>${project.organization.url}</organizationUrl>
         </developer>
     </developers>
 
