@@ -8,6 +8,14 @@
 
     <url>https://github.com/tecsinapse/${project.artifactId}</url>
 
+    <licenses>
+        <license>
+            <name>FSF Lesser GNU Public License, Version 3</name>
+            <url>http://www.gnu.org/licenses/lgpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
