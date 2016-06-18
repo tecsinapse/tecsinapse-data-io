@@ -1,5 +1,10 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.files.test;
-
 
 import static org.testng.Assert.assertEquals;
 
@@ -18,13 +23,13 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
+
 import br.com.tecsinapse.exporter.FileType;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import br.com.tecsinapse.exporter.importer.ExcelParser;
 import br.com.tecsinapse.exporter.importer.Importer;
 import br.com.tecsinapse.exporter.importer.ImporterXLSXType;
-
-import com.google.common.base.Charsets;
 
 public class ImporterFileTest {
 
@@ -47,7 +52,6 @@ public class ImporterFileTest {
     @DataProvider(name = "arquivos")
     public Object[][] arquivos() throws URISyntaxException {
         List<FileBean> esperados = FileBean.getBeans();
-
 
         return new Object[][]{
                 {getFile("planilha.csv"), 1, FileType.CSV, esperados},
@@ -120,7 +124,6 @@ public class ImporterFileTest {
         List<FileBean> sheet2 = new ArrayList<>(reverse);
         Collections.swap(sheet2, 1, 3);
 
-
         return new Object[][]{
                 {getFile("planilha.xls"), 1, Arrays.asList(esperados, sheet2, reverse)},
                 {getFile("planilha.xlsx"), 1, Arrays.asList(esperados, sheet2, reverse)},
@@ -160,27 +163,26 @@ public class ImporterFileTest {
     
     @DataProvider(name = "filesWithHiddenSheet")
     public Object[][] filesWithHiddenSheet() throws URISyntaxException {
-
         return new Object[][]{
                 {getFile("planilha-com-primeira-aba-invisivel.xls"), 1},
                 {getFile("planilha-com-primeira-aba-invisivel.xlsx"), 2}
         };
     }
-    
-	@Test(dataProvider = "filesWithHiddenSheet")
-	public void validateFilesWithHiddenSheet(File file, int expectedSheetNumber) throws IOException {
 
-		try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, file, 1)) {
-			assertEquals(excelParser.getSheetNumber(), 0);
+    @Test(dataProvider = "filesWithHiddenSheet")
+    public void validateFilesWithHiddenSheet(File file, int expectedSheetNumber) throws IOException {
+        try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, file, 1)) {
+            assertEquals(excelParser.getSheetNumber(), 0);
 
-			excelParser.setSheetNumberAsFirstNotHidden();
-			assertEquals(excelParser.getSheetNumber(), expectedSheetNumber);
-			
-			try {
-				excelParser.parse();
-			} catch (Exception e) {
-				Assert.fail("Fail while reading first not hidden sheet.", e);
-			}
-		}
-	}
+            excelParser.setSheetNumberAsFirstNotHidden();
+            assertEquals(excelParser.getSheetNumber(), expectedSheetNumber);
+
+            try {
+                excelParser.parse();
+            } catch (Exception e) {
+                Assert.fail("Fail while reading first not hidden sheet.", e);
+            }
+        }
+    }
+
 }

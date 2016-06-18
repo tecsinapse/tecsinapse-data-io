@@ -1,3 +1,9 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.exporter.annotation;
 
 import static java.lang.annotation.ElementType.METHOD;
@@ -19,4 +25,5 @@ public @interface TableCellMapping {
     Class<? extends TableCellConverter<?>> converter() default StringTableCellConverter.class;
 
     Class<?>[] groups() default { Default.class };
+
 }

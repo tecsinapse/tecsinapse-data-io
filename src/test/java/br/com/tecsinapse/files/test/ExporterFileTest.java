@@ -1,3 +1,9 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.files.test;
 
 import static org.testng.Assert.assertEquals;
@@ -36,7 +42,6 @@ public class ExporterFileTest {
     @DataProvider(name = "beans")
     public Object[][] beans() {
         final List<FileBean> beans = FileBean.getBeans();
-
 
         //melhorar e unificar api de exportação
         final Function<Table, File> csvExport = new Function<Table, File>() {
@@ -84,7 +89,6 @@ public class ExporterFileTest {
             }
         };
 
-
         final Function<Table, File> xlsExport = toWorkbookFunction(new Supplier<Workbook>() {
             @Override
             public Workbook get() {
@@ -131,7 +135,6 @@ public class ExporterFileTest {
             }
         };
     }
-
 
     @Test(dataProvider = "beans")
     public void testExporter(

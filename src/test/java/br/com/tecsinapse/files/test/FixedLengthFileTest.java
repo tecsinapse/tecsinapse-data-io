@@ -1,3 +1,9 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.files.test;
 
 import java.io.File;
@@ -25,46 +31,45 @@ public class FixedLengthFileTest {
     @DataProvider(name = "data")
     public Object[][] data() throws URISyntaxException {
         final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
-        return new Object[][] { { pojos, getFile("fixed-length-file.txt") } };
+        return new Object[][]{{pojos, getFile("fixed-length-file.txt")}};
     }
 
     @DataProvider(name = "dataUseLineLength")
     public Object[][] dataUseLineLength() throws URISyntaxException {
         final List<FakeFixedLengthFilePojoUseLineLength> pojos = expectedPojosUseLineLength();
-        return new Object[][] { { pojos, getFile("fixed-length-file.txt") } };
+        return new Object[][]{{pojos, getFile("fixed-length-file.txt")}};
     }
 
     @DataProvider(name = "dataWithError")
     public Object[][] dataWithError() throws URISyntaxException {
         final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
-        return new Object[][] { { pojos, getFile("fixed-length-file-with-error.txt") } };
+        return new Object[][]{{pojos, getFile("fixed-length-file-with-error.txt")}};
     }
-    
+
     @DataProvider(name = "dataWithHeader")
-    public Object[][] dataWithHeader() throws URISyntaxException{
+    public Object[][] dataWithHeader() throws URISyntaxException {
         final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
-        return new Object[][] { { pojos, getFile("fixed-length-file-with-header.txt") } };
+        return new Object[][]{{pojos, getFile("fixed-length-file-with-header.txt")}};
     }
 
     @DataProvider(name = "dataWithLongHeader")
-    public Object[][] dataWithLongHeader() throws URISyntaxException{
-    	final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
-    	return new Object[][] { { pojos, getFile("fixed-length-file-with-long-header.txt") } };
+    public Object[][] dataWithLongHeader() throws URISyntaxException {
+        final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
+        return new Object[][]{{pojos, getFile("fixed-length-file-with-long-header.txt")}};
     }
 
     @DataProvider(name = "dataWithLongHeaderAndEof")
-    public Object[][] dataWithLongHeaderAndEof() throws URISyntaxException{
-    	final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
-    	return new Object[][] { { pojos, getFile("fixed-length-file-with-long-header-and-eof.txt") } };
+    public Object[][] dataWithLongHeaderAndEof() throws URISyntaxException {
+        final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
+        return new Object[][]{{pojos, getFile("fixed-length-file-with-long-header-and-eof.txt")}};
     }
 
     @DataProvider(name = "dataWithSpaceLineAndLongHeaderAndEof")
-    public Object[][] dataWithSpaceLineAndLongHeaderAndEof() throws URISyntaxException{
-    	final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
-    	return new Object[][] { { pojos, getFile("fixed-length-file-with-space-line-and-long-header-and-eof.txt") } };
+    public Object[][] dataWithSpaceLineAndLongHeaderAndEof() throws URISyntaxException {
+        final List<FakeFixedLengthFilePojo> pojos = expectedPojos();
+        return new Object[][]{{pojos, getFile("fixed-length-file-with-space-line-and-long-header-and-eof.txt")}};
     }
-    
-    
+
     private List<FakeFixedLengthFilePojo> expectedPojos() {
         final List<FakeFixedLengthFilePojo> pojos = new ArrayList<>();
         pojos.add(new FakeFixedLengthFilePojo(1, "String 01", new LocalDate(2014, 9, 19), "01String 01 2014-09-19"));
@@ -86,86 +91,84 @@ public class FixedLengthFileTest {
     @Test(dataProvider = "data")
     public void validaImportacao(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException,
             ReflectiveOperationException {
-        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
+        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<>(
                 FakeFixedLengthFilePojo.class).withCharset(Charset.forName("UTF-8")).parse(file);
 
         validaImportacao(pojos, importedPojos);
     }
     
     @Test(dataProvider = "dataWithHeader")
-    public void validarImpotacaoComCabecalho(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException{
-
-        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
+    public void validarImpotacaoComCabecalho(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException {
+        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<>(
                 FakeFixedLengthFilePojo.class).withIgnoreFirstLine(true).withCharset(Charset.forName("UTF-8")).parse(file);
 
         validaImportacao(pojos, importedPojos);
     }
 
     @Test(dataProvider = "dataWithLongHeader")
-    public void validarImpotacaoComCabecalhoLongo(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException{
-    	
-    	List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
-    			FakeFixedLengthFilePojo.class).withAfterLine(3)
-    			.withIgnoreFirstLine(true).withCharset(Charset.forName("UTF-8")).parse(file);
-    	
-    	validaImportacao(pojos, importedPojos);
+    public void validarImpotacaoComCabecalhoLongo(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException {
+        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<>(
+                FakeFixedLengthFilePojo.class).withAfterLine(3)
+                .withIgnoreFirstLine(true).withCharset(Charset.forName("UTF-8")).parse(file);
+
+        validaImportacao(pojos, importedPojos);
     }
 
     @Test(dataProvider = "dataWithLongHeaderAndEof")
-    public void validarImpotacaoComCabecalhoLongoEFimDeArquivo(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException{
-    	final String eof = "";
-    	List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
-    			FakeFixedLengthFilePojo.class).withAfterLine(3).withIgnoreFirstLine(true).withEofCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
-    	
-    	validaImportacao(pojos, importedPojos);
+    public void validarImpotacaoComCabecalhoLongoEFimDeArquivo(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException {
+        final String eof = "";
+        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<>(
+                FakeFixedLengthFilePojo.class).withAfterLine(3).withIgnoreFirstLine(true).withEofCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
+
+        validaImportacao(pojos, importedPojos);
     }
 
     @Test(dataProvider = "dataWithSpaceLineAndLongHeaderAndEof")
-    public void validarImpotacaoComLinhasComEspacoECabecalhoLongoEFimDeArquivo(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException{
-    	final String eof = "";
-    	List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
-    			FakeFixedLengthFilePojo.class).withAfterLine(3).withIgnoreFirstLine(true).withEofCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
-    	
-    	validaImportacao(pojos, importedPojos);
+    public void validarImpotacaoComLinhasComEspacoECabecalhoLongoEFimDeArquivo(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException {
+        final String eof = "";
+        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<>(
+                FakeFixedLengthFilePojo.class).withAfterLine(3).withIgnoreFirstLine(true).withEofCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
+
+        validaImportacao(pojos, importedPojos);
     }
 
     @Test(dataProvider = "dataWithSpaceLineAndLongHeaderAndEof")
-    public void validarImpotacaoComLinhasComEspacoECabecalhoLongoEFimDeArquivoRetornandoLinhaProcessada(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException{
-    	final String eof = "";
-    	List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
-    			FakeFixedLengthFilePojo.class).withAfterLine(3)
-    			.withIgnoreFirstLine(true)
-    			.withEofCharacter(eof)
-    			.withCharset(Charset.forName("UTF-8"))
-    			.parse(file);
-    	
-    	validaImportacao(pojos, importedPojos);
-    	
-    	for (FakeFixedLengthFilePojo pojo : importedPojos) {
-			Assert.assertNotNull(pojo.getLine());
-		}
+    public void validarImpotacaoComLinhasComEspacoECabecalhoLongoEFimDeArquivoRetornandoLinhaProcessada(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException {
+        final String eof = "";
+        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<>(
+                FakeFixedLengthFilePojo.class).withAfterLine(3)
+                .withIgnoreFirstLine(true)
+                .withEofCharacter(eof)
+                .withCharset(Charset.forName("UTF-8"))
+                .parse(file);
+
+        validaImportacao(pojos, importedPojos);
+
+        for (FakeFixedLengthFilePojo pojo : importedPojos) {
+            Assert.assertNotNull(pojo.getLine());
+        }
     }
 
     @Test(dataProvider = "dataWithLongHeaderAndEof", expectedExceptions=IllegalArgumentException.class)
-    public void validarImpotacaoComCabecalhoLongoEFimDeArquivoErro(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException{
-    	final String eof = "-";
-    	List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
-    			FakeFixedLengthFilePojo.class).withAfterLine(3).withIgnoreFirstLine(true).withEofCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
-    	
-    	validaImportacao(pojos, importedPojos);
+    public void validarImpotacaoComCabecalhoLongoEFimDeArquivoErro(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException {
+        final String eof = "-";
+        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<>(
+                FakeFixedLengthFilePojo.class).withAfterLine(3).withIgnoreFirstLine(true).withEofCharacter(eof).withCharset(Charset.forName("UTF-8")).parse(file);
+
+        validaImportacao(pojos, importedPojos);
     }
 
     @Test(dataProvider = "dataWithError", expectedExceptions = IllegalArgumentException.class)
     public void validaImportacaoErro(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException,
             ReflectiveOperationException {
-        new FixedLengthFileParser<FakeFixedLengthFilePojo>(FakeFixedLengthFilePojo.class).withCharset(
+        new FixedLengthFileParser<>(FakeFixedLengthFilePojo.class).withCharset(
                 Charset.forName("UTF-8")).parse(file);
     }
 
     @Test(dataProvider = "dataWithError")
     public void validaImportacaoIgnoreErros(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException,
             ReflectiveOperationException {
-        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojo>(
+        List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<>(
                 FakeFixedLengthFilePojo.class).withCharset(Charset.forName("UTF-8")).withIgnoreLineWhenErrors(true)
                 .parse(file);
 
@@ -175,18 +178,18 @@ public class FixedLengthFileTest {
     @Test(dataProvider = "dataUseLineLength")
     public void validaImportacaoComUseLineLength(List<FakeFixedLengthFilePojoUseLineLength> pojos, File file) throws IOException,
             ReflectiveOperationException {
-        List<FakeFixedLengthFilePojoUseLineLength> importedPojos = new FixedLengthFileParser<FakeFixedLengthFilePojoUseLineLength>(
+        List<FakeFixedLengthFilePojoUseLineLength> importedPojos = new FixedLengthFileParser<>(
                 FakeFixedLengthFilePojoUseLineLength.class).withCharset(Charset.forName("UTF-8")).parse(file);
 
         validaImportacao(pojos, importedPojos);
     }
 
-	private void validaImportacao(List<?> pojos,
-			List<?> importedPojos) {
-		Assert.assertEquals(importedPojos.size(), pojos.size());
+    private void validaImportacao(List<?> pojos, List<?> importedPojos) {
+        Assert.assertEquals(importedPojos.size(), pojos.size());
 
         for (int i = 0; i < pojos.size(); i++) {
             Assert.assertEquals(importedPojos.get(i), pojos.get(i));
         }
-	}
+    }
+
 }

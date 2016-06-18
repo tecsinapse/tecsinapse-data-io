@@ -1,3 +1,9 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.exporter.importer;
 
 import java.io.File;
@@ -23,7 +29,6 @@ import br.com.tecsinapse.exporter.annotation.LineFixedLengthFile;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 
 public class FixedLengthFileParser<T> {
-	
 
     private final Class<T> clazz;
 
@@ -41,8 +46,8 @@ public class FixedLengthFileParser<T> {
     }
     
     public FixedLengthFileParser<T> withAfterLine(int afterLine){
-    	this.afterLine = afterLine;
-    	return this;
+        this.afterLine = afterLine;
+        return this;
     }
 
     public FixedLengthFileParser<T> withCharset(Charset charset) {
@@ -66,8 +71,8 @@ public class FixedLengthFileParser<T> {
     }
     
     public FixedLengthFileParser<T> withEofCharacter(String eof){
-    	this.eof = eof;
-    	return this;
+        this.eof = eof;
+        return this;
     }
 
     public FixedLengthFileParser<T> withIgnoreLastLines(int linesToIgnore) {
@@ -128,7 +133,7 @@ public class FixedLengthFileParser<T> {
                     value = value.replaceAll("\\s+", " ");
                 }
                 TableCellConverter<?> converter = flc.converter().newInstance();
-                Object obj = null;
+                Object obj;
                 try {
                     obj = converter.apply(value);
                 } catch (Exception e) {
@@ -143,7 +148,7 @@ public class FixedLengthFileParser<T> {
                 workingLine = workingLine.substring(length, workingLine.length());
             }
             if(lineMethod != null){
-            	lineMethod.invoke(instance, lines.get(i));
+                lineMethod.invoke(instance, lines.get(i));
             }
             if (!ignoreLine) {
                 list.add(instance);
