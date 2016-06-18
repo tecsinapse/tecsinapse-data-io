@@ -24,4 +24,4 @@ fi
 
 echo "<settings><servers><server><id>sonatype-nexus</id><username>\${env.SONATYPE_USERNAME}</username><password>\${env.SONATYPE_PASSWORD}</password></server></servers></settings>" > ~/settings.xml
 
-mvn -B deploy -Dmaven.test.skip=true -Dgpg.skip=true --settings ~/settings.xml
+mvn -B deploy -Dmaven.test.skip=true -DperformRelease=true --settings ~/settings.xml
