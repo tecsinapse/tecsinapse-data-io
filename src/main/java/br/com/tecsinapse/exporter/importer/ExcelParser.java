@@ -1,21 +1,36 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.exporter.importer;
 
 import static br.com.tecsinapse.exporter.importer.Importer.getMappedMethods;
 import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -43,8 +58,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
@@ -182,16 +199,92 @@ public class ExcelParser<T> implements Parser<T> {
     /**
      * Não lê a primeira linha
      *
-     * @return
-     * @throws Exception
+     * @return lista represetando as linhas da planilha
+     * @throws Exception em caso de erro
      */
     @Override
     public List<T> parse() throws Exception {
+        List<T> resultList;
         if (ExcelType.XLSX == type) {
-            return parseXlsx();
+            resultList = parseXlsx();
+        } else {
+            resultList = parseXls();
         }
-        return parseXls();
+        removeBlankLinesOfEnd(resultList);
+        return resultList;
     }
+
+	private void removeBlankLinesOfEnd(List<T> resultList) throws InvocationTargetException, IllegalAccessException, IntrospectionException {
+        Collections.reverse(resultList);
+		final PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
+		final Set<Method> readMethodsOfWriteMethodsWithTableCellMapping = FluentIterable.from(Arrays.asList(propertyDescriptors))
+				.filter(hasWriteAndReadMethod())
+				.filter(hasAnnotationTableCellMapping())
+				.transform(toReadMethod())
+				.toSet();
+
+		if (!readMethodsOfWriteMethodsWithTableCellMapping.isEmpty()) {
+			final Iterator<T> iterator = resultList.iterator();
+			while(iterator.hasNext()) {
+				final T instance = iterator.next();
+				if (allPropertiesHasNoValue(instance, readMethodsOfWriteMethodsWithTableCellMapping)) {
+					iterator.remove();
+				} else {
+					break;
+				}
+			}
+		}
+        Collections.reverse(resultList);
+	}
+
+	private static Function<PropertyDescriptor, Method> toReadMethod() {
+		return new Function<PropertyDescriptor, Method>() {
+			@Override
+			public Method apply(PropertyDescriptor propertyDescriptor) {
+				return propertyDescriptor.getReadMethod();
+			}
+		};
+	}
+
+	private boolean allPropertiesHasNoValue(T instance, Set<Method> readMethodsOfWriteMethodsWithTableCellMapping) throws InvocationTargetException, IllegalAccessException {
+		for (Method method : readMethodsOfWriteMethodsWithTableCellMapping) {
+			final Object value = method.invoke(instance);
+			if (method.getReturnType().equals(String.class)) {
+				String valueStr = nullToEmpty((String) value).trim();
+				if (!isNullOrEmpty(valueStr)) {
+					return false;
+				}
+			} else if (value != null) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private Predicate<PropertyDescriptor> hasAnnotationTableCellMapping() {
+		return new Predicate<PropertyDescriptor>() {
+			@Override
+			public boolean apply(PropertyDescriptor propertyDescriptor) {
+				final Method writeMethod = propertyDescriptor.getWriteMethod();
+				for (Annotation annotation : writeMethod.getDeclaredAnnotations()) {
+					if (annotation instanceof TableCellMapping) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+	}
+
+	private Predicate<PropertyDescriptor> hasWriteAndReadMethod() {
+		return new Predicate<PropertyDescriptor>() {
+			@Override
+			public boolean apply(PropertyDescriptor propertyDescriptor) {
+				return propertyDescriptor.getWriteMethod() != null &&
+						propertyDescriptor.getReadMethod() != null;
+			}
+		};
+	}
 
     private List<T> parseXlsx() throws Exception {
         List<List<String>> xlsxLines = getXlsxLines(afterLine, sheetNumber);
@@ -223,7 +316,6 @@ public class ExcelParser<T> implements Parser<T> {
     private List<T> parseXls() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException, NoSuchMethodException {
         List<T> list = new ArrayList<>();
 
-
         Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods(clazz, group);
         Workbook wb = getWorkbook();
         Sheet sheet = wb.getSheetAt(this.sheetNumber);
@@ -232,7 +324,7 @@ public class ExcelParser<T> implements Parser<T> {
 
 		final Constructor<T> constructor = clazz.getDeclaredConstructor();
 		constructor.setAccessible(true);
-		 
+
         Iterator<Row> rowIterator = sheet.iterator();
 
         int i = 0;
@@ -289,16 +381,18 @@ public class ExcelParser<T> implements Parser<T> {
         return getXlsLinesIncludingEmptyCells();
     }
 
-    @Deprecated
+
     /**
-     * @deprecated
-     * Não traz na lista as ceulas que estão vazias no arquivo.
+     * @return lista representando as linhas da planilha
+     * @see #getXlsLinesIncludingEmptyCells()
+     * @deprecated Não traz na lista as ceulas que estão vazias no arquivo.
      * O método getXlsLinesIncludingEmptyCells faz esse tratamento e deve ser acessado através do método getLines.
      */
-    public List<List<String>> getXlsLines() throws InvalidFormatException, IOException {
-    	Workbook wb = getWorkbook();
+    @Deprecated
+    public List<List<String>> getXlsLines() {
+        Workbook wb = getWorkbook();
 
-    	Sheet sheet = wb.getSheetAt(this.sheetNumber);
+        Sheet sheet = wb.getSheetAt(this.sheetNumber);
         final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
         List<List<String>> lines = Lists.newArrayList();
@@ -405,6 +499,9 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     /**
+     * @return lista contendo as linhas da planilha
+     * @throws Exception em caso de erro
+     * @see #getLines()
      * @deprecated Use getLines() mais afterLine 0 nao deveria importar se e xls ou xlsx
      */
     @Deprecated

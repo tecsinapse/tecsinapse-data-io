@@ -1,3 +1,9 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.exporter;
 
 import java.io.BufferedOutputStream;
@@ -22,51 +28,38 @@ import com.google.common.base.Strings;
 
 public class ExcelUtil {
 
-	private static HttpServletResponse getResponseForExcel(String filenameWithExtension,
-                                                           FacesContext context) {
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext()
-                .getResponse();
+    private static HttpServletResponse getResponseForExcel(String filenameWithExtension, FacesContext context) {
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("Expires", "0");
-        response.setHeader("Cache-Control",
-                "must-revalidate, post-check=0, pre-check=0");
+        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
         response.setHeader("Pragma", "public");
-        response.setHeader("Content-disposition", "attachment;filename="
-                + filenameWithExtension);
+        response.setHeader("Content-disposition", "attachment;filename=" + filenameWithExtension);
         return response;
     }
 
-    private static HttpServletResponse getResponseForCsv(String filename,
-                                                         FacesContext context) {
-        HttpServletResponse response = (HttpServletResponse) context
-                .getExternalContext().getResponse();
+    private static HttpServletResponse getResponseForCsv(String filename, FacesContext context) {
+        HttpServletResponse response = (HttpServletResponse) context .getExternalContext().getResponse();
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("Expires", "0");
-        response.setHeader("Cache-Control",
-                "must-revalidate, post-check=0, pre-check=0");
+        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
         response.setHeader("Pragma", "public");
-        response.setHeader("Content-disposition", "attachment;filename="
-				+ filename + ".csv");
+        response.setHeader("Content-disposition", "attachment;filename=" + filename + ".csv");
         return response;
     }
 
-    private static HttpServletResponse getResponseForTxt(String filename,
-                                                         FacesContext context) {
-        HttpServletResponse response = (HttpServletResponse) context
-                .getExternalContext().getResponse();
+    private static HttpServletResponse getResponseForTxt(String filename, FacesContext context) {
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
         response.setContentType("text/plain");
         response.setHeader("Expires", "0");
-        response.setHeader("Cache-Control",
-                "must-revalidate, post-check=0, pre-check=0");
+        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
         response.setHeader("Pragma", "public");
-        response.setHeader("Content-disposition", "attachment;filename="
-                + filename + ".txt");
+        response.setHeader("Content-disposition", "attachment;filename=" + filename + ".txt");
         return response;
     }
 
     private static void doExport(String name, String extension, Workbook wb) throws IOException {
-        String filename = name + "_";
-        filename += LocalDateTime.now().toString("dd-MM-yyyy_HH-mm");
+        String filename = name + "_" + LocalDateTime.now().toString("dd-MM-yyyy_HH-mm");
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletResponse response = getResponseForExcel(filename + extension, context);
         wb.write(response.getOutputStream());
@@ -74,7 +67,11 @@ public class ExcelUtil {
     }
 
     /**
-     * @deprecated use {@link static void exportXls(String name, Table t)} instead.
+     * @param name nome do arquivo a ser gerado
+     * @param t    {@link Table} a ser exportada
+     * @throws IOException em caso de algum problema de {@code I/O}
+     * @see #exportXls(String, Table)
+     * @deprecated use {@code static void exportXls(String name, Table t)} instead.
      */
     @Deprecated
     public static void export(String name, Table t) throws IOException {
@@ -87,11 +84,11 @@ public class ExcelUtil {
     }
 
     /**
-     * Prefira {@link static void exportSXlsx(String name, Table t)} por fazer cache em disco e ser mais otimizado
+     * Prefira {@code static void exportSXlsx(String name, Table t)} por fazer cache em disco e ser mais otimizado
      *
-     * @param name
-     * @param t
-     * @throws IOException
+     * @param name nome do arquivo a ser gerado
+     * @param t {@link Table} a ser exportada
+     * @throws IOException em caso de algum problema de {@code I/O}
      */
     public static void exportXlsx(String name, Table t) throws IOException {
         Workbook wb = t.toXSSFWorkBook();
@@ -119,9 +116,9 @@ public class ExcelUtil {
         filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletResponse response = getResponseForCsv(filename, context);
-        
-		  exportCsv(t, chartsetName, response.getOutputStream());
-		  
+
+        exportCsv(t, chartsetName, response.getOutputStream());
+
         context.responseComplete();
     }
 
@@ -135,7 +132,7 @@ public class ExcelUtil {
           
         context.responseComplete();
     }
-	 
+
     public static void exportCsv(Table t, String chartsetName, OutputStream out) throws IOException {
         List<List<String>> csv = t.toStringMatrix();
         CSVUtil.write(csv, out, chartsetName);
@@ -146,28 +143,26 @@ public class ExcelUtil {
     }
 
     public static File getCsvFile(Table t, File f, String charsetName) throws IOException {
-    	try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
-    		CSVUtil.write(t.toStringMatrix(), fos, charsetName);
-		}
-    	return f;
+        try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
+            CSVUtil.write(t.toStringMatrix(), fos, charsetName);
+        }
+        return f;
     }
-    
-    public static File getSvFile(Table t, String file, String charsetName, char separator) throws IOException {
 
-    	File f = createFile(file);
-    	try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
-    		CSVUtil.write(t.toStringMatrix(), fos, charsetName, separator);
-		}
-    	return f;
+    public static File getSvFile(Table t, String file, String charsetName, char separator) throws IOException {
+        File f = createFile(file);
+        try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
+            CSVUtil.write(t.toStringMatrix(), fos, charsetName, separator);
+        }
+        return f;
     }
-    
+
     public static File getXlsFile(Table t, String file) throws IOException {
-    	
-    	File f = createFile(file);
-    	try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
-    		t.toHSSFWorkBook().write(fos);
-		}
-    	return f;
+        File f = createFile(file);
+        try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
+            t.toHSSFWorkBook().write(fos);
+        }
+        return f;
     }
 
     public static int getColumnIndexByColumnName(String columnName) {
@@ -197,9 +192,10 @@ public class ExcelUtil {
         return s;
     }
 
-	private static File createFile(String fileName) throws IOException {
-		String ext = com.google.common.io.Files.getFileExtension(fileName);
-		String name = com.google.common.io.Files.getNameWithoutExtension(fileName);
-		return Files.createTempFile(name, ext.isEmpty() ? "" : "." + ext).toFile();
-	}
+    private static File createFile(String fileName) throws IOException {
+        String ext = com.google.common.io.Files.getFileExtension(fileName);
+        String name = com.google.common.io.Files.getNameWithoutExtension(fileName);
+        return Files.createTempFile(name, ext.isEmpty() ? "" : "." + ext).toFile();
+    }
+
 }

@@ -1,3 +1,9 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.exporter.importer;
 
 import java.math.BigDecimal;
@@ -20,23 +26,14 @@ public enum ImporterXLSXType {
             return new UniqueDataFormat();
         }
     };
-	
+
 	private ImporterXLSXType() {
 	}
 
-    /**
-     * não é api publica
-     * @deprecated
-     */
-    @Deprecated
-	public DataFormatter getFormatter() {
-        return getFormatter(null);
-    }
-
     abstract DataFormatter getFormatter(ExcelParser<?> parser);
-	
+
 	private static class UniqueDataFormat extends DataFormatter {
-		
+
 		@Override
 		public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
 			// Is it a date? then always format like LocalDateTime default Formatter

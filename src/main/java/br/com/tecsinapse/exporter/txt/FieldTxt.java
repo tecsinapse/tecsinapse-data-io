@@ -1,24 +1,38 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.exporter.txt;
 
 /**
- * Representa cada coluna de uma linha no arquivo .txt<br><br/>
- * Exemplo de criação de um FieldTxt:<br/><br/>
- * <code>
- *     FieldTxt.newBuilder()<br/>
- *     		.withContent("12345")<br/>
- *     		.withAlign(FieldTxtAlign.RIGHT)<br/>
- *     		.withFixedSize(20)<br/>
- *     		.withFiller("0")<br/>
- *     		.withSeparator(SeparatorTxt.TAB)<br/>
- *     		.build();<br/><br/>
- * </code>
- * Valores padrões:<br/>
- * <li>separator: Separator.NONE</li><br/>
- * <li>fixedSize: 0</li><br/>
- * <li>filler: ' '</li><br/>
- * <li>align: FieldTxtAlign.LEFT</li><br/>
+ * Representa cada coluna de uma linha no arquivo {@code .txt}
+ * <br><br>
+ * Exemplo de criação de um FieldTxt:
+ *
+ * <pre>
+ * {@code
+ *     FieldTxt.newBuilder()
+ *          .withContent("12345")
+ *          .withAlign(FieldTxtAlign.RIGHT)
+ *          .withFixedSize(20)
+ *          .withFiller("0")
+ *          .withSeparator(SeparatorTxt.TAB)
+ *          .build();
+ * }
+ * </pre>
+ * Valores padrões:
+ *
+ * <ul>
+ * <li>separator: Separator.NONE</li>
+ * <li>fixedSize: 0</li>
+ * <li>filler: ' '</li>
+ * <li>align: FieldTxtAlign.LEFT</li>
+ * </ul>
  */
 public class FieldTxt {
+
 	private String content;
 	private FieldTxtAlign align;
 	private SeparatorTxt separator;

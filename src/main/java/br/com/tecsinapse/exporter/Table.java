@@ -1,3 +1,9 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.exporter;
 
 import java.io.FileInputStream;
@@ -30,9 +36,10 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Table {
-	private String title;
-	List<List<TableCell>> cells = new ArrayList<List<TableCell>>();
+
+    private String title;
     private boolean autoSizeColumnSheet = true;
+    private List<List<TableCell>> cells = new ArrayList<>();
 
     public void replace(TableCell cell, Integer row, Integer column) {
         cells.get(row).set(column, cell);
@@ -129,11 +136,11 @@ public class Table {
     public void add(String content, int colspan, int rowspan) {
         add(new TableCell(content, colspan, rowspan));
     }
-	
+
 	public void add(String content, CellType cellType) {
 		add(new TableCell(content, cellType));
 	}
-	
+
 	public void add(Number content) {
 		add(new TableCell(content));
 	}
@@ -141,7 +148,7 @@ public class Table {
     public void add(Number content, boolean bold) {
         add(new TableCell(content, bold));
     }
-	
+
 	public void addOnNewRow(TableCell cell) {
 		addNewRow();
 		add(cell);
@@ -181,7 +188,7 @@ public class Table {
 		int rows = cells.size();
 		int columns = getBiggerRowSize();
 
-		List<List<String>> matrix = new ArrayList<List<String>>();
+		List<List<String>> matrix = new ArrayList<>();
 
 		boolean[][] spanMark = new boolean[rows][];
 		for (int r = 0; r < rows; ++r) {
@@ -239,7 +246,7 @@ public class Table {
 		int rows = cells.size();
 		int columns = getBiggerRowSize();
 
-		List<List<TableCell>> matrix = new ArrayList<List<TableCell>>();
+		List<List<TableCell>> matrix = new ArrayList<>();
 
 		boolean[][] spanMark = new boolean[rows][];
 		for (int r = 0; r < rows; ++r) {
@@ -350,9 +357,10 @@ public class Table {
         return toWorkBook(new HSSFWorkbook());
     }
 
-
     /**
-     * @deprecated use {@link public Workbook toHSSFWorkBook()} instead.
+     * @return {@link Workbook}
+     * @see #toHSSFWorkBook()
+     * @deprecated use {@code public Workbook toHSSFWorkBook()} instead.
      */
     @Deprecated
     public Workbook toWorkBook() {
@@ -378,7 +386,7 @@ public class Table {
 
 		for (List<TableCell> row : matrix) {
 			Row sheetRow = sheet.createRow(r);
-			
+
 			for (TableCell tableCell : row) {
 				while (matrixFull.get(r - titleRows)
 						.get(c) == EmptyTableCell.EMPTY_CELL) {
@@ -394,7 +402,7 @@ public class Table {
 				if(c > maxColumns) {
 					maxColumns = c;
 				}
-				
+
 				if (tableCell.getRowspan() > 1 || tableCell.getColspan() > 1) {
 					int rowStart = r;
 					int rowEnd = rowStart + (tableCell.getRowspan() - 1);
@@ -427,7 +435,7 @@ public class Table {
 			r++;
 			c = 0;
 		}
-		
+
 		if(isAutoSizeColumnSheet()){
 			for(int i = 0 ; i <= maxColumns ; ++i) {
 				sheet.autoSizeColumn(i, true);
@@ -598,7 +606,7 @@ public class Table {
 			}
 		}
 	}
-	
+
 	public void addAllCells(List<TableCell> values) {
 		if (values != null) {
 			for (TableCell cell : values) {
@@ -617,7 +625,7 @@ public class Table {
 		int rowsOut = table.getLastRowIndex();
 		if (rows < rowsOut) {
 			int biggerRow = this.getBiggerRowSize();
-			List<TableCell> emptyCells = new ArrayList<TableCell>();
+			List<TableCell> emptyCells = new ArrayList<>();
 			for (int i = 0; i < biggerRow; ++i) {
 				emptyCells.add(EmptyTableCell.EMPTY_CELL);
 			}
@@ -641,7 +649,7 @@ public class Table {
 	public void concatenateTableBelow(Table table) {
 		// completa se necessario
 		int biggerRow = this.getBiggerRowSize();
-		List<TableCell> emptyCells = new ArrayList<TableCell>();
+		List<TableCell> emptyCells = new ArrayList<>();
 		for (int i = 0; i < biggerRow; ++i) {
 			emptyCells.add(new TableCell(" "));
 		}
@@ -668,19 +676,20 @@ public class Table {
     public int getNextColumnIndexOfLastRow() {
         return getLastColumnIndex(getLastRow()) + 1;
     }
-	 
-	 
-	 /**
-	  * <p>Este método identifica se ao escrever as colunas da planilha deve ser 
-	  * utilizado o método <code>autoSizeColumn</code> do objeto 
-	  * <code>org.apache.poi.ss.usermodel.Sheet</code>.</p>
-	  * <p>Se retornar false as colunas serão redimencionadas realizando um 
-	  * cálculo considerando o maior número de caracteres existente em uma coluna</p>
-	  */
-	 //#workaround para resolver o problema do tamanho das colunas com valor zero
-	 public boolean isAutoSizeColumnSheet(){
-         return autoSizeColumnSheet;
-     }
+
+    /**
+     * <p>Este método identifica se ao escrever as colunas da planilha deve ser
+     * utilizado o método <code>autoSizeColumn</code> do objeto
+     * <code>org.apache.poi.ss.usermodel.Sheet</code>.</p>
+     * <p>Se retornar false as colunas serão redimencionadas realizando um
+     * cálculo considerando o maior número de caracteres existente em uma coluna</p>
+     *
+     * @return {@code true} caso esteja configurado {@code auto size}. {@code false} caso contrário
+     */
+    //#workaround para resolver o problema do tamanho das colunas com valor zero
+    public boolean isAutoSizeColumnSheet() {
+        return autoSizeColumnSheet;
+    }
 
     public void setAutoSizeColumnSheet(boolean autoSizeColumnSheet) {
         this.autoSizeColumnSheet = autoSizeColumnSheet;

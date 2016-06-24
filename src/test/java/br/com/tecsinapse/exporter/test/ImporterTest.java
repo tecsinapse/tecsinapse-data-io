@@ -1,3 +1,9 @@
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
 package br.com.tecsinapse.exporter.test;
 
 import br.com.tecsinapse.exporter.converter.group.Default;
@@ -12,14 +18,12 @@ import java.util.List;
 
 public class ImporterTest {
 
-
     @DataProvider(name = "arquivos")
     public Object[][] getExcel() throws URISyntaxException {
         return new Object[][]{
                 {getFile("teste_sem_razao.xlsx"), getResultadoTesteSemRazaoXlsx(), Default.class},
                 {getFile("excel.xls"), getResultadoExcel(), Default.class},
                 {getFile("excel.xlsx"), getResultadoExcel(), Default.class},
-//                {getFile("excel.csv"), getResultadoExcel(), Default.class}, //TODO Verificar onde está esse arquivo e replicar esse teste para os outros dataProviders
         };
     }
 

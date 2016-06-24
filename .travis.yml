@@ -1,0 +1,41 @@
+sudo:
+  false
+
+language:
+  java
+
+jdk:
+  - oraclejdk7
+
+branches:
+  only:
+    - master
+
+notifications:
+  email:
+    recipients:
+      - dev@tecsinapse.com.br
+    on_success: change
+    on_failure: always
+
+after_success:
+  - mkdir deploy
+  - mvn -B clean test jacoco:report coveralls:report
+
+# waiting for sonatype user/pass
+#  - mkdir deploy
+#  - openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $GPG_DIR/pubring.gpg.enc -out $GPG_DIR/pubring.gpg -d
+#  - openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $GPG_DIR/secring.gpg.enc -out $GPG_DIR/secring.gpg -d
+#  - bash .travis_after_success.sh
+
+cache:
+  directories:
+    - $HOME/.m2
+
+install:
+# waiting for sonatype user/pass
+  - mvn install -DskipTests=true -Dgpg.skip=true
+
+env:
+  global:
+  - GPG_DIR="`pwd`/deploy"
