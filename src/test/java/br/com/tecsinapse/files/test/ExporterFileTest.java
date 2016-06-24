@@ -6,6 +6,8 @@
  */
 package br.com.tecsinapse.files.test;
 
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.FRANCE;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -39,6 +41,8 @@ import br.com.tecsinapse.exporter.TableCellType;
 import br.com.tecsinapse.exporter.importer.ExcelParser;
 
 public class ExporterFileTest {
+
+    private static final Locale LC_PT_BR = new Locale("pt","BR");
 
     @DataProvider(name = "beans")
     public Object[][] beans() {
@@ -110,10 +114,22 @@ public class ExporterFileTest {
         });
 
         return new Object[][]{
-                {beans, csvExport, csvLines, "#.#", ""},
-                {beans, xlsExport, excelLines, "#.#", ""},
-                {beans, xlsxExport, excelLines, ".#", ""},
-                {beans, sxlsxExport, excelLines, ".#", ""}
+                {beans, csvExport, csvLines, "#.#", "", Locale.getDefault()},
+                {beans, xlsExport, excelLines, "#.#", "", Locale.getDefault()},
+                {beans, xlsxExport, excelLines, ".#", "", Locale.getDefault()},
+                {beans, sxlsxExport, excelLines, ".#", "", Locale.getDefault()},
+                {beans, csvExport, csvLines, "#.#", "", ENGLISH},
+                {beans, xlsExport, excelLines, "#.#", "", ENGLISH},
+                {beans, xlsxExport, excelLines, ".#", "", ENGLISH},
+                {beans, sxlsxExport, excelLines, ".#", "", ENGLISH},
+                {beans, csvExport, csvLines, "#.#", "", LC_PT_BR},
+                {beans, xlsExport, excelLines, "#.#", "", LC_PT_BR},
+                {beans, xlsxExport, excelLines, ".#", "", LC_PT_BR},
+                {beans, sxlsxExport, excelLines, ".#", "", LC_PT_BR},
+                {beans, csvExport, csvLines, "#.#", "", FRANCE},
+                {beans, xlsExport, excelLines, "#.#", "", FRANCE},
+                {beans, xlsxExport, excelLines, ".#", "", FRANCE},
+                {beans, sxlsxExport, excelLines, ".#", "", FRANCE}
         };
     }
 
@@ -141,9 +157,10 @@ public class ExporterFileTest {
     public void testExporter(
             List<FileBean> beans,
             Function<Table, File> toFile, Function<File, List<List<String>>> toLines,
-            String decimalPattern, String nullValue) throws IOException {
+            String decimalPattern, String nullValue, Locale locale) throws IOException {
+        Locale.setDefault(locale);
         final String dataPattern = "dd/MM/yyyy";
-        final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern, new DecimalFormatSymbols(Locale.getDefault()));
+        final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern, new DecimalFormatSymbols(ENGLISH));
 
 
         final Table table = new Table();

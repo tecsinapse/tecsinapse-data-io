@@ -53,12 +53,14 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.FluentIterable;
@@ -303,10 +305,29 @@ public class ExcelParser<T> implements Parser<T> {
                 method.setAccessible(true);
 
                 TableCellMapping tcm = methodTcm.getValue();
+
                 String value = getValueOrEmpty(fields, tcm.columnIndex());
-                TableCellConverter<?> converter = tcm.converter().newInstance();
-                Object obj = converter.apply(value);
-                method.invoke(instance, obj);
+
+                try {
+                    T obj;
+                    if (Strings.isNullOrEmpty(value)) {
+                        obj = null;
+                    } if (isReturnType(tcm.converter(), LocalDate.class)) {
+                        LocalDateTime localDateTime = DateTimeFormat.forPattern(getDateStringPattern()).parseLocalDateTime(value);
+                        obj = (T) localDateTime.toLocalDate();
+                    } else if (isReturnType(tcm.converter(), LocalDateTime.class)) {
+                        obj = (T) DateTimeFormat.forPattern(getDateStringPattern()).parseLocalDateTime(value);
+                    } else {
+                        TableCellConverter converter = tcm.converter().newInstance();
+                        obj = (T) converter.apply(value);
+                    }
+                    method.invoke(instance, obj);
+
+                } catch (NoSuchMethodException e) {
+                    TableCellConverter<?> converter = tcm.converter().newInstance();
+                    method.invoke(instance, converter.apply(value));
+                    e.printStackTrace();
+                }
             }
             list.add(instance);
         }
@@ -365,6 +386,12 @@ public class ExcelParser<T> implements Parser<T> {
         Class<?> returnType = converterMethod.getReturnType();
         boolean isInstance = value != null && returnType.isInstance(value);
         return isInstance;
+    }
+
+    private boolean isReturnType(Class<?> converter, Class<?> type) throws NoSuchMethodException {
+        Method converterMethod = converter.getMethod("apply", String.class);
+        Class<?> returnType = converterMethod.getReturnType();
+        return returnType != null && returnType.equals(type);
     }
 
     private String getValueOrEmpty(List<String> fields, int index) {
