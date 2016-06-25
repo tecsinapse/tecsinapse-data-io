@@ -326,7 +326,6 @@ public class ExcelParser<T> implements Parser<T> {
                 } catch (NoSuchMethodException e) {
                     TableCellConverter<?> converter = tcm.converter().newInstance();
                     method.invoke(instance, converter.apply(value));
-                    e.printStackTrace();
                 }
             }
             list.add(instance);
