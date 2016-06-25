@@ -357,16 +357,6 @@ public class Table {
         return toWorkBook(new HSSFWorkbook());
     }
 
-    /**
-     * @return {@link Workbook}
-     * @see #toHSSFWorkBook()
-     * @deprecated use {@code public Workbook toHSSFWorkBook()} instead.
-     */
-    @Deprecated
-    public Workbook toWorkBook() {
-        return toHSSFWorkBook();
-    }
-
 	public Workbook toWorkBook(Workbook wb) {
 		List<List<TableCell>> matrix = cells;
 		List<List<TableCell>> matrixFull = toTableCellMatrix();
@@ -694,4 +684,5 @@ public class Table {
     public void setAutoSizeColumnSheet(boolean autoSizeColumnSheet) {
         this.autoSizeColumnSheet = autoSizeColumnSheet;
     }
+
 }

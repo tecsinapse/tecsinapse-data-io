@@ -62,7 +62,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -383,8 +382,7 @@ public class ExcelParser<T> implements Parser<T> {
     private boolean isSameType(Object value, Class<?> converter) throws NoSuchMethodException {
         Method converterMethod = converter.getMethod("apply", String.class);
         Class<?> returnType = converterMethod.getReturnType();
-        boolean isInstance = value != null && returnType.isInstance(value);
-        return isInstance;
+        return value != null && returnType.isInstance(value);
     }
 
     private boolean isReturnType(Class<?> converter, Class<?> type) throws NoSuchMethodException {
@@ -405,36 +403,6 @@ public class ExcelParser<T> implements Parser<T> {
             return getXlsxLines(afterLine, sheetNumber);
         }
         return getXlsLinesIncludingEmptyCells();
-    }
-
-
-    /**
-     * @return lista representando as linhas da planilha
-     * @see #getXlsLinesIncludingEmptyCells()
-     * @deprecated Não traz na lista as ceulas que estão vazias no arquivo.
-     * O método getXlsLinesIncludingEmptyCells faz esse tratamento e deve ser acessado através do método getLines.
-     */
-    @Deprecated
-    public List<List<String>> getXlsLines() {
-        Workbook wb = getWorkbook();
-
-        Sheet sheet = wb.getSheetAt(this.sheetNumber);
-        final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
-
-        List<List<String>> lines = Lists.newArrayList();
-        List<Row> linhasArquivo = Lists.newArrayList(sheet.iterator());
-        for (Row row : linhasArquivo) {
-            List<Cell> cells = Lists.newArrayList(row.cellIterator());
-            List<String> cellsAsString = Lists.newArrayList(Collections2.transform(cells, new Function<Cell, String>() {
-                @Override
-                public String apply(Cell input) {
-                    return getValueOrEmpty(evaluator, input);
-                }
-            }));
-            lines.add(cellsAsString);
-        }
-
-        return lines;
     }
 
     private List<List<String>> getXlsLinesIncludingEmptyCells() throws InvalidFormatException, IOException {
@@ -508,11 +476,7 @@ public class ExcelParser<T> implements Parser<T> {
         return workbook;
     }
 
-    @Deprecated
-    /**
-     * @deprecated metodo especifico para xlsx não é api ts-expoter pública, será alterado para privado ou removido em futuras versões
-     */
-    public OPCPackage getOPCPackage() {
+    private OPCPackage getOPCPackage() {
         //não delegar para getWorkbook().getPackage() arquivo muito grande(33mb) lançariam OOME
         if (opcPackage == null) {
             try {
@@ -524,19 +488,7 @@ public class ExcelParser<T> implements Parser<T> {
         return opcPackage;
     }
 
-    /**
-     * @return lista contendo as linhas da planilha
-     * @throws Exception em caso de erro
-     * @see #getLines()
-     * @deprecated Use getLines() mais afterLine 0 nao deveria importar se e xls ou xlsx
-     */
-    @Deprecated
-    public List<List<String>> getXlsxLines() throws Exception {
-        return getXlsxLines(FIRST_LINE, FIRST_SHEET);
-    }
-
     private List<List<String>> getXlsxLines(int initialRow, int sheet) throws Exception {
-
         Table table = null;
         OPCPackage container;
         container = getOPCPackage();
@@ -564,7 +516,6 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, boolean ignoreFirstRow) throws Exception {
-
         final Table table = processXlsxSheet(styles, strings, sheetInputStream);
 
         if (ignoreFirstRow) {
@@ -574,9 +525,7 @@ public class ExcelParser<T> implements Parser<T> {
         return table;
     }
 
-
     protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, int rowInitial) throws Exception {
-
         final Table table = processXlsxSheet(styles, strings, sheetInputStream);
 
         table.removeInitialRows(rowInitial);
@@ -585,7 +534,6 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     private Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream) throws Exception {
-
         final Table table = new Table();
         InputSource sheetSource = new InputSource(sheetInputStream);
         SAXParserFactory saxFactory = SAXParserFactory.newInstance();
@@ -645,4 +593,5 @@ public class ExcelParser<T> implements Parser<T> {
     public boolean isDateAsString() {
         return dateAsString;
     }
+
 }

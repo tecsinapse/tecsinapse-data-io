@@ -66,18 +66,6 @@ public class ExcelUtil {
         context.responseComplete();
     }
 
-    /**
-     * @param name nome do arquivo a ser gerado
-     * @param t    {@link Table} a ser exportada
-     * @throws IOException em caso de algum problema de {@code I/O}
-     * @see #exportXls(String, Table)
-     * @deprecated use {@code static void exportXls(String name, Table t)} instead.
-     */
-    @Deprecated
-    public static void export(String name, Table t) throws IOException {
-        exportXls(name, t);
-    }
-
     public static void exportXls(String name, Table t) throws IOException {
         Workbook wb = t.toHSSFWorkBook();
         doExport(name, ".xls", wb);
