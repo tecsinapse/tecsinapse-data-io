@@ -34,7 +34,7 @@ public class ImporterTest2 {
 
     @Test(dataProvider = "arquivos")
     public void test(File file, String result) throws Exception {
-        List<FakePojo2> pojos = new Importer<FakePojo2>(FakePojo2.class, file, UNIQUE_DATA_VALUE).parse();
+        List<FakePojo2> pojos = new Importer<>(FakePojo2.class, file, UNIQUE_DATA_VALUE).parse();
         StringBuilder sb = new StringBuilder();
         for (FakePojo2 fp : pojos) {
             sb.append(fp);

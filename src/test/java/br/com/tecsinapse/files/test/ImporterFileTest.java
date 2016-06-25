@@ -48,6 +48,7 @@ public class ImporterFileTest {
         public LocalDate apply(String input) {
             return FORMATTER.parseLocalDate(input);
         }
+
     }
 
     private File getFile(String name) throws URISyntaxException {
@@ -149,43 +150,36 @@ public class ImporterFileTest {
             Locale.setDefault(locale);
             try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
                 excelParser.setDateStringPattern(DD_MM_YYYY);
-
-                for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
-                    excelParser.setSheetNumber(sheetNumber);
-                    final List<FileBean> esperados = sheets.get(sheetNumber);
-
-                    final List<FileBean> beans = excelParser.parse();
-                    for (int i = 0; i < beans.size(); i++) {
-                        final FileBean atual = beans.get(i);
-                        final FileBean esperado = esperados.get(i);
-                        assertFileBeanEquals(atual, esperado, arquivo);
-                    }
-                }
+                assertFileBeanEquals(excelParser, sheets, arquivo);
             }
         }
     }
 
-	@Test(dataProvider = "arquivosSheet")
-	public void validaSheetWithDate(File arquivo, int afterLine, List<List<FileBean>> sheets) throws Exception {
+    @Test(dataProvider = "arquivosSheet")
+    public void validaSheetWithDate(File arquivo, int afterLine, List<List<FileBean>> sheets) throws Exception {
         for (Locale locale : LOCALES) {
             Locale.setDefault(locale);
             try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
                 excelParser.setDateAsString(false);
-
-                for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
-                    excelParser.setSheetNumber(sheetNumber);
-                    final List<FileBean> esperados = sheets.get(sheetNumber);
-
-                    final List<FileBean> beans = excelParser.parse();
-                    for (int i = 0; i < beans.size(); i++) {
-                        final FileBean atual = beans.get(i);
-                        final FileBean esperado = esperados.get(i);
-                        assertFileBeanEquals(atual, esperado, arquivo);
-                    }
-                }
+                assertFileBeanEquals(excelParser, sheets, arquivo);
             }
         }
-	}
+    }
+
+    private void assertFileBeanEquals(final ExcelParser<FileBean> excelParser, final List<List<FileBean>> sheets,
+                                      final File arquivo) throws Exception {
+        for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
+            excelParser.setSheetNumber(sheetNumber);
+            final List<FileBean> esperados = sheets.get(sheetNumber);
+
+            final List<FileBean> beans = excelParser.parse();
+            for (int i = 0; i < beans.size(); i++) {
+                final FileBean atual = beans.get(i);
+                final FileBean esperado = esperados.get(i);
+                assertFileBeanEquals(atual, esperado, arquivo);
+            }
+        }
+    }
 
     private void assertFileBeanEquals(FileBean atual, FileBean esperado, File file) {
         assertEquals(atual.cidade, esperado.cidade, file.getName());
