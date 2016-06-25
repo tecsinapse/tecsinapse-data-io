@@ -28,9 +28,6 @@ public enum ImporterXLSXType {
         }
     };
 
-	private ImporterXLSXType() {
-	}
-
     abstract DataFormatter getFormatter(ExcelParser<?> parser);
 
 	private static class UniqueDataFormat extends DataFormatter {

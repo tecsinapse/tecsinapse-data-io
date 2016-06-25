@@ -309,17 +309,17 @@ public class ExcelParser<T> implements Parser<T> {
                 String value = getValueOrEmpty(fields, tcm.columnIndex());
 
                 try {
-                    T obj;
+                    Object obj;
                     if (Strings.isNullOrEmpty(value)) {
                         obj = null;
                     } if (isReturnType(tcm.converter(), LocalDate.class)) {
                         LocalDateTime localDateTime = DateTimeFormat.forPattern(getDateStringPattern()).parseLocalDateTime(value);
-                        obj = (T) localDateTime.toLocalDate();
+                        obj = localDateTime.toLocalDate();
                     } else if (isReturnType(tcm.converter(), LocalDateTime.class)) {
-                        obj = (T) DateTimeFormat.forPattern(getDateStringPattern()).parseLocalDateTime(value);
+                        obj = DateTimeFormat.forPattern(getDateStringPattern()).parseLocalDateTime(value);
                     } else {
                         TableCellConverter converter = tcm.converter().newInstance();
-                        obj = (T) converter.apply(value);
+                        obj = converter.apply(value);
                     }
                     method.invoke(instance, obj);
 
