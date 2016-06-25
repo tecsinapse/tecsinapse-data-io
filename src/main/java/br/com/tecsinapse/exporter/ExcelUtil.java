@@ -39,7 +39,7 @@ public class ExcelUtil {
     }
 
     private static HttpServletResponse getResponseForCsv(String filename, FacesContext context) {
-        HttpServletResponse response = (HttpServletResponse) context .getExternalContext().getResponse();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("Expires", "0");
         response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
@@ -66,18 +66,6 @@ public class ExcelUtil {
         context.responseComplete();
     }
 
-    /**
-     * @param name nome do arquivo a ser gerado
-     * @param t    {@link Table} a ser exportada
-     * @throws IOException em caso de algum problema de {@code I/O}
-     * @see #exportXls(String, Table)
-     * @deprecated use {@code static void exportXls(String name, Table t)} instead.
-     */
-    @Deprecated
-    public static void export(String name, Table t) throws IOException {
-        exportXls(name, t);
-    }
-
     public static void exportXls(String name, Table t) throws IOException {
         Workbook wb = t.toHSSFWorkBook();
         doExport(name, ".xls", wb);
@@ -87,7 +75,7 @@ public class ExcelUtil {
      * Prefira {@code static void exportSXlsx(String name, Table t)} por fazer cache em disco e ser mais otimizado
      *
      * @param name nome do arquivo a ser gerado
-     * @param t {@link Table} a ser exportada
+     * @param t    {@link Table} a ser exportada
      * @throws IOException em caso de algum problema de {@code I/O}
      */
     public static void exportXlsx(String name, Table t) throws IOException {
@@ -127,9 +115,9 @@ public class ExcelUtil {
         filename += new DateTime(new Date()).toString("dd-MM-yyyy_HH-mm");
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletResponse response = getResponseForTxt(filename, context);
-        
+
         exportCsv(t, chartsetName, response.getOutputStream());
-          
+
         context.responseComplete();
     }
 
