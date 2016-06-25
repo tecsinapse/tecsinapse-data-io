@@ -8,6 +8,7 @@ package br.com.tecsinapse.exporter.importer;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -26,9 +27,6 @@ public enum ImporterXLSXType {
             return new UniqueDataFormat();
         }
     };
-
-	private ImporterXLSXType() {
-	}
 
     abstract DataFormatter getFormatter(ExcelParser<?> parser);
 
@@ -56,6 +54,7 @@ public enum ImporterXLSXType {
         private final ExcelParser<?> parser;
 
         private DefaultDataFormat(ExcelParser<?> parser) {
+            super(Locale.ENGLISH);
             this.parser = parser;
         }
 

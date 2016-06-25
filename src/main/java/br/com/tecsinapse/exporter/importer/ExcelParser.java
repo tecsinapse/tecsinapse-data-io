@@ -53,12 +53,14 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.FluentIterable;
@@ -87,6 +89,7 @@ public class ExcelParser<T> implements Parser<T> {
     private String dateTimeStringPattern;
     private ImporterXLSXType importerXLSXType = DEFAULT;
     private boolean dateAsLocalDateTime = false;
+    private boolean dateAsString = true;
 
     //lazy somente criado ao chamar getWorkbook
     private Workbook workbook;
@@ -117,11 +120,11 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine) {
-		this(clazz, inputStream, type, afterLine, Default.class);
+        this(clazz, inputStream, type, afterLine, Default.class);
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, Class<?> group) {
-		this(clazz, inputStream, type, afterLine, false, ImporterXLSXType.DEFAULT, group);
+        this(clazz, inputStream, type, afterLine, false, ImporterXLSXType.DEFAULT, group);
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet, ImporterXLSXType importerXLSXType) {
@@ -161,25 +164,25 @@ public class ExcelParser<T> implements Parser<T> {
         this.afterLine = afterLine;
     }
 
-	public void setSheetNumber(int sheetNumber) {
-		this.sheetNumber = sheetNumber;
-	}
+    public void setSheetNumber(int sheetNumber) {
+        this.sheetNumber = sheetNumber;
+    }
 
-	public int getSheetNumber() {
-		return sheetNumber;
-	}
+    public int getSheetNumber() {
+        return sheetNumber;
+    }
 
-	public void setSheetNumberAsFirstNotHidden() {
-		if (type == ExcelType.XLSX) {
-			try {
-				sheetNumber = new XSSFWorkbook(getOPCPackage()).getFirstVisibleTab();
-			} catch (IOException e) {
-				throw Throwables.propagate(e);
-			}
-		} else {
-			sheetNumber = getWorkbook().getFirstVisibleTab();
-		}
-	}
+    public void setSheetNumberAsFirstNotHidden() {
+        if (type == ExcelType.XLSX) {
+            try {
+                sheetNumber = new XSSFWorkbook(getOPCPackage()).getFirstVisibleTab();
+            } catch (IOException e) {
+                throw Throwables.propagate(e);
+            }
+        } else {
+            sheetNumber = getWorkbook().getFirstVisibleTab();
+        }
+    }
 
     @Override
     public int getNumberOfSheets() {
@@ -213,77 +216,77 @@ public class ExcelParser<T> implements Parser<T> {
         return resultList;
     }
 
-	private void removeBlankLinesOfEnd(List<T> resultList) throws InvocationTargetException, IllegalAccessException, IntrospectionException {
+    private void removeBlankLinesOfEnd(List<T> resultList) throws InvocationTargetException, IllegalAccessException, IntrospectionException {
         Collections.reverse(resultList);
-		final PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-		final Set<Method> readMethodsOfWriteMethodsWithTableCellMapping = FluentIterable.from(Arrays.asList(propertyDescriptors))
-				.filter(hasWriteAndReadMethod())
-				.filter(hasAnnotationTableCellMapping())
-				.transform(toReadMethod())
-				.toSet();
+        final PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
+        final Set<Method> readMethodsOfWriteMethodsWithTableCellMapping = FluentIterable.from(Arrays.asList(propertyDescriptors))
+                .filter(hasWriteAndReadMethod())
+                .filter(hasAnnotationTableCellMapping())
+                .transform(toReadMethod())
+                .toSet();
 
-		if (!readMethodsOfWriteMethodsWithTableCellMapping.isEmpty()) {
-			final Iterator<T> iterator = resultList.iterator();
-			while(iterator.hasNext()) {
-				final T instance = iterator.next();
-				if (allPropertiesHasNoValue(instance, readMethodsOfWriteMethodsWithTableCellMapping)) {
-					iterator.remove();
-				} else {
-					break;
-				}
-			}
-		}
+        if (!readMethodsOfWriteMethodsWithTableCellMapping.isEmpty()) {
+            final Iterator<T> iterator = resultList.iterator();
+            while (iterator.hasNext()) {
+                final T instance = iterator.next();
+                if (allPropertiesHasNoValue(instance, readMethodsOfWriteMethodsWithTableCellMapping)) {
+                    iterator.remove();
+                } else {
+                    break;
+                }
+            }
+        }
         Collections.reverse(resultList);
-	}
+    }
 
-	private static Function<PropertyDescriptor, Method> toReadMethod() {
-		return new Function<PropertyDescriptor, Method>() {
-			@Override
-			public Method apply(PropertyDescriptor propertyDescriptor) {
-				return propertyDescriptor.getReadMethod();
-			}
-		};
-	}
+    private static Function<PropertyDescriptor, Method> toReadMethod() {
+        return new Function<PropertyDescriptor, Method>() {
+            @Override
+            public Method apply(PropertyDescriptor propertyDescriptor) {
+                return propertyDescriptor.getReadMethod();
+            }
+        };
+    }
 
-	private boolean allPropertiesHasNoValue(T instance, Set<Method> readMethodsOfWriteMethodsWithTableCellMapping) throws InvocationTargetException, IllegalAccessException {
-		for (Method method : readMethodsOfWriteMethodsWithTableCellMapping) {
-			final Object value = method.invoke(instance);
-			if (method.getReturnType().equals(String.class)) {
-				String valueStr = nullToEmpty((String) value).trim();
-				if (!isNullOrEmpty(valueStr)) {
-					return false;
-				}
-			} else if (value != null) {
-				return false;
-			}
-		}
-		return true;
-	}
+    private boolean allPropertiesHasNoValue(T instance, Set<Method> readMethodsOfWriteMethodsWithTableCellMapping) throws InvocationTargetException, IllegalAccessException {
+        for (Method method : readMethodsOfWriteMethodsWithTableCellMapping) {
+            final Object value = method.invoke(instance);
+            if (method.getReturnType().equals(String.class)) {
+                String valueStr = nullToEmpty((String) value).trim();
+                if (!isNullOrEmpty(valueStr)) {
+                    return false;
+                }
+            } else if (value != null) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	private Predicate<PropertyDescriptor> hasAnnotationTableCellMapping() {
-		return new Predicate<PropertyDescriptor>() {
-			@Override
-			public boolean apply(PropertyDescriptor propertyDescriptor) {
-				final Method writeMethod = propertyDescriptor.getWriteMethod();
-				for (Annotation annotation : writeMethod.getDeclaredAnnotations()) {
-					if (annotation instanceof TableCellMapping) {
-						return true;
-					}
-				}
-				return false;
-			}
-		};
-	}
+    private Predicate<PropertyDescriptor> hasAnnotationTableCellMapping() {
+        return new Predicate<PropertyDescriptor>() {
+            @Override
+            public boolean apply(PropertyDescriptor propertyDescriptor) {
+                final Method writeMethod = propertyDescriptor.getWriteMethod();
+                for (Annotation annotation : writeMethod.getDeclaredAnnotations()) {
+                    if (annotation instanceof TableCellMapping) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+    }
 
-	private Predicate<PropertyDescriptor> hasWriteAndReadMethod() {
-		return new Predicate<PropertyDescriptor>() {
-			@Override
-			public boolean apply(PropertyDescriptor propertyDescriptor) {
-				return propertyDescriptor.getWriteMethod() != null &&
-						propertyDescriptor.getReadMethod() != null;
-			}
-		};
-	}
+    private Predicate<PropertyDescriptor> hasWriteAndReadMethod() {
+        return new Predicate<PropertyDescriptor>() {
+            @Override
+            public boolean apply(PropertyDescriptor propertyDescriptor) {
+                return propertyDescriptor.getWriteMethod() != null &&
+                        propertyDescriptor.getReadMethod() != null;
+            }
+        };
+    }
 
     private List<T> parseXlsx() throws Exception {
         List<List<String>> xlsxLines = getXlsxLines(afterLine, sheetNumber);
@@ -300,12 +303,30 @@ public class ExcelParser<T> implements Parser<T> {
 
                 Method method = methodTcm.getKey();
                 method.setAccessible(true);
-                
+
                 TableCellMapping tcm = methodTcm.getValue();
+
                 String value = getValueOrEmpty(fields, tcm.columnIndex());
-                TableCellConverter<?> converter = tcm.converter().newInstance();
-                Object obj = converter.apply(value);
-                method.invoke(instance, obj);
+
+                try {
+                    Object obj;
+                    if (Strings.isNullOrEmpty(value)) {
+                        obj = null;
+                    } if (isReturnType(tcm.converter(), LocalDate.class)) {
+                        LocalDateTime localDateTime = DateTimeFormat.forPattern(getDateStringPattern()).parseLocalDateTime(value);
+                        obj = localDateTime.toLocalDate();
+                    } else if (isReturnType(tcm.converter(), LocalDateTime.class)) {
+                        obj = DateTimeFormat.forPattern(getDateStringPattern()).parseLocalDateTime(value);
+                    } else {
+                        TableCellConverter converter = tcm.converter().newInstance();
+                        obj = converter.apply(value);
+                    }
+                    method.invoke(instance, obj);
+
+                } catch (NoSuchMethodException e) {
+                    TableCellConverter<?> converter = tcm.converter().newInstance();
+                    method.invoke(instance, converter.apply(value));
+                }
             }
             list.add(instance);
         }
@@ -321,8 +342,8 @@ public class ExcelParser<T> implements Parser<T> {
 
         final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
-		final Constructor<T> constructor = clazz.getDeclaredConstructor();
-		constructor.setAccessible(true);
+        final Constructor<T> constructor = clazz.getDeclaredConstructor();
+        constructor.setAccessible(true);
 
         Iterator<Row> rowIterator = sheet.iterator();
 
@@ -336,19 +357,40 @@ public class ExcelParser<T> implements Parser<T> {
             T instance = constructor.newInstance();
 
             for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
-                
+
                 TableCellMapping tcm = methodTcm.getValue();
                 Method method = methodTcm.getKey();
                 method.setAccessible(true);
-                
-                String value = getValueOrEmpty(evaluator, row.getCell(tcm.columnIndex()));
-                TableCellConverter<?> converter = tcm.converter().newInstance();
-                Object obj = converter.apply(value);
-                method.invoke(instance, obj);
+
+                Object value = getValueOrEmptyAsObject(evaluator, row.getCell(tcm.columnIndex()));
+                try {
+                    if (!dateAsString && isSameType(value, tcm.converter())) {
+                        method.invoke(instance, value);
+                    } else {
+                        TableCellConverter<?> converter = tcm.converter().newInstance();
+                        method.invoke(instance, converter.apply(value.toString()));
+                    }
+                } catch (NoSuchMethodException e) {
+                    TableCellConverter<?> converter = tcm.converter().newInstance();
+                    method.invoke(instance, converter.apply(value.toString()));
+                }
             }
             list.add(instance);
         }
         return list;
+    }
+
+    private boolean isSameType(Object value, Class<?> converter) throws NoSuchMethodException {
+        Method converterMethod = converter.getMethod("apply", String.class);
+        Class<?> returnType = converterMethod.getReturnType();
+        boolean isInstance = value != null && returnType.isInstance(value);
+        return isInstance;
+    }
+
+    private boolean isReturnType(Class<?> converter, Class<?> type) throws NoSuchMethodException {
+        Method converterMethod = converter.getMethod("apply", String.class);
+        Class<?> returnType = converterMethod.getReturnType();
+        return returnType != null && returnType.equals(type);
     }
 
     private String getValueOrEmpty(List<String> fields, int index) {
@@ -359,7 +401,7 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     public List<List<String>> getLines() throws Exception {
-        if(type == ExcelType.XLSX){
+        if (type == ExcelType.XLSX) {
             return getXlsxLines(afterLine, sheetNumber);
         }
         return getXlsLinesIncludingEmptyCells();
@@ -410,7 +452,7 @@ public class ExcelParser<T> implements Parser<T> {
             final Row row = linhasArquivo.get(i);
 
             List<String> cellsStringValues = Lists.newArrayList();
-            for(int index = 0; index < row.getLastCellNum(); index++) {
+            for (int index = 0; index < row.getLastCellNum(); index++) {
                 Cell cell = row.getCell(index, Row.CREATE_NULL_AS_BLANK);
                 cellsStringValues.add(getValueOrEmpty(evaluator, cell));
             }
@@ -420,6 +462,10 @@ public class ExcelParser<T> implements Parser<T> {
     }
 
     private String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell) {
+        return getValueOrEmptyAsObject(evaluator, cell).toString();
+    }
+
+    private Object getValueOrEmptyAsObject(FormulaEvaluator evaluator, Cell cell) {
         final CellValue cellValue = evaluator.evaluate(cell);
         if (cellValue == null) {
             return "";
@@ -430,9 +476,11 @@ public class ExcelParser<T> implements Parser<T> {
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
                     if (dateAsLocalDateTime) {
-                        return LocalDateTime.fromDateFields(cell.getDateCellValue()).toString(dateTimeStringPattern);
+                        LocalDateTime localDateTime = LocalDateTime.fromDateFields(cell.getDateCellValue());
+                        return dateAsString ? localDateTime.toString(dateTimeStringPattern) : localDateTime;
                     }
-                    return new LocalDate(cell.getDateCellValue()).toString(dateStringPattern);
+                    LocalDate localDate = new LocalDate(cell.getDateCellValue());
+                    return dateAsString ? localDate.toString(dateStringPattern) : localDate;
                 }
                 //força a tirar '.0' se for inteiro
                 cell.setCellType(Cell.CELL_TYPE_STRING);
@@ -505,7 +553,7 @@ public class ExcelParser<T> implements Parser<T> {
                 continue;
             }
 
-			table = processXlsxSheet(styles, strings, stream, initialRow);
+            table = processXlsxSheet(styles, strings, stream, initialRow);
 
             stream.close();
             //le apenas 1 aba
@@ -520,66 +568,66 @@ public class ExcelParser<T> implements Parser<T> {
         final Table table = processXlsxSheet(styles, strings, sheetInputStream);
 
         if (ignoreFirstRow) {
-        	table.removeFirstRow();
-		}
+            table.removeFirstRow();
+        }
 
         return table;
     }
 
 
-	protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, int rowInitial) throws Exception {
+    protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, int rowInitial) throws Exception {
 
-		final Table table = processXlsxSheet(styles, strings, sheetInputStream);
+        final Table table = processXlsxSheet(styles, strings, sheetInputStream);
 
-		table.removeInitialRows(rowInitial);
+        table.removeInitialRows(rowInitial);
 
-		return table;
-	}
+        return table;
+    }
 
-	private Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream) throws Exception {
+    private Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream) throws Exception {
 
-		final Table table = new Table();
-		InputSource sheetSource = new InputSource(sheetInputStream);
-		SAXParserFactory saxFactory = SAXParserFactory.newInstance();
-		SAXParser saxParser = saxFactory.newSAXParser();
-		XMLReader sheetParser = saxParser.getXMLReader();
+        final Table table = new Table();
+        InputSource sheetSource = new InputSource(sheetInputStream);
+        SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+        SAXParser saxParser = saxFactory.newSAXParser();
+        XMLReader sheetParser = saxParser.getXMLReader();
 
-		ContentHandler handler = new XSSFSheetXMLHandler(styles, strings, new XSSFSheetXMLHandler.SheetContentsHandler() {
+        ContentHandler handler = new XSSFSheetXMLHandler(styles, strings, new XSSFSheetXMLHandler.SheetContentsHandler() {
 
-			@Override
-			public void startRow(int rowNum) {
-				table.addNewRow();
-			}
+            @Override
+            public void startRow(int rowNum) {
+                table.addNewRow();
+            }
 
-			@Override
-			public void endRow() {
-			}
+            @Override
+            public void endRow() {
+            }
 
-			@Override
-			public void cell(String cellReference, String formattedValue) {
-				int columnIndex = ExcelUtil.getColumnIndexByColumnName(cellReference);
-				int idx = table.getNextColumnIndexOfLastRow();
-				int dif = columnIndex - idx;
-				while(dif-- > 0) {
-					table.add("");
-				}
-				table.add(formattedValue);
-			}
+            @Override
+            public void cell(String cellReference, String formattedValue) {
+                int columnIndex = ExcelUtil.getColumnIndexByColumnName(cellReference);
+                int idx = table.getNextColumnIndexOfLastRow();
+                int dif = columnIndex - idx;
+                while (dif-- > 0) {
+                    table.add("");
+                }
+                table.add(formattedValue);
+            }
 
-			@Override
-			public void headerFooter(String text, boolean isHeader, String tagName) {
+            @Override
+            public void headerFooter(String text, boolean isHeader, String tagName) {
 
-			}
+            }
 
-		},
-				importerXLSXType.getFormatter(this),
-				false//means result instead of formula
-		);
-		sheetParser.setContentHandler(handler);
-		sheetParser.parse(sheetSource);
+        },
+                importerXLSXType.getFormatter(this),
+                false//means result instead of formula
+        );
+        sheetParser.setContentHandler(handler);
+        sheetParser.parse(sheetSource);
 
-		return table;
-	}
+        return table;
+    }
 
     @Override
     public void close() throws IOException {
@@ -588,5 +636,13 @@ public class ExcelParser<T> implements Parser<T> {
 
     public void setDateAsLocalDateTime(boolean dateAsLocalDateTime) {
         this.dateAsLocalDateTime = dateAsLocalDateTime;
+    }
+
+    public void setDateAsString(boolean dateAsString) {
+        this.dateAsString = dateAsString;
+    }
+
+    public boolean isDateAsString() {
+        return dateAsString;
     }
 }
