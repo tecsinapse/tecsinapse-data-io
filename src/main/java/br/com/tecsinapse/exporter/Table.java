@@ -6,33 +6,24 @@
  */
 package br.com.tecsinapse.exporter;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Table {
@@ -316,16 +307,6 @@ public class Table {
         return biggerRowSize;
     }
 
-	public void printStringMatrix(List<List<String>> matrix) {
-		System.out.println("print matrix");
-		for (List<String> row : matrix) {
-			for (String cell : row) {
-				System.out.print("|" + cell);
-			}
-			System.out.println();
-		}
-	}
-
     public String getStringMatrixAsString(List<List<String>> matrix) {
         StringBuilder sb = new StringBuilder();
         for (List<String> row : matrix) {
@@ -337,17 +318,6 @@ public class Table {
         }
         return sb.toString();
     }
-
-	public void printString() {
-
-		for (List<TableCell> row : cells) {
-			for (TableCell cell : row) {
-				System.out.print("|" + cell.getContent());
-			}
-			System.out.println();
-		}
-
-	}
 
 	public Workbook toXSSFWorkBook() {
         return toWorkBook(new XSSFWorkbook());
@@ -526,67 +496,6 @@ public class Table {
 		style.setAlignment((short) HorizontalAlignment.CENTER.ordinal());
 		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		return style;
-	}
-
-	@SuppressWarnings("unused")
-	private Integer putTitle(Workbook wb, Sheet sheet, int size) {
-		Row sheetRow = sheet.createRow(0);
-
-		CellStyle style = wb.createCellStyle();
-		style.setBorderBottom(CellStyle.BORDER_THIN);
-		style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-		style.setBorderLeft(CellStyle.BORDER_THIN);
-		style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-		style.setBorderRight(CellStyle.BORDER_THIN);
-		style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-		style.setBorderTop(CellStyle.BORDER_THIN);
-		style.setTopBorderColor(IndexedColors.BLACK.getIndex());
-		style.setVerticalAlignment((short) VerticalAlignment.CENTER.ordinal());
-		style.setAlignment((short) HorizontalAlignment.CENTER.ordinal());
-
-		Cell cell = sheetRow.createCell(0);
-		sheetRow.setHeight((short) 500);
-
-		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, size - 1));
-
-		cell.setCellValue(new HSSFRichTextString(title));
-
-		return 1;
-	}
-
-	@SuppressWarnings("unused")
-	private void putImage(Workbook wb, Sheet sheet) {
-		// add picture data to this workbook.
-
-		int pictureIdx = 0;
-		try {
-			InputStream is = new FileInputStream(
-					"d:/ui-icons_222222_256x240.png");
-			byte[] bytes;
-			bytes = IOUtils.toByteArray(is);
-
-			pictureIdx = wb.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
-			is.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		CreationHelper helper = wb.getCreationHelper();
-
-		// Create the drawing patriarch. This is the top level container for all
-		// shapes.
-		Drawing drawing = sheet.createDrawingPatriarch();
-
-		// add a picture shape
-		ClientAnchor anchor = helper.createClientAnchor();
-		// set top-left corner of the picture,
-		// subsequent call of Picture#resize() will operate relative to it
-		anchor.setCol1(3);
-		anchor.setRow1(2);
-		Picture pict = drawing.createPicture(anchor, pictureIdx);
-
-		// auto-size picture relative to its top-left corner
-		pict.resize();
 	}
 
 	public void addAll(List<String> values) {

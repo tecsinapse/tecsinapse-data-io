@@ -75,8 +75,6 @@ import br.com.tecsinapse.exporter.converter.group.Default;
 
 public class ExcelParser<T> implements Parser<T> {
 
-    private static final int FIRST_LINE = 0;
-    private static final int FIRST_SHEET = 0;
     private final Class<T> clazz;
     private final InputStream excelInputStream;
     private final ExcelType type;
