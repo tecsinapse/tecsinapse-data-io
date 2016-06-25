@@ -60,7 +60,6 @@ import org.xml.sax.XMLReader;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterators;
@@ -307,9 +306,7 @@ public class ExcelParser<T> implements Parser<T> {
 
                 try {
                     Object obj;
-                    if (Strings.isNullOrEmpty(value)) {
-                        obj = null;
-                    } if (isReturnType(tcm.converter(), LocalDate.class)) {
+                    if (isReturnType(tcm.converter(), LocalDate.class)) {
                         LocalDateTime localDateTime = DateTimeFormat.forPattern(getDateStringPattern()).parseLocalDateTime(value);
                         obj = localDateTime.toLocalDate();
                     } else if (isReturnType(tcm.converter(), LocalDateTime.class)) {
@@ -510,7 +507,7 @@ public class ExcelParser<T> implements Parser<T> {
             break;
         }
 
-        return table != null ? table.toStringMatrix() : null;
+        return table != null ? table.toStringMatrix() : Collections.<List<String>>emptyList();
     }
 
     protected Table processXlsxSheet(StylesTable styles, ReadOnlySharedStringsTable strings, InputStream sheetInputStream, boolean ignoreFirstRow) throws Exception {
