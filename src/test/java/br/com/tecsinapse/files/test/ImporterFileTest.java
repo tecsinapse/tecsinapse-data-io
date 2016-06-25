@@ -6,6 +6,8 @@
  */
 package br.com.tecsinapse.files.test;
 
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.FRENCH;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -34,6 +37,8 @@ import br.com.tecsinapse.exporter.importer.ImporterXLSXType;
 public class ImporterFileTest {
 
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
+
+    private static final List<Locale> LOCALES = Arrays.asList(new Locale("pt","BR"), ENGLISH, FRENCH, Locale.getDefault());
 
     public static final class LocalDateConverter implements TableCellConverter<LocalDate> {
 
@@ -66,15 +71,18 @@ public class ImporterFileTest {
 
     @Test(dataProvider = "arquivos")
     public void validaArquivo(File arquivo, int afterLine, FileType esperadoFileType, List<FileBean> esperados) throws Exception {
-        try (final Importer<FileBean> importer = new Importer<>(FileBean.class, Charsets.UTF_8, arquivo)) {
-            importer.setAfterLine(afterLine);
-            importer.setDateStringPattern(DD_MM_YYYY);
+        for (Locale locale : LOCALES) {
+            Locale.setDefault(locale);
+            try (final Importer<FileBean> importer = new Importer<>(FileBean.class, Charsets.UTF_8, arquivo)) {
+                importer.setAfterLine(afterLine);
+                importer.setDateStringPattern(DD_MM_YYYY);
 
-            assertEquals(importer.getFileType(), esperadoFileType);
+                assertEquals(importer.getFileType(), esperadoFileType);
 
-            final List<FileBean> beans = importer.parse();
-            for (int i = 0; i < beans.size(); i++) {
-                assertFileBeanEquals(beans.get(i), esperados.get(i), arquivo);
+                final List<FileBean> beans = importer.parse();
+                for (int i = 0; i < beans.size(); i++) {
+                    assertFileBeanEquals(beans.get(i), esperados.get(i), arquivo);
+                }
             }
         }
     }
@@ -104,12 +112,15 @@ public class ImporterFileTest {
 
     @Test(dataProvider = "arquivosLastSheet")
     public void validaLastSheet(File arquivo, boolean lastSheet, int afterLine, List<FileBean> esperados) throws Exception {
-        try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine, lastSheet, ImporterXLSXType.DEFAULT)) {
-            excelParser.setDateStringPattern(DD_MM_YYYY);
+        for (Locale locale : LOCALES) {
+            Locale.setDefault(locale);
+            try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine, lastSheet, ImporterXLSXType.DEFAULT)) {
+                excelParser.setDateStringPattern(DD_MM_YYYY);
 
-            final List<FileBean> beans = excelParser.parse();
-            for (int i = 0; i < beans.size(); i++) {
-                assertFileBeanEquals(beans.get(i), esperados.get(i), arquivo);
+                final List<FileBean> beans = excelParser.parse();
+                for (int i = 0; i < beans.size(); i++) {
+                    assertFileBeanEquals(beans.get(i), esperados.get(i), arquivo);
+                }
             }
         }
     }
@@ -134,18 +145,21 @@ public class ImporterFileTest {
 
     @Test(dataProvider = "arquivosSheet")
     public void validaSheet(File arquivo, int afterLine, List<List<FileBean>> sheets) throws Exception {
-        try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
-            excelParser.setDateStringPattern(DD_MM_YYYY);
+        for (Locale locale : LOCALES) {
+            Locale.setDefault(locale);
+            try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
+                excelParser.setDateStringPattern(DD_MM_YYYY);
 
-            for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
-                excelParser.setSheetNumber(sheetNumber);
-                final List<FileBean> esperados = sheets.get(sheetNumber);
+                for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
+                    excelParser.setSheetNumber(sheetNumber);
+                    final List<FileBean> esperados = sheets.get(sheetNumber);
 
-                final List<FileBean> beans = excelParser.parse();
-                for (int i = 0; i < beans.size(); i++) {
-                    final FileBean atual = beans.get(i);
-                    final FileBean esperado = esperados.get(i);
-                    assertFileBeanEquals(atual, esperado, arquivo);
+                    final List<FileBean> beans = excelParser.parse();
+                    for (int i = 0; i < beans.size(); i++) {
+                        final FileBean atual = beans.get(i);
+                        final FileBean esperado = esperados.get(i);
+                        assertFileBeanEquals(atual, esperado, arquivo);
+                    }
                 }
             }
         }
@@ -153,21 +167,24 @@ public class ImporterFileTest {
 
 	@Test(dataProvider = "arquivosSheet")
 	public void validaSheetWithDate(File arquivo, int afterLine, List<List<FileBean>> sheets) throws Exception {
-		try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
-			excelParser.setDateAsString(false);
+        for (Locale locale : LOCALES) {
+            Locale.setDefault(locale);
+            try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
+                excelParser.setDateAsString(false);
 
-			for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
-				excelParser.setSheetNumber(sheetNumber);
-				final List<FileBean> esperados = sheets.get(sheetNumber);
+                for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
+                    excelParser.setSheetNumber(sheetNumber);
+                    final List<FileBean> esperados = sheets.get(sheetNumber);
 
-				final List<FileBean> beans = excelParser.parse();
-				for (int i = 0; i < beans.size(); i++) {
-					final FileBean atual = beans.get(i);
-					final FileBean esperado = esperados.get(i);
-					assertFileBeanEquals(atual, esperado, arquivo);
-				}
-			}
-		}
+                    final List<FileBean> beans = excelParser.parse();
+                    for (int i = 0; i < beans.size(); i++) {
+                        final FileBean atual = beans.get(i);
+                        final FileBean esperado = esperados.get(i);
+                        assertFileBeanEquals(atual, esperado, arquivo);
+                    }
+                }
+            }
+        }
 	}
 
     private void assertFileBeanEquals(FileBean atual, FileBean esperado, File file) {
