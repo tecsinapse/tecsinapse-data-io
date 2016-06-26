@@ -22,6 +22,6 @@ if [[ "$TRAVIS_PULL_REQUEST" = "true" ]]; then
     exit
 fi
 
-echo "<settings><servers><server><id>sonatype-nexus</id><username>\${env.SONATYPE_USERNAME}</username><password>\${env.SONATYPE_PASSWORD}</password></server></servers></settings>" > ~/settings.xml
+echo "<settings><servers><server><id>sonatype-nexus</id><username>\${env.SONATYPE_USERNAME}</username><password>\${env.SONATYPE_PASSWORD}</password></server></servers></settings>" > $GPG_DIR/settings.xml
 
-mvn -B deploy -Dmaven.test.skip=true -DperformRelease=true --settings ~/settings.xml
+mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true --settings $GPG_DIR/settings.xml
