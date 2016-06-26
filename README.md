@@ -11,7 +11,7 @@ Wants to contribute to tecsinapse-exporter?
 ---
 Before working on the code, if you plan to contribute changes, please read the following [CONTRIBUTING](CONTRIBUTING.md) document.
 
-Using ${project.version}
+Using tecsinapse-exporter
 ---
 
 Maven:
