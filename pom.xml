@@ -42,6 +42,7 @@
 
         <!-- plugins -->
         <coveralls-maven-plugin.version>4.2.0</coveralls-maven-plugin.version>
+        <findbugs-maven-plugin.version>3.0.3</findbugs-maven-plugin.version>
         <jacoco-maven-plugin.version>0.7.7.201606060606</jacoco-maven-plugin.version>
 
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
@@ -124,6 +125,25 @@
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>${findbugs-maven-plugin.version}</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                    <effort>Max</effort>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
