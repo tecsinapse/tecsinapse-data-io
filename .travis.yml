@@ -1,41 +1,23 @@
-sudo:
-  false
-
-language:
-  java
-
+sudo: false
+language: java
 jdk:
-  - oraclejdk7
-
-branches:
-  only:
-    - master
-
+- oraclejdk7
 notifications:
   email:
     recipients:
-      - dev@tecsinapse.com.br
+    - dev@tecsinapse.com.br
     on_success: change
     on_failure: always
-
 after_success:
-  - mkdir deploy
-  - mvn -B clean test jacoco:report coveralls:report
-
-# waiting for sonatype user/pass
-#  - mkdir deploy
-#  - openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $GPG_DIR/pubring.gpg.enc -out $GPG_DIR/pubring.gpg -d
-#  - openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $GPG_DIR/secring.gpg.enc -out $GPG_DIR/secring.gpg -d
-#  - bash .travis_after_success.sh
-
+- bash .travis_after_success.sh
 cache:
   directories:
-    - $HOME/.m2
-
-install:
-# waiting for sonatype user/pass
-  - mvn install -DskipTests=true -Dgpg.skip=true
-
+  - "$HOME/.m2"
 env:
   global:
   - GPG_DIR="`pwd`/deploy"
+  - secure: PAAvU52nVmvsS89bFEIyTo1f6xkA9pn2ZnDttLKG//AmQA3+EQoOWL86KjRR8GGauTXuplNiTwJWnqoidgRoC++ckX1L8E1aPmNdFBqehiLM80Ja3RFsSkzS9zaG3JeOZd4pLZPSiJ6WVOCO0dl0jU3TA4QdCM65AVujaFKJZ9az0drOri/m3+b8wQmZJCR/zcWAF1EM+mkNbsOOrGul9lAicLr92FWPo+xAkcI6rFZ91SR+fsPJLNU19oex4WnfpSyl4SU4VMu43onLDjHLP4ZZoaQab6pKuBaUyoYQ2OBTGwG8wpjyERmzg1iq3vPkfzOwrhVk9Jiwh+rNRt4zypWiM2m82cOYCmVRxRVVXiPJ9ai42Zxq1/qy7B/LPxPfRCsqcP/ZCnR9EzPnbLTN7r3cB9BnyujLrUNEHaM2Fspzvmqi0hecuO68rPGeqYIPsDVNFcKSEA+UGybFeFfTuP/Isw6w2UUqrdsyw43q+eS3n6dnehEtIK4QuS5kg9BvYUD0xRrO/KFmKT1Y5p67hLM7/aEgn0HWhwzEOMqLSpts/KIoUu6bfbZRADhdQvtkTlsF8XvfDjSKgebNtl7S3WL4V1PbNWEuLB2xqwr9NjOQK196SM2c3sWzwdycGjxwGN7Aj/+mQvCvcuYzHMKwYj9Lfg6cxQTXfk3UluxXPW8=
+  - secure: clOUEKkstSP+Mh0HY6g72tuGvqI8+5zmp1NXkaFDBT+OpFxFw0i1x/LnBHAAufwVwm+amFILVBOt+Pb1s6W1isxR/dFbcmjEaYT2bKcgY3m49903FHyIKyEkN2hp2LkZW2cCRW8xzxCY/LN5aNYTTFnp39y1JLUPxK3gcKCR9u9n26f1kHUdETu9Z4M0YcwkeowWrxIstQnaTMnDe7fgNtuU737b8hA9loP0/m/vin+xRcedSa5BwlV8my/7f7av0o+35WPpqWE90VjmeLwb8SZcdlaG/y20s3VURGx+s1V3S45QkEqMpb0EQ0aeAAu0EWZ2nPcIq90LGrzvrbJWmG+PEEU/rHmkRjMshwRBqPrs4VqvyrupiAqyABpqOutB0JbJGiAoVJG/Y5UbyLB58wff5+VR/I9nIAb2Q60gmXHLg9HPu3jCx7E1GCxkKTRA51JhdJUuLfw3aa/x9Loym0d5pAl3NaZUGl4iujwQFeEmYdL+0sP0yWUSao4iJCEHmdOR1oY1zrGRBjdq1jYSsY1dQecS2O2PRPRExrJ26WJ/7gVqCkmTAgdlIjZGoVjF57bliIJEn2MkigVHhNRtsbh3o4AEbMJrKqUKx5EranhhJk45KMpucHKLOOHhrTtR+fcwdKfoQSNYzxyJToPPxehuOx4pbxl/I+zWC8eUQf4=
+  - secure: ALcO5DAGHWqJAHjY+zztKijTXZx55aVz2bk/acbYTSNnkz0hMqh3D3T53jKB1WfVKJFABzI02ABH78T57BIeDvzsjLUk1ba/LCnj8SXlG+pogP8YAHJ5wF+58FlMlLgCfPDEMotOXpbIMgrGBchRNueRCSiVXJ2W69eEnEeEUQdLXZ+nPljR59o1cJo9KYryY5Q2eZhL4r2tN+z0B9jnjp4SQBLJuLrE+VmtXFpl3F/54xOtoY6RXuyGISP7mp9BKJ2TDQceLSU9wXTWjkHQVj7DLSol4fkd/DA9KqMGxu1ppAhxxTG3Jvp2X+xU2tkrWeDA/gS0ey1tSSEURXD7VbOZ38tHiSqyNxgwP8MbcAyViXo+ALWHn13C5aWsbq7vOblWO8ReVseI4ruri8qHxV2t62Zex3LIL1HNDpEV4UFGNqTmnffuScpfFY6yLmZV1C1cvMc6PMI1nIMD9ZQpjmEJ9nVmKaaExSbqFGF7TLHIaHzWNJS5X8R2hziVYk3/yklvRMZiSrawHYZ9hJji+7U++eCK0nOO2yCPJc2QlOAc9vKnvhaMinwOdGYFwaIZFabExPWmWFYEFIgQykL7gPMOeLgxsfU6MsQGgC9Vq9e2XHjobHobP/nzsQ/SKGpBFs+JgjKXQyUC+PWM78WUPbgqQavD9HDXZmrpQYBscPU=
+  - secure: LpA6odm/cTPfQToLoQvfpjU8sfKKILlfh8kSDWoxfKs0JB3AJvlmcXniYB5Is6E2C7giFlUe1iXuIYfS63ZcspWe/KkWANmAQ4QuKW5Y39433RV6oXOskQ31ErSQlR9P11i9X0IbG9/+DufyQdOgcBTHD02Yu6Ycas2RkhBcQYYAmr15RbopAQZO9VQ3sZ0kytexYFAcQ+jvL0hvMNghDQitB3Xb9mEMZzjQ7n6Q5QzJ3jkb1VEAZ4nRtX0bH4c7dub8yqzrioLNmfCA8fIuzuQhLXl2CatHhzWW7dbcCGwWCqTAjojHju21HXY1KQSnJFCx+wDYztVK2rk9GXPtVIwZ46ukzBs2+WFDtgxevDD8pIoh4q/vJo9h/guTtT1nr5eZJGkcg9+BE0UzWRE4/ABt+e2/1l453bspvlBj3UAxdVxNV6D6/RbETaaIizQ2Z1xm45axPmlaYUTrBh9QoUcrcmuzQlMqAdjvnzaZfctEhajb4gdba4LAYi+hNtQFsjp9ZbibQm+YitWl7ii4No+9FBcXcapsJSVkWZYxufeMc9eFuyWGlP/H2SkfYwC5fXTMmEt8ck7cF0jHmF53cvLrsNZuf4OdNDW3WLKAmLxTuEsLUOX0/O7S48MFdjgn+9ZNETR6uqQ+9PYZyW1KOJbRt9qG/KfMsn9UU6SbjVk=
+  - secure: GJ2XB8UbEiNtWQOEuQkkD41BgVeJv7A5fw/dd1PzExvfr/VX4+ceh7Kxv29PGSwWlj6dSt2wVgkIKdXCctk7h//4VNFxyTs/1R/ko4DbLFhEOl2+tKRHZl7PqVj9Y73WR5kkGhCz5A9Ju7tZDMotmiZUr7MBdJn7b+mZPXeSbR40dQp+RMp6WiQe2QNDHET31m/Yv1gnim4BsE3Gx+IwXTGOcN6Tm/eIo1dKR4r/In3hJORrgbOgPj+LMyGxp/9DFc7WYzY1bUbIbNSboQBlV97r/LlP82kAqK1bjuHaA+KTnHekuqSn21O5xCgJ/LM4gNJjEKsiEa9SyaITVILiJrrTbIuLejXj/L0L5Pl4WEF8TA32lkItWnAcJno+QdkKDgSroH/urA31icmRXcSz47WcpAYbq1eb8g3amJGQ5ISuoF2vRc3IJyd+uImZVDi6zDGOpuGO1gH5YADIx4tSe1q6Zbxtn1XerZtTO982/jFGMRb1UFaYBmi9Ykeqyijpx8OOGv669icZ9ADLmVBuCDdKom6SQWxLBD/ho3wHTOyFUUtakTXV2sv6gYQgi/pJk+rCCKgAK4RIPtO3gGvEnHiGw4iXZMj+9GRZDxfj1ZztF89g7cYmFKnZGxOyEEjuwyYcupk8ZTrBNP/48dPH0sAWJeVw7mZsxnGL4SaCb5c=
