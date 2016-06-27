@@ -9,29 +9,25 @@ package br.com.tecsinapse.exporter;
 import com.google.common.primitives.Doubles;
 
 public class TableCell {
-	
-	private static final int COLUMN_WIDTH = 256;
-	private String content = "";
-	private Integer colspan = 1;
-	private Integer rowspan = 1;
-	private TableCellType tableCellType = TableCellType.BODY;
-	private CellType cellType = CellType.STRING_TYPE;
+
+    private static final int COLUMN_WIDTH = 256;
+    private String content = "";
+    private Integer colspan = 1;
+    private Integer rowspan = 1;
+    private TableCellType tableCellType = TableCellType.BODY;
+    private CellType cellType = CellType.STRING_TYPE;
     private String style;
     private String styleClass;
     private boolean bold = false;
 
-	public TableCell() {
-		super();
-	}
-	
-	int getDefaultColumnWidth(){
-		return content == null || content.trim().length() == 0 ? 0 : content.length() * COLUMN_WIDTH;
-	}
+    public TableCell() {
+        super();
+    }
 
-	public TableCell(String content) {
-		this();
-		this.content = content;
-	}
+    public TableCell(String content) {
+        this();
+        this.content = content;
+    }
 
     public TableCell(String content, boolean bold) {
         this();
@@ -65,11 +61,11 @@ public class TableCell {
         this(content, colspan);
         this.rowspan = rowspan;
     }
-	
-	public TableCell(Number content) {
-		this(content != null ? content.toString() : null);
-		this.cellType = CellType.NUMERIC_TYPE;
-	}
+
+    public TableCell(Number content) {
+        this(content != null ? content.toString() : null);
+        this.cellType = CellType.NUMERIC_TYPE;
+    }
 
     public TableCell(Number content, boolean bold) {
         this(content != null ? content.toString() : null);
@@ -87,16 +83,16 @@ public class TableCell {
         this.tableCellType = tableCellType;
         this.bold = bold;
     }
-	
-	public TableCell(String content, CellType cellType) {
-		this(content);
-		this.cellType = cellType;
-	}
-	
-	public TableCell(String content, TableCellType tableCellType) {
+
+    public TableCell(String content, CellType cellType) {
         this(content);
-		this.tableCellType = tableCellType;
-	}
+        this.cellType = cellType;
+    }
+
+    public TableCell(String content, TableCellType tableCellType) {
+        this(content);
+        this.tableCellType = tableCellType;
+    }
 
     public TableCell(String content, TableCellType tableCellType, boolean bold) {
         this(content);
@@ -132,29 +128,33 @@ public class TableCell {
         this.rowspan = rowspan;
     }
 
+    int getDefaultColumnWidth() {
+        return content == null || content.trim().length() == 0 ? 0 : content.length() * COLUMN_WIDTH;
+    }
+
     public String getContent() {
-		return content;
-	}
+        return content;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-	public Integer getColspan() {
-		return colspan;
-	}
+    public Integer getColspan() {
+        return colspan;
+    }
 
-	public void setColspan(Integer colspan) {
-		this.colspan = colspan;
-	}
+    public void setColspan(Integer colspan) {
+        this.colspan = colspan;
+    }
 
-	public Integer getRowspan() {
-		return rowspan;
-	}
+    public Integer getRowspan() {
+        return rowspan;
+    }
 
-	public void setRowspan(Integer rowspan) {
-		this.rowspan = rowspan;
-	}
+    public void setRowspan(Integer rowspan) {
+        this.rowspan = rowspan;
+    }
 
     public boolean isBold() {
         return bold;
@@ -165,27 +165,27 @@ public class TableCell {
     }
 
     public TableCellType getTableCellType() {
-		return tableCellType;
-	}
+        return tableCellType;
+    }
 
-	public void setTableCellType(TableCellType tableCellType) {
-		this.tableCellType = tableCellType;
-	}
+    public void setTableCellType(TableCellType tableCellType) {
+        this.tableCellType = tableCellType;
+    }
 
-	public CellType getCellType() {
-		return cellType;
-	}
+    public CellType getCellType() {
+        return cellType;
+    }
 
-	public void setCellType(CellType cellType) {
-		this.cellType = cellType;
-	}
+    public void setCellType(CellType cellType) {
+        this.cellType = cellType;
+    }
 
-	public Double getContentAsDoubleOrNull(){
-		return content == null ? null : Doubles.tryParse(content);
-	}
+    public Double getContentAsDoubleOrNull() {
+        return content == null ? null : Doubles.tryParse(content);
+    }
 
     public String getStyle() {
-        if(style == null && styleClass == null) {
+        if (style == null && styleClass == null) {
             return getTableCellType().getDefaultStyle();
         }
         return style;

@@ -44,8 +44,8 @@ public class FixedLengthFileParser<T> {
     public FixedLengthFileParser(Class<T> clazz) {
         this.clazz = clazz;
     }
-    
-    public FixedLengthFileParser<T> withAfterLine(int afterLine){
+
+    public FixedLengthFileParser<T> withAfterLine(int afterLine) {
         this.afterLine = afterLine;
         return this;
     }
@@ -69,8 +69,8 @@ public class FixedLengthFileParser<T> {
         this.removeDuplicatedSpaces = removeDuplicatedSpaces;
         return this;
     }
-    
-    public FixedLengthFileParser<T> withEofCharacter(String eof){
+
+    public FixedLengthFileParser<T> withEofCharacter(String eof) {
         this.eof = eof;
         return this;
     }
@@ -96,10 +96,10 @@ public class FixedLengthFileParser<T> {
 
         @SuppressWarnings("unchecked")
         final Set<Method> methods = ReflectionUtils.getAllMethods(clazz,
-                ReflectionUtils.<Method> withAnnotation(FixedLengthColumn.class));
-        
+                ReflectionUtils.<Method>withAnnotation(FixedLengthColumn.class));
+
         @SuppressWarnings("unchecked")
-        Method lineMethod = Iterables.getFirst(ReflectionUtils.getMethods(clazz, ReflectionUtils.<Method> withAnnotation(LineFixedLengthFile.class)), null);
+        Method lineMethod = Iterables.getFirst(ReflectionUtils.getMethods(clazz, ReflectionUtils.<Method>withAnnotation(LineFixedLengthFile.class)), null);
 
         final List<AnnotationMethod> methodsAndAnnotations = orderedAnnotationsAndMethods(methods);
 
@@ -147,7 +147,7 @@ public class FixedLengthFileParser<T> {
                 method.invoke(instance, obj);
                 workingLine = workingLine.substring(length, workingLine.length());
             }
-            if(lineMethod != null){
+            if (lineMethod != null) {
                 lineMethod.invoke(instance, lines.get(i));
             }
             if (!ignoreLine) {
@@ -173,6 +173,7 @@ public class FixedLengthFileParser<T> {
     }
 
     private static class AnnotationMethod implements Comparable<AnnotationMethod> {
+
         private final Method method;
         private final FixedLengthColumn flc;
 

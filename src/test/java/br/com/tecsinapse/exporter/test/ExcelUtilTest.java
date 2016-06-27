@@ -6,12 +6,13 @@
  */
 package br.com.tecsinapse.exporter.test;
 
-import br.com.tecsinapse.exporter.ExcelUtil;
+import java.net.URISyntaxException;
+
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.net.URISyntaxException;
+import br.com.tecsinapse.exporter.ExcelUtil;
 
 public class ExcelUtilTest {
 

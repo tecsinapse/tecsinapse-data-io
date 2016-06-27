@@ -38,18 +38,7 @@ public class ImporterFileTest {
 
     private static final String DD_MM_YYYY = "dd/MM/yyyy";
 
-    private static final List<Locale> LOCALES = Arrays.asList(new Locale("pt","BR"), ENGLISH, FRENCH, Locale.getDefault());
-
-    public static final class LocalDateConverter implements TableCellConverter<LocalDate> {
-
-        private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern(DD_MM_YYYY);
-
-        @Override
-        public LocalDate apply(String input) {
-            return FORMATTER.parseLocalDate(input);
-        }
-
-    }
+    private static final List<Locale> LOCALES = Arrays.asList(new Locale("pt", "BR"), ENGLISH, FRENCH, Locale.getDefault());
 
     private File getFile(String name) throws URISyntaxException {
         return new File(getClass().getResource("/files/mock/" + name).toURI());
@@ -190,7 +179,7 @@ public class ImporterFileTest {
         assertEquals(atual.decimal.compareTo(esperado.decimal), 0, file.getName());
         assertEquals(atual.numeroInteger, esperado.numeroInteger, file.getName());
     }
-    
+
     @DataProvider(name = "filesWithHiddenSheet")
     public Object[][] filesWithHiddenSheet() throws URISyntaxException {
         return new Object[][]{
@@ -213,6 +202,17 @@ public class ImporterFileTest {
                 Assert.fail("Fail while reading first not hidden sheet.", e);
             }
         }
+    }
+
+    public static final class LocalDateConverter implements TableCellConverter<LocalDate> {
+
+        private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern(DD_MM_YYYY);
+
+        @Override
+        public LocalDate apply(String input) {
+            return FORMATTER.parseLocalDate(input);
+        }
+
     }
 
 }

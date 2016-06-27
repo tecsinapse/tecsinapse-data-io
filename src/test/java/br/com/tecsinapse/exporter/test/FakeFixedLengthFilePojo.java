@@ -26,10 +26,10 @@ public class FakeFixedLengthFilePojo {
     }
 
     public FakeFixedLengthFilePojo(int one, String two, LocalDate three, String line) {
-    	this.one = one;
-    	this.two = two;
-    	this.three = three;
-    	this.line = line;
+        this.one = one;
+        this.two = two;
+        this.three = three;
+        this.line = line;
     }
 
     @FixedLengthColumn(columnIndex = 0, columnSize = 2, converter = IntegerTableCellConverter.class)
@@ -47,15 +47,15 @@ public class FakeFixedLengthFilePojo {
         this.three = three;
     }
 
+    public String getLine() {
+        return line;
+    }
+
     @LineFixedLengthFile
     public void setLine(String line) {
-		this.line = line;
-	}
-    
-    public String getLine() {
-		return line;
-	}
-    
+        this.line = line;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

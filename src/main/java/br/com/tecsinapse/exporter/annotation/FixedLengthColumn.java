@@ -16,7 +16,7 @@ import br.com.tecsinapse.exporter.converter.StringTableCellConverter;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 
 @Retention(RUNTIME)
-@Target({ METHOD })
+@Target({METHOD})
 public @interface FixedLengthColumn {
 
     int columnIndex();
