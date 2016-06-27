@@ -16,22 +16,22 @@ public enum FileType {
     public static FileType getFileType(String filename) {
         if (filename.toLowerCase().endsWith("xlsx")) {
             return FileType.XLSX;
-        } else if(filename.toLowerCase().endsWith("xls")) {
+        } else if (filename.toLowerCase().endsWith("xls")) {
             return FileType.XLS;
-        } else if(filename.toLowerCase().endsWith("xlsm")) {
+        } else if (filename.toLowerCase().endsWith("xlsm")) {
             return FileType.XLSM;
         }
         return CSV;
     }
 
     public ExcelType getExcelType() {
-        if(this == XLS) {
+        if (this == XLS) {
             return ExcelType.XLS;
         }
-        if(this == XLSX) {
+        if (this == XLSX) {
             return ExcelType.XLSX;
         }
-        if(this == XLSM) {
+        if (this == XLSM) {
             return ExcelType.XLSM;
         }
         return null;

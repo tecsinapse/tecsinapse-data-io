@@ -18,61 +18,61 @@ import br.com.tecsinapse.exporter.TableCellType;
 
 public class TableTest {
 
-	@Test
-	public void testAutoSizeColumn_ComprovaErroMetodoAutoSizeColumn_de_Sheet_QuandoUltimasLinhasSaoVazias() {
-		final int tamanhoIncorretoColuna = 236;
-		final int tamanhoCorretoColuna = 2048;
-		
-		Table t = new Table();
-		//após escrever certo número de linhas com o conteúdo vazio, 
-		//a coluna não é ajustada para o tamanho equivalente a linha
-		//com maior número de caracteres
-		for(int i = 1; i < 130; i++){
-			t.addNewRow();
-			if(i < 20){
-				t.add("Teste erro " + i);
-			}else{
-				t.add(" ");
-			}
-		}
+    @Test
+    public void testAutoSizeColumn_ComprovaErroMetodoAutoSizeColumn_de_Sheet_QuandoUltimasLinhasSaoVazias() {
+        final int tamanhoIncorretoColuna = 236;
+        final int tamanhoCorretoColuna = 2048;
 
-		Workbook wb = t.toWorkBook(new SXSSFWorkbook());
-		Sheet sheet = wb.getSheetAt(0);
-		
+        Table t = new Table();
+        //após escrever certo número de linhas com o conteúdo vazio,
+        //a coluna não é ajustada para o tamanho equivalente a linha
+        //com maior número de caracteres
+        for (int i = 1; i < 130; i++) {
+            t.addNewRow();
+            if (i < 20) {
+                t.add("Teste erro " + i);
+            } else {
+                t.add(" ");
+            }
+        }
+
+        Workbook wb = t.toWorkBook(new SXSSFWorkbook());
+        Sheet sheet = wb.getSheetAt(0);
+
 //		alterado o modo de validação devido a diferneça de plataformas(Windows, Linux, Mac) esses valores podem mudar, porém devem respeitar o mínimo. Por isso usado assertTrue e não assertEquals
-		Assert.assertTrue(sheet.getColumnWidth(0) >= tamanhoIncorretoColuna);
-		Assert.assertTrue(sheet.getColumnWidth(1) >= tamanhoCorretoColuna);
-	}
+        Assert.assertTrue(sheet.getColumnWidth(0) >= tamanhoIncorretoColuna);
+        Assert.assertTrue(sheet.getColumnWidth(1) >= tamanhoCorretoColuna);
+    }
 
-	@Test
-	public void testAutoSizeColumn_GeraTamanhoConformeMaiorQuantidadeCaracteresColuna() {
-		final int tamanhoUmCaracter = 256;
-		final int tamanhoDefaultColuna = 2048;
-		final int maiorNumeroCaracteresColuna = 13;
-		
-		Table t = new Table(){
-			@Override
-			public boolean isAutoSizeColumnSheet() {
-				return false;
-			}
-		};
-		
-		for(int i = 1; i < 130; i++){
-			t.addNewRow();
-			if(i < 20){
-				t.add("Teste erro " + i);
-			}else{
-				t.add(" ");
-			}
-		}
+    @Test
+    public void testAutoSizeColumn_GeraTamanhoConformeMaiorQuantidadeCaracteresColuna() {
+        final int tamanhoUmCaracter = 256;
+        final int tamanhoDefaultColuna = 2048;
+        final int maiorNumeroCaracteresColuna = 13;
 
-		Workbook wb = t.toWorkBook(new SXSSFWorkbook());
-		Sheet sheet = wb.getSheetAt(0);
-		Assert.assertEquals(sheet.getColumnWidth(0), maiorNumeroCaracteresColuna * tamanhoUmCaracter);
-		Assert.assertEquals(sheet.getColumnWidth(1), tamanhoDefaultColuna);
-	}
-	
-	
+        Table t = new Table() {
+            @Override
+            public boolean isAutoSizeColumnSheet() {
+                return false;
+            }
+        };
+
+        for (int i = 1; i < 130; i++) {
+            t.addNewRow();
+            if (i < 20) {
+                t.add("Teste erro " + i);
+            } else {
+                t.add(" ");
+            }
+        }
+
+        Workbook wb = t.toWorkBook(new SXSSFWorkbook());
+        Sheet sheet = wb.getSheetAt(0);
+        Assert.assertEquals(sheet.getColumnWidth(0), maiorNumeroCaracteresColuna * tamanhoUmCaracter);
+        Assert.assertEquals(sheet.getColumnWidth(1), tamanhoDefaultColuna);
+    }
+
+
     @Test
     public void testColspanFirstLine() {
         Table t = new Table();
@@ -88,7 +88,7 @@ public class TableTest {
         String text = t.getStringMatrixAsString(t.toStringMatrix());
         Assert.assertEquals(text, "|Coluna 1||||||Coluna 2|\n");
     }
-	 
+
     @Test
     public void testRowspanFirstLine() {
         Table t = new Table();
@@ -96,23 +96,23 @@ public class TableTest {
         TableCell l1 = new TableCell("Linha 1", TableCellType.HEADER);
         l1.setColspan(6);
         t.add(l1);
-		  
+
         TableCell l12 = new TableCell("Linha 1/2", TableCellType.HEADER);
         l12.setRowspan(2);
-		  t.add(l12);
-        
-		  t.addNewRow();
+        t.add(l12);
+
+        t.addNewRow();
         TableCell l2 = new TableCell("Linha 2", TableCellType.HEADER);
         l2.setColspan(6);
         t.add(l2);
-        
-		  
+
+
         String text = t.getStringMatrixAsString(t.toStringMatrix());
-        Assert.assertEquals(text, 
-				  "|Linha 1||||||Linha 1/2\n" + 
-				  "|Linha 2||||||\n");
+        Assert.assertEquals(text,
+                "|Linha 1||||||Linha 1/2\n" +
+                        "|Linha 2||||||\n");
     }
-	 
+
     @Test
     public void testRowAndColspanFirstLine() {
         Table t = new Table();
@@ -121,17 +121,17 @@ public class TableTest {
         l1.setColspan(2);
         l1.setRowspan(2);
         t.add(l1);
-		  
+
         t.add(new TableCell("Linha 1", TableCellType.HEADER));
-        
-		  t.addNewRow();
+
+        t.addNewRow();
         t.add(new TableCell("Linha 2", TableCellType.HEADER));
-        
-		  
+
+
         String text = t.getStringMatrixAsString(t.toStringMatrix());
-        Assert.assertEquals(text, 
-				  "|Linha/Coluna 1|Linha 1|\n" +
-	           "|Linha 2||\n");
+        Assert.assertEquals(text,
+                "|Linha/Coluna 1|Linha 1|\n" +
+                        "|Linha 2||\n");
     }
 
     @Test

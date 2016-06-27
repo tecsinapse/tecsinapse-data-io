@@ -142,6 +142,15 @@ public class ExcelParser<T> implements Parser<T> {
         }
     }
 
+    private static Function<PropertyDescriptor, Method> toReadMethod() {
+        return new Function<PropertyDescriptor, Method>() {
+            @Override
+            public Method apply(PropertyDescriptor propertyDescriptor) {
+                return propertyDescriptor.getReadMethod();
+            }
+        };
+    }
+
     public String getDateStringPattern() {
         return dateStringPattern;
     }
@@ -160,12 +169,12 @@ public class ExcelParser<T> implements Parser<T> {
         this.afterLine = afterLine;
     }
 
-    public void setSheetNumber(int sheetNumber) {
-        this.sheetNumber = sheetNumber;
-    }
-
     public int getSheetNumber() {
         return sheetNumber;
+    }
+
+    public void setSheetNumber(int sheetNumber) {
+        this.sheetNumber = sheetNumber;
     }
 
     public void setSheetNumberAsFirstNotHidden() {
@@ -233,15 +242,6 @@ public class ExcelParser<T> implements Parser<T> {
             }
         }
         Collections.reverse(resultList);
-    }
-
-    private static Function<PropertyDescriptor, Method> toReadMethod() {
-        return new Function<PropertyDescriptor, Method>() {
-            @Override
-            public Method apply(PropertyDescriptor propertyDescriptor) {
-                return propertyDescriptor.getReadMethod();
-            }
-        };
     }
 
     private boolean allPropertiesHasNoValue(T instance, Set<Method> readMethodsOfWriteMethodsWithTableCellMapping) throws InvocationTargetException, IllegalAccessException {
@@ -581,12 +581,12 @@ public class ExcelParser<T> implements Parser<T> {
         this.dateAsLocalDateTime = dateAsLocalDateTime;
     }
 
-    public void setDateAsString(boolean dateAsString) {
-        this.dateAsString = dateAsString;
-    }
-
     public boolean isDateAsString() {
         return dateAsString;
+    }
+
+    public void setDateAsString(boolean dateAsString) {
+        this.dateAsString = dateAsString;
     }
 
 }

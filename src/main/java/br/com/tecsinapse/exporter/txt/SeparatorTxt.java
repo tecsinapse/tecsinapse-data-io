@@ -26,11 +26,11 @@ public enum SeparatorTxt {
     SEMICOLON(";"),
     COMMA(",");
 
+    private final String separator;
+
     SeparatorTxt(String separator) {
         this.separator = separator;
     }
-
-    private final String separator;
 
     public String getSeparator() {
         return separator;

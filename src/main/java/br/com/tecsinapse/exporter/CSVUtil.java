@@ -87,7 +87,7 @@ public class CSVUtil {
         try (OutputStreamWriter writer = new OutputStreamWriter(o, chartsetName)) {
             for (List<T> row : csv) {
                 StringBuilder line = new StringBuilder();
-                for (Iterator<T> iter = row.iterator(); iter.hasNext();) {
+                for (Iterator<T> iter = row.iterator(); iter.hasNext(); ) {
                     final T next = iter.next();
                     String field = "";
                     if (next != null) {
@@ -109,7 +109,7 @@ public class CSVUtil {
     }
 
     public static <T> void write(List<List<T>> csv, OutputStream o, String chartsetName) throws IOException {
-        write(csv, o, chartsetName, DEFAULT_SEPARATOR_CHAR); 
+        write(csv, o, chartsetName, DEFAULT_SEPARATOR_CHAR);
     }
 
 }

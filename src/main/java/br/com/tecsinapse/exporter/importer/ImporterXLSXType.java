@@ -16,12 +16,13 @@ import org.joda.time.LocalDateTime;
 
 public enum ImporterXLSXType {
 
-	DEFAULT(){
+    DEFAULT() {
         @Override
         public DataFormatter getFormatter(ExcelParser<?> parser) {
             return new DefaultDataFormat(parser);
         }
-    }, UNIQUE_DATA_VALUE(){
+    },
+    UNIQUE_DATA_VALUE() {
         @Override
         public DataFormatter getFormatter(ExcelParser<?> parser) {
             return new UniqueDataFormat();
@@ -30,27 +31,28 @@ public enum ImporterXLSXType {
 
     abstract DataFormatter getFormatter(ExcelParser<?> parser);
 
-	private static class UniqueDataFormat extends DataFormatter {
+    private static class UniqueDataFormat extends DataFormatter {
 
-		@Override
-		public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
-			// Is it a date? then always format like LocalDateTime default Formatter
-			if(DateUtil.isADateFormat(formatIndex,formatString) && DateUtil.isValidExcelDate(value)) {
+        @Override
+        public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
+            // Is it a date? then always format like LocalDateTime default Formatter
+            if (DateUtil.isADateFormat(formatIndex, formatString) && DateUtil.isValidExcelDate(value)) {
                 Date d = DateUtil.getJavaDate(value, use1904Windowing);
                 return LocalDateTime.fromDateFields(d).toString();
             } else {
-            	// else Number
-            	// If is General formating then take the value from super
-            	if ("General".equalsIgnoreCase(formatString)) {
-            		return super.formatRawCellContents(value, formatIndex, formatString, use1904Windowing);
-            	}
-            	// then format as toString output for BigDecimal. See the BigDecimal.toString() document to know why.
-            	return BigDecimal.valueOf(value).toString();
+                // else Number
+                // If is General formating then take the value from super
+                if ("General".equalsIgnoreCase(formatString)) {
+                    return super.formatRawCellContents(value, formatIndex, formatString, use1904Windowing);
+                }
+                // then format as toString output for BigDecimal. See the BigDecimal.toString() document to know why.
+                return BigDecimal.valueOf(value).toString();
             }
-		}
-	}
+        }
+    }
 
     private static class DefaultDataFormat extends DataFormatter {
+
         private final ExcelParser<?> parser;
 
         private DefaultDataFormat(ExcelParser<?> parser) {

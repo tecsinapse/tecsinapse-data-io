@@ -42,7 +42,7 @@ import br.com.tecsinapse.exporter.importer.ExcelParser;
 
 public class ExporterFileTest {
 
-    private static final List<Locale> LOCALES = Arrays.asList(new Locale("pt","BR"), ENGLISH, FRENCH, Locale.getDefault());
+    private static final List<Locale> LOCALES = Arrays.asList(new Locale("pt", "BR"), ENGLISH, FRENCH, Locale.getDefault());
 
     @DataProvider(name = "beans")
     public Object[][] beans() {

@@ -20,14 +20,6 @@ public enum ExcelType {
         this.defaultDateTimePattern = defaultDateTimePattern;
     }
 
-    public String getDefaultDatePattern() {
-        return defaultDatePattern;
-    }
-
-    public String getDefaultDateTimePattern() {
-        return defaultDateTimePattern;
-    }
-
     public static ExcelType getExcelType(String filename) {
         if (filename.toLowerCase().endsWith("xlsx")) {
             return ExcelType.XLSX;
@@ -36,6 +28,14 @@ public enum ExcelType {
             return ExcelType.XLSM;
         }
         return ExcelType.XLS;
+    }
+
+    public String getDefaultDatePattern() {
+        return defaultDatePattern;
+    }
+
+    public String getDefaultDateTimePattern() {
+        return defaultDateTimePattern;
     }
 
 }

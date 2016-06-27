@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.reflections.ReflectionUtils;
 
 import com.google.common.base.Function;
@@ -42,20 +43,18 @@ import br.com.tecsinapse.exporter.converter.group.Default;
 public class Importer<T> implements Closeable {
 
     static final int DEFAULT_START_ROW = 1;
-
+    private final Class<?> group;
     private Class<T> clazz;
     private File file;
     private InputStream inputStream;
     private String filename;
     private Charset charset;
     private Parser<T> parser;
-
     private int afterLine = DEFAULT_START_ROW;
     private boolean isLastSheet;
     private ImporterXLSXType importerXLSXType = DEFAULT;
     private String dateStringPattern;
     private String dateTimeStringPattern;
-    private final Class<?> group;
     private boolean dateAsLocalDateTime = false;
 
     public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
@@ -69,7 +68,7 @@ public class Importer<T> implements Closeable {
     }
 
     public Importer(Class<T> clazz, File file, ImporterXLSXType importerXLSXType) throws IOException {
-    	this(clazz, file);
+        this(clazz, file);
         this.importerXLSXType = importerXLSXType;
     }
 
@@ -125,50 +124,6 @@ public class Importer<T> implements Closeable {
         this.group = group;
     }
 
-    private void beforeParser() throws IOException {
-        doBeforeParser();
-        if (dateTimeStringPattern != null) {
-            parser.setDateTimeStringPattern(dateTimeStringPattern);
-        }
-        if (dateStringPattern != null) {
-            parser.setDateStringPattern(dateStringPattern);
-        }
-        parser.setDateAsLocalDateTime(dateAsLocalDateTime);
-    }
-
-	private void doBeforeParser() throws IOException {
-        FileType fileType = getFileType();
-        if(fileType == FileType.XLSX || fileType == FileType.XLS) {
-            if(file != null) {
-                parser = new ExcelParser<T>(clazz, file, afterLine, isLastSheet, importerXLSXType, group);
-                return;
-            }
-            if(inputStream != null) {
-                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), afterLine, isLastSheet, importerXLSXType, group);
-                return;
-            }
-        }
-        if(file != null) {
-            parser = new CsvParser<T>(clazz, file, charset, afterLine, group);
-            return;
-        }
-        if(inputStream != null) {
-            parser = new CsvParser<T>(clazz, inputStream, charset, afterLine, group);
-            return;
-        }
-    }
-
-    public FileType getFileType() {
-        if(this.file == null && Strings.isNullOrEmpty(this.filename)) {
-            throw new IllegalStateException("File is null and filename is null");
-        }
-        String name = this.filename;
-        if(file != null) {
-            name = file.getName();
-        }
-        return FileType.getFileType(name);
-    }
-
     //FIXME Refatorar: deixar método comum para ExcelParser e CsvParser
     protected static final Map<Method, TableCellMapping> getMappedMethods(Class<?> clazz, final Class<?> group) {
 
@@ -182,7 +137,8 @@ public class Importer<T> implements Closeable {
                     public Optional<TableCellMapping> apply(Method method) {
                         return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
                                 .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class), group));
-                    }})
+                    }
+                })
                 .inverse();
 
         tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, new Predicate<Entry<Method, Optional<TableCellMapping>>>() {
@@ -197,7 +153,8 @@ public class Importer<T> implements Closeable {
             @Override
             public TableCellMapping apply(Optional<TableCellMapping> tcmOptional) {
                 return tcmOptional.get();
-            }});
+            }
+        });
 
         return Maps.transformValues(methodByTableCellMapping.asMap(), new Function<Collection<TableCellMapping>, TableCellMapping>() {
             @Override
@@ -217,7 +174,8 @@ public class Importer<T> implements Closeable {
                     @Override
                     public boolean apply(TableCellMapping tcm) {
                         return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
-                    }})
+                    }
+                })
                 .first();
     }
 
@@ -226,7 +184,52 @@ public class Importer<T> implements Closeable {
             @Override
             public boolean apply(Class<?> g) {
                 return g.isAssignableFrom(group);
-            }};
+            }
+        };
+    }
+
+    private void beforeParser() throws IOException {
+        doBeforeParser();
+        if (dateTimeStringPattern != null) {
+            parser.setDateTimeStringPattern(dateTimeStringPattern);
+        }
+        if (dateStringPattern != null) {
+            parser.setDateStringPattern(dateStringPattern);
+        }
+        parser.setDateAsLocalDateTime(dateAsLocalDateTime);
+    }
+
+    private void doBeforeParser() throws IOException {
+        FileType fileType = getFileType();
+        if (fileType == FileType.XLSX || fileType == FileType.XLS) {
+            if (file != null) {
+                parser = new ExcelParser<T>(clazz, file, afterLine, isLastSheet, importerXLSXType, group);
+                return;
+            }
+            if (inputStream != null) {
+                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), afterLine, isLastSheet, importerXLSXType, group);
+                return;
+            }
+        }
+        if (file != null) {
+            parser = new CsvParser<T>(clazz, file, charset, afterLine, group);
+            return;
+        }
+        if (inputStream != null) {
+            parser = new CsvParser<T>(clazz, inputStream, charset, afterLine, group);
+            return;
+        }
+    }
+
+    public FileType getFileType() {
+        if (this.file == null && Strings.isNullOrEmpty(this.filename)) {
+            throw new IllegalStateException("File is null and filename is null");
+        }
+        String name = this.filename;
+        if (file != null) {
+            name = file.getName();
+        }
+        return FileType.getFileType(name);
     }
 
     public void setAfterLine(int afterLine) {
@@ -250,7 +253,7 @@ public class Importer<T> implements Closeable {
     }
 
     public List<T> parse() throws Exception {
-    	beforeParser();
+        beforeParser();
         return parser.parse();
     }
 

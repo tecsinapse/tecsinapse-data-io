@@ -96,7 +96,7 @@ public class FixedLengthFileTest {
 
         validaImportacao(pojos, importedPojos);
     }
-    
+
     @Test(dataProvider = "dataWithHeader")
     public void validarImpotacaoComCabecalho(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException {
         List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<>(
@@ -149,7 +149,7 @@ public class FixedLengthFileTest {
         }
     }
 
-    @Test(dataProvider = "dataWithLongHeaderAndEof", expectedExceptions=IllegalArgumentException.class)
+    @Test(dataProvider = "dataWithLongHeaderAndEof", expectedExceptions = IllegalArgumentException.class)
     public void validarImpotacaoComCabecalhoLongoEFimDeArquivoErro(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException, ReflectiveOperationException {
         final String eof = "-";
         List<FakeFixedLengthFilePojo> importedPojos = new FixedLengthFileParser<>(

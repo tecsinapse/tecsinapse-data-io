@@ -6,15 +6,16 @@
  */
 package br.com.tecsinapse.exporter.test;
 
-import br.com.tecsinapse.exporter.converter.group.Default;
-import br.com.tecsinapse.exporter.importer.Importer;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.List;
+
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.List;
+import br.com.tecsinapse.exporter.converter.group.Default;
+import br.com.tecsinapse.exporter.importer.Importer;
 
 public class ImporterTest {
 

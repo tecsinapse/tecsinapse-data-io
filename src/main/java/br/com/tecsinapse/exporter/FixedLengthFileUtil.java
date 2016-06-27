@@ -18,23 +18,23 @@ public final class FixedLengthFileUtil {
 
     private FixedLengthFileUtil() {
     }
-    
+
     public static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, Charset charset) throws IOException {
         return getLines(inputStream, ignoreFirstLine, 0, null, charset);
     }
-        
-    private static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, int afterLine, String eofCharacter, Charset charset) throws IOException{
+
+    private static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, int afterLine, String eofCharacter, Charset charset) throws IOException {
         return getLines(inputStream, ignoreFirstLine, afterLine, 0, eofCharacter, charset);
     }
 
-    public static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, int afterLine, int ignoreLastLines, String eofCharacter, Charset charset) throws IOException{
+    public static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, int afterLine, int ignoreLastLines, String eofCharacter, Charset charset) throws IOException {
         List<String> lines = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset))) {
             String line;
-            
+
             afterLine += (ignoreFirstLine ? 1 : 0);
-            
-            for(int i = 0; i < afterLine; i++){
+
+            for (int i = 0; i < afterLine; i++) {
                 line = br.readLine();
             }
 
@@ -53,8 +53,8 @@ public final class FixedLengthFileUtil {
 
         return lines;
     }
-    
-    private static boolean isEof(String line, String eofCharacter){
+
+    private static boolean isEof(String line, String eofCharacter) {
         return line == null || (eofCharacter != null && line.contains(eofCharacter));
     }
 

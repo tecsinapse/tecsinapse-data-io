@@ -19,8 +19,8 @@ import br.com.tecsinapse.exporter.converter.IntegerTableCellConverter;
 import br.com.tecsinapse.files.test.ImporterFileTest.LocalDateConverter;
 
 /**
-* Created by janario on 7/23/14.
-*/
+ * Created by janario on 7/23/14.
+ */
 public final class FileBean {
 
     String cidade;

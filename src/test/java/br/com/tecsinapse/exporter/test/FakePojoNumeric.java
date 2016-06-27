@@ -19,30 +19,30 @@ public class FakePojoNumeric {
     private BigDecimal value4;
     private BigDecimal value5;
 
-    @TableCellMapping(columnIndex = 0, converter=BigDecimalTableCellConverter.class)
+    @TableCellMapping(columnIndex = 0, converter = BigDecimalTableCellConverter.class)
     public void setValue1(BigDecimal value1) {
-		this.value1 = value1;
-	}
-    
-    @TableCellMapping(columnIndex = 1, converter=BigDecimalTableCellConverter.class)
+        this.value1 = value1;
+    }
+
+    @TableCellMapping(columnIndex = 1, converter = BigDecimalTableCellConverter.class)
     public void setValue2(BigDecimal value2) {
-		this.value2 = value2;
-	}
-    
-    @TableCellMapping(columnIndex = 2, converter=BigDecimalTableCellConverter.class)
+        this.value2 = value2;
+    }
+
+    @TableCellMapping(columnIndex = 2, converter = BigDecimalTableCellConverter.class)
     public void setValue3(BigDecimal value3) {
-		this.value3 = value3;
-	}
-    
-    @TableCellMapping(columnIndex = 3, converter=BigDecimalTableCellConverter.class)
+        this.value3 = value3;
+    }
+
+    @TableCellMapping(columnIndex = 3, converter = BigDecimalTableCellConverter.class)
     public void setValue4(BigDecimal value4) {
-		this.value4 = value4;
-	}
-    
-    @TableCellMapping(columnIndex = 4, converter=BigDecimalTableCellConverter.class)
+        this.value4 = value4;
+    }
+
+    @TableCellMapping(columnIndex = 4, converter = BigDecimalTableCellConverter.class)
     public void setValue5(BigDecimal value5) {
-		this.value5 = value5;
-	}
+        this.value5 = value5;
+    }
 
 
     @Override
@@ -55,5 +55,5 @@ public class FakePojoNumeric {
                 ", value5='" + value5 + '\'' +
                 '}';
     }
-    
+
 }
