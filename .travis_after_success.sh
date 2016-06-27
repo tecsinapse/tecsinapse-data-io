@@ -24,6 +24,6 @@ if [[ $TRAVIS_BRANCH != "master" ]]; then
 fi
 
 if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
-    mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -DperformRelease=true --settings $GPG_DIR/settings.xml
+    mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true --settings $GPG_DIR/settings.xml
     exit $?
 fi
