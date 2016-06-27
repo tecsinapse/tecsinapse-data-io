@@ -4,15 +4,13 @@
   License: GNU Lesser General Public License (LGPL), version 3 or later
   See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.com.tecsinapse</groupId>
     <artifactId>tecsinapse-exporter</artifactId>
     <version>1.1.56-SNAPSHOT</version>
 
-    <url>https://github.com/tecsinapse/${project.artifactId}</url>
+    <url>https://github.com/tecsinapse/tecsinapse-exporter</url>
 
     <licenses>
         <license>
@@ -205,20 +203,20 @@
     </distributionManagement>
 
     <scm>
-        <url>https://github.com/tecsinapse/${project.artifactId}</url>
-        <connection>scm:git:git@github.com:tecsinapse/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:git@github.com:tecsinapse/${project.artifactId}.git</developerConnection>
+        <url>https://github.com/tecsinapse/tecsinapse-exporter</url>
+        <connection>scm:git:git@github.com:tecsinapse/tecsinapse-exporter.git</connection>
+        <developerConnection>scm:git:git@github.com:tecsinapse/tecsinapse-exporter.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/tecsinapse/${project.artifactId}/issues</url>
+        <url>https://github.com/tecsinapse/tecsinapse-exporter/issues</url>
     </issueManagement>
 
     <ciManagement>
         <system>Travis CI</system>
-        <url>https://travis-ci.org/tecsinapse/${project.artifactId}</url>
+        <url>https://travis-ci.org/tecsinapse/tecsinapse-exporter</url>
     </ciManagement>
 
     <dependencies>
