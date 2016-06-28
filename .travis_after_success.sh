@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# TecSinapse Exporter
+#
+# License: GNU Lesser General Public License (LGPL), version 3 or later
+# See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+#
 
 if [[ $TRAVIS_JDK_VERSION != "oraclejdk7" ]]; then
     echo "Skipping after_success actions for JDK version \"${TRAVIS_JDK_VERSION}\""
@@ -18,6 +24,6 @@ if [[ $TRAVIS_BRANCH != "master" ]]; then
 fi
 
 if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
-    mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -Dgpg.skip=true -DperformRelease=true --settings $GPG_DIR/settings.xml
+    mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true --settings $GPG_DIR/settings.xml
     exit $?
 fi
