@@ -153,6 +153,14 @@ public class ExcelUtil {
         return f;
     }
 
+    public static File getXlsxFile(Table t, String file) throws IOException {
+        File f = createFile(file);
+        try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
+            t.toXSSFWorkBook().write(fos);
+        }
+        return f;
+    }
+
     public static int getColumnIndexByColumnName(String columnName) {
         columnName = getColumnFromCellName(columnName.toUpperCase());
         int value = 0;

@@ -414,20 +414,24 @@ public class Table {
 
     private void setCellStyle(CellStyle defaultHeader, CellStyle defaultBody, CellStyle defaultFooter, Cell cell,
                               TableCell tableCell, Workbook wb, DataFormat dataFormat, CellStyle cellStyle) {
-
         CellStyle style;
-        switch (tableCell.getTableCellType()) {
-            case HEADER:
-                style = tableCell.isBold() ? header(getDefaultCellStyle(wb)) : defaultHeader;
-                break;
-            case BODY:
-                style = tableCell.isBold() ? body(getDefaultCellStyle(wb)) : defaultBody;
-                break;
-            case FOOTER:
-                style = tableCell.isBold() ? footer(getDefaultCellStyle(wb)) : defaultFooter;
-                break;
-            default:
-                throw new IllegalStateException("CellStyle " + tableCell.getTableCellType() + " is not supported.");
+        if (tableCell.getTableCellStyle() != null) {
+            style = getDefaultCellStyle(wb);
+            cell.setCellStyle(tableCell.getTableCellStyle().toCellStyle(style));
+        } else {
+            switch (tableCell.getTableCellType()) {
+                case HEADER:
+                    style = tableCell.isBold() ? header(getDefaultCellStyle(wb)) : defaultHeader;
+                    break;
+                case BODY:
+                    style = tableCell.isBold() ? body(getDefaultCellStyle(wb)) : defaultBody;
+                    break;
+                case FOOTER:
+                    style = tableCell.isBold() ? footer(getDefaultCellStyle(wb)) : defaultFooter;
+                    break;
+                default:
+                    throw new IllegalStateException("CellStyle " + tableCell.getTableCellType() + " is not supported.");
+            }
         }
 
         if (tableCell.isBold()) {

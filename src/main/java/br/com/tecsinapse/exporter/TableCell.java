@@ -8,6 +8,8 @@ package br.com.tecsinapse.exporter;
 
 import com.google.common.primitives.Doubles;
 
+import br.com.tecsinapse.exporter.style.TableCellStyle;
+
 public class TableCell {
 
     private static final int COLUMN_WIDTH = 256;
@@ -16,6 +18,7 @@ public class TableCell {
     private Integer rowspan = 1;
     private TableCellType tableCellType = TableCellType.BODY;
     private CellType cellType = CellType.STRING_TYPE;
+    private TableCellStyle tableCellStyle;
     private String style;
     private String styleClass;
     private boolean bold = false;
@@ -201,5 +204,13 @@ public class TableCell {
 
     public void setStyleClass(String styleClass) {
         this.styleClass = styleClass;
+    }
+
+    public TableCellStyle getTableCellStyle() {
+        return tableCellStyle;
+    }
+
+    public void setTableCellStyle(TableCellStyle tableCellStyle) {
+        this.tableCellStyle = tableCellStyle;
     }
 }
