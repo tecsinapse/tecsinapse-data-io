@@ -9,17 +9,17 @@ package br.com.tecsinapse.exporter.style;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 
-public class TableCellStyle {
+public class SpreadsheetCellStyle {
 
     private HSSFColor backgroundColor;
 
-    public TableCellStyle(HSSFColor backgroundColor) {
+    public SpreadsheetCellStyle(HSSFColor backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
 
     public CellStyle toCellStyle(CellStyle cellStyle) {
         if (backgroundColor != null) {
-            cellStyle.setFillForegroundColor((backgroundColor).getIndex());
+            cellStyle.setFillForegroundColor(backgroundColor.getIndex());
             return cellStyle;
         }
         return cellStyle;
@@ -31,6 +31,14 @@ public class TableCellStyle {
 
     public void setBackgroundColor(HSSFColor backgroundColor) {
         this.backgroundColor = backgroundColor;
+    }
+
+    public String getCssStyle() {
+        if (backgroundColor != null) {
+            short[] rgb = backgroundColor.getTriplet();
+            return String.format("background-color: #%02X%02X%02X", rgb[0], rgb[1], rgb[2]);
+        }
+        return null;
     }
 
 }

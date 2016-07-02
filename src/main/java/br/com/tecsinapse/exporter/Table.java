@@ -415,9 +415,9 @@ public class Table {
     private void setCellStyle(CellStyle defaultHeader, CellStyle defaultBody, CellStyle defaultFooter, Cell cell,
                               TableCell tableCell, Workbook wb, DataFormat dataFormat, CellStyle cellStyle) {
         CellStyle style;
-        if (tableCell.getTableCellStyle() != null) {
+        if (tableCell.getSpreadsheetCellStyle() != null) {
             style = getDefaultCellStyle(wb);
-            cell.setCellStyle(tableCell.getTableCellStyle().toCellStyle(style));
+            cell.setCellStyle(tableCell.getSpreadsheetCellStyle().toCellStyle(style));
         } else {
             switch (tableCell.getTableCellType()) {
                 case HEADER:

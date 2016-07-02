@@ -8,7 +8,7 @@ package br.com.tecsinapse.exporter;
 
 import com.google.common.primitives.Doubles;
 
-import br.com.tecsinapse.exporter.style.TableCellStyle;
+import br.com.tecsinapse.exporter.style.SpreadsheetCellStyle;
 
 public class TableCell {
 
@@ -18,7 +18,7 @@ public class TableCell {
     private Integer rowspan = 1;
     private TableCellType tableCellType = TableCellType.BODY;
     private CellType cellType = CellType.STRING_TYPE;
-    private TableCellStyle tableCellStyle;
+    private SpreadsheetCellStyle spreadsheetCellStyle;
     private String style;
     private String styleClass;
     private boolean bold = false;
@@ -189,6 +189,9 @@ public class TableCell {
 
     public String getStyle() {
         if (style == null && styleClass == null) {
+            if (spreadsheetCellStyle != null) {
+                return spreadsheetCellStyle.getCssStyle();
+            }
             return getTableCellType().getDefaultStyle();
         }
         return style;
@@ -206,11 +209,11 @@ public class TableCell {
         this.styleClass = styleClass;
     }
 
-    public TableCellStyle getTableCellStyle() {
-        return tableCellStyle;
+    public SpreadsheetCellStyle getSpreadsheetCellStyle() {
+        return spreadsheetCellStyle;
     }
 
-    public void setTableCellStyle(TableCellStyle tableCellStyle) {
-        this.tableCellStyle = tableCellStyle;
+    public void setSpreadsheetCellStyle(SpreadsheetCellStyle spreadsheetCellStyle) {
+        this.spreadsheetCellStyle = spreadsheetCellStyle;
     }
 }
