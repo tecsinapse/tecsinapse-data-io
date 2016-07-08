@@ -20,7 +20,7 @@ import br.com.tecsinapse.exporter.TableCell;
 import br.com.tecsinapse.exporter.style.SpreadsheetCellStyle;
 import br.com.tecsinapse.exporter.util.ExportHtml;
 
-public class ExcelCellColorExample {
+public class ExcelCellColorExampleTest {
 
     @Test
     public void generateExample() throws IOException {

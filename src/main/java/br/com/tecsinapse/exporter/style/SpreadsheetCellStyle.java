@@ -18,8 +18,8 @@ public class SpreadsheetCellStyle {
     }
 
     public CellStyle toCellStyle(CellStyle cellStyle) {
-        if (backgroundColor != null) {
-            cellStyle.setFillForegroundColor(backgroundColor.getIndex());
+        if (getBackgroundColor() != null) {
+            cellStyle.setFillForegroundColor(getBackgroundColor().getIndex());
             return cellStyle;
         }
         return cellStyle;
@@ -34,8 +34,8 @@ public class SpreadsheetCellStyle {
     }
 
     public String getCssStyle() {
-        if (backgroundColor != null) {
-            short[] rgb = backgroundColor.getTriplet();
+        if (getBackgroundColor() != null) {
+            short[] rgb = getBackgroundColor().getTriplet();
             return String.format("background-color: #%02X%02X%02X", rgb[0], rgb[1], rgb[2]);
         }
         return null;
