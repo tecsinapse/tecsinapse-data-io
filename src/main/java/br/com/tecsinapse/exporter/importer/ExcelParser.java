@@ -53,6 +53,7 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -86,6 +87,8 @@ public class ExcelParser<T> implements Parser<T> {
     private ImporterXLSXType importerXLSXType = DEFAULT;
     private boolean dateAsLocalDateTime = false;
     private boolean dateAsString = true;
+
+    private ParserFormatter parserFormatter;
 
     //lazy somente criado ao chamar getWorkbook
     private Workbook workbook;
@@ -155,14 +158,20 @@ public class ExcelParser<T> implements Parser<T> {
         return dateStringPattern;
     }
 
-    @Override
+    public String getDateTimeStringPattern() {
+        return dateTimeStringPattern;
+    }
+
     public void setDateStringPattern(String dateStringPattern) {
         this.dateStringPattern = dateStringPattern;
     }
 
-    @Override
     public void setDateTimeStringPattern(String dateTimeStringPattern) {
         this.dateTimeStringPattern = dateTimeStringPattern;
+    }
+
+    public void setParserFormatter(ParserFormatter parserFormatter) {
+        this.parserFormatter = parserFormatter;
     }
 
     public void setAfterLine(int afterLine) {
@@ -307,10 +316,12 @@ public class ExcelParser<T> implements Parser<T> {
                 try {
                     Object obj;
                     if (isReturnType(tcm.converter(), LocalDate.class)) {
-                        LocalDateTime localDateTime = DateTimeFormat.forPattern(getDateStringPattern()).parseLocalDateTime(value);
+                        LocalDateTime localDateTime = DateTimeFormat.forPattern(getDateTimeStringPattern()).parseLocalDateTime(value);
                         obj = localDateTime.toLocalDate();
                     } else if (isReturnType(tcm.converter(), LocalDateTime.class)) {
-                        obj = DateTimeFormat.forPattern(getDateStringPattern()).parseLocalDateTime(value);
+                        obj = DateTimeFormat.forPattern(dateTimeStringPattern).parseLocalDateTime(value);
+                    } else if (isReturnType(tcm.converter(), LocalTime.class)) {
+                        obj = DateTimeFormat.forPattern(getDateTimeStringPattern()).parseLocalDateTime(value).toLocalTime();
                     } else {
                         TableCellConverter converter = tcm.converter().newInstance();
                         obj = converter.apply(value);

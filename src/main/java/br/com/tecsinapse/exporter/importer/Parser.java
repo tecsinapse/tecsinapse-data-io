@@ -22,10 +22,6 @@ public interface Parser<T> extends Closeable {
      */
     int getNumberOfSheets();
 
-    void setDateStringPattern(String dateStringPattern);
-
-    void setDateTimeStringPattern(String dateTimeStringPattern);
-
-    void setDateAsLocalDateTime(boolean considerarLocalDateTime);
+    void setParserFormatter(ParserFormatter parserFormatter);
 
 }

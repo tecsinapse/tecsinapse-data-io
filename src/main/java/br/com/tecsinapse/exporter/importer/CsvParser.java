@@ -32,6 +32,7 @@ class CsvParser<T> implements Parser<T> {
     private final Class<?> group;
     private List<String> csvLines;
     private int afterLine = Importer.DEFAULT_START_ROW;
+    private ParserFormatter parserFormatter = ParserFormatter.DEFAULT;
 
 
     CsvParser(Class<T> clazz, File file, Charset charset, int afterLine, Class<?> group) throws IOException {
@@ -77,16 +78,20 @@ class CsvParser<T> implements Parser<T> {
         return 1;
     }
 
-    @Override
+
     public void setDateStringPattern(String dateStringPattern) {
     }
 
-    @Override
+
     public void setDateAsLocalDateTime(boolean considerarLocalDateTime) {
     }
 
-    @Override
+
     public void setDateTimeStringPattern(String dateTimeStringPattern) {
+    }
+
+    public void setParserFormatter(ParserFormatter parserFormatter) {
+        this.parserFormatter = parserFormatter;
     }
 
     /**

@@ -66,7 +66,7 @@ public enum ImporterXLSXType {
             if (parser != null && DateUtil.isADateFormat(formatIndex, formatString) && DateUtil.isValidExcelDate(value)) {
                 Date d = DateUtil.getJavaDate(value, use1904Windowing);
 
-                return LocalDateTime.fromDateFields(d).toString(parser.getDateStringPattern());
+                return LocalDateTime.fromDateFields(d).toString(parser.getDateTimeStringPattern());
             } else {
                 return super.formatRawCellContents(value, formatIndex, formatString, use1904Windowing);
             }

@@ -190,13 +190,6 @@ public class Importer<T> implements Closeable {
 
     private void beforeParser() throws IOException {
         doBeforeParser();
-        if (dateTimeStringPattern != null) {
-            parser.setDateTimeStringPattern(dateTimeStringPattern);
-        }
-        if (dateStringPattern != null) {
-            parser.setDateStringPattern(dateStringPattern);
-        }
-        parser.setDateAsLocalDateTime(dateAsLocalDateTime);
     }
 
     private void doBeforeParser() throws IOException {

@@ -15,6 +15,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.testng.annotations.Test;
 
 import br.com.tecsinapse.exporter.ExcelUtil;
+import br.com.tecsinapse.exporter.ResourceUtils;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
 import br.com.tecsinapse.exporter.style.SpreadsheetCellStyle;
@@ -41,18 +42,14 @@ public class ExcelCellColorExampleTest {
             }
         }
         String xlsx = "XLSX-cell-color.xlsx";
-        Files.move(ExcelUtil.getXlsFile(table, xlsx).toPath(), newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(ExcelUtil.getXlsFile(table, xlsx).toPath(), ResourceUtils.newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         String xls = "XLS-cell-color.xls";
-        Files.move(ExcelUtil.getXlsFile(table, xls).toPath(), newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(ExcelUtil.getXlsFile(table, xls).toPath(), ResourceUtils.newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-        File htmlOutput = newFileTargetResource("HTML-cell-color.html");
+        File htmlOutput = ResourceUtils.newFileTargetResource("HTML-cell-color.html");
         ExportHtml.newInstance().toHtml(table, htmlOutput);
     }
 
-    private static File newFileTargetResource(String name) {
-        File targetResourceDir = new File(Class.class.getResource("/").getFile());
-        return new File(targetResourceDir, name);
-    }
 
 }
