@@ -109,6 +109,11 @@ public class ExcelParserTest {
             assertDataParser(actual, expected, testId);
         }
 
+        List<List<String>> rows = parser.getLines();
+        for (List<String> cells : rows) {
+
+        }
+
     }
 
     private void assertDataParser(List<DataParser> actualList, List<DataParser> expectedList, String testId) {

@@ -7,33 +7,23 @@
 package br.com.tecsinapse.exporter.importer;
 
 import static br.com.tecsinapse.exporter.importer.Importer.getMappedMethods;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.base.Strings.nullToEmpty;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -46,10 +36,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
@@ -58,19 +45,18 @@ import br.com.tecsinapse.exporter.converter.group.Default;
 
 public class XlsParser<T> implements Parser<T> {
 
+    private static short DECIMAL_PRECISION = 10;
+
+    private static LocalDate LOCAL_DATE_BIGBANG = LocalDate.fromDateFields(DateUtil.getJavaDate(0.0));
+
     private final Class<T> clazz;
     private final Class<?> group;
-
     private final InputStream excelInputStream;
-
+    private boolean ignoreBlankLinesAtEnd = true;
     private int headersRows = Importer.DEFAULT_START_ROW;
     private int sheetNumber = 0;
     private ParserFormatter parserFormatter = ParserFormatter.DEFAULT;
-
-    //lazy somente criado ao chamar getWorkbook
     private Workbook workbook;
-    private OPCPackage opcPackage;
-
     public XlsParser(Class<T> clazz, File file) throws IOException {
         this(clazz, file, Default.class);
     }
@@ -87,23 +73,22 @@ public class XlsParser<T> implements Parser<T> {
         this.clazz = clazz;
         this.excelInputStream = new BufferedInputStream(inputStream);
         this.group = group;
-   }
-
-    private static Function<PropertyDescriptor, Method> toReadMethod() {
-        return new Function<PropertyDescriptor, Method>() {
-            @Override
-            public Method apply(PropertyDescriptor propertyDescriptor) {
-                return propertyDescriptor.getReadMethod();
-            }
-        };
     }
 
-    public void setParserFormatter(ParserFormatter parserFormatter) {
-        this.parserFormatter = parserFormatter;
+    public boolean isIgnoreBlankLinesAtEnd() {
+        return ignoreBlankLinesAtEnd;
+    }
+
+    public void setIgnoreBlankLinesAtEnd(boolean ignoreBlankLinesAtEnd) {
+        this.ignoreBlankLinesAtEnd = ignoreBlankLinesAtEnd;
     }
 
     public ParserFormatter getParserFormatter() {
         return parserFormatter;
+    }
+
+    public void setParserFormatter(ParserFormatter parserFormatter) {
+        this.parserFormatter = parserFormatter;
     }
 
     public void setHeadersRows(int headersRows) {
@@ -130,71 +115,10 @@ public class XlsParser<T> implements Parser<T> {
     @Override
     public List<T> parse() throws Exception {
         List<T> resultList = parseXls();
-        removeBlankLinesOfEnd(resultList);
+        if (ignoreBlankLinesAtEnd) {
+            ImporterUtils.removeBlankLinesOfEnd(resultList, clazz);
+        }
         return resultList;
-    }
-
-    private void removeBlankLinesOfEnd(List<T> resultList) throws InvocationTargetException, IllegalAccessException, IntrospectionException {
-        Collections.reverse(resultList);
-        final PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-        final Set<Method> readMethodsOfWriteMethodsWithTableCellMapping = FluentIterable.from(Arrays.asList(propertyDescriptors))
-                .filter(hasWriteAndReadMethod())
-                .filter(hasAnnotationTableCellMapping())
-                .transform(toReadMethod())
-                .toSet();
-
-        if (!readMethodsOfWriteMethodsWithTableCellMapping.isEmpty()) {
-            final Iterator<T> iterator = resultList.iterator();
-            while (iterator.hasNext()) {
-                final T instance = iterator.next();
-                if (allPropertiesHasNoValue(instance, readMethodsOfWriteMethodsWithTableCellMapping)) {
-                    iterator.remove();
-                } else {
-                    break;
-                }
-            }
-        }
-        Collections.reverse(resultList);
-    }
-
-    private boolean allPropertiesHasNoValue(T instance, Set<Method> readMethodsOfWriteMethodsWithTableCellMapping) throws InvocationTargetException, IllegalAccessException {
-        for (Method method : readMethodsOfWriteMethodsWithTableCellMapping) {
-            final Object value = method.invoke(instance);
-            if (method.getReturnType().equals(String.class)) {
-                String valueStr = nullToEmpty((String) value).trim();
-                if (!isNullOrEmpty(valueStr)) {
-                    return false;
-                }
-            } else if (value != null) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private Predicate<PropertyDescriptor> hasAnnotationTableCellMapping() {
-        return new Predicate<PropertyDescriptor>() {
-            @Override
-            public boolean apply(PropertyDescriptor propertyDescriptor) {
-                final Method writeMethod = propertyDescriptor.getWriteMethod();
-                for (Annotation annotation : writeMethod.getDeclaredAnnotations()) {
-                    if (annotation instanceof TableCellMapping) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-    }
-
-    private Predicate<PropertyDescriptor> hasWriteAndReadMethod() {
-        return new Predicate<PropertyDescriptor>() {
-            @Override
-            public boolean apply(PropertyDescriptor propertyDescriptor) {
-                return propertyDescriptor.getWriteMethod() != null &&
-                        propertyDescriptor.getReadMethod() != null;
-            }
-        };
     }
 
     private List<T> parseXls() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException, NoSuchMethodException {
@@ -226,6 +150,9 @@ public class XlsParser<T> implements Parser<T> {
 
     private void parseCell(Class<? extends TableCellConverter<?>> tcc, Object value, Method method, T instance) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         try {
+            if (value == null) {
+                method.invoke(instance, value);
+            }
             Class<?> targetType = getReturnType(tcc);
             if (isInstanceOf(value, targetType)) {
                 method.invoke(instance, value);
@@ -273,7 +200,23 @@ public class XlsParser<T> implements Parser<T> {
         if (LocalTime.class.equals(targetType)) {
             return localDateTime.toLocalTime();
         }
+        if (String.class.equals(targetType)) {
+            return formatLocalDateTimeAsString(localDateTime);
+        }
         return null;
+    }
+
+    private String formatLocalDateTimeAsString(LocalDateTime localDateTime) {
+        LocalTime localTime = localDateTime.toLocalTime();
+        LocalDate localDate = localDateTime.toLocalDate();
+        if (LocalTime.MIDNIGHT.equals(localTime)) {
+            return parserFormatter.formatLocalDate(localDate);
+        }
+
+        if (LOCAL_DATE_BIGBANG.equals(localDate)) {
+            return parserFormatter.formatLocalTime(localTime);
+        }
+        return parserFormatter.formatLocalDateTime(localDateTime);
     }
 
     private boolean isInstanceOf(Object value, Class<?> targetType) throws NoSuchMethodException {
@@ -314,7 +257,11 @@ public class XlsParser<T> implements Parser<T> {
     }
 
     private String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell) {
-        return getValueOrEmptyAsObject(evaluator, cell).toString();
+        Object value = getValueOrEmptyAsObject(evaluator, cell);
+        if (value instanceof LocalDateTime) {
+            return formatLocalDateTimeAsString((LocalDateTime) value);
+        }
+        return value.toString();
     }
 
     private Object getValueOrEmptyAsObject(FormulaEvaluator evaluator, Cell cell) {
@@ -330,15 +277,12 @@ public class XlsParser<T> implements Parser<T> {
                      LocalDateTime localDateTime = LocalDateTime.fromDateFields(cell.getDateCellValue());
                     return localDateTime;
                 }
-                BigDecimal bd = BigDecimal.valueOf(cell.getNumericCellValue()).setScale(10, BigDecimal.ROUND_HALF_UP);
+                BigDecimal bd = BigDecimal.valueOf(cell.getNumericCellValue()).setScale(DECIMAL_PRECISION, BigDecimal.ROUND_HALF_UP);
                 return bd.stripTrailingZeros();
             case Cell.CELL_TYPE_STRING:
                 return cellValue.getStringValue();
-            case Cell.CELL_TYPE_BLANK:
-                return "";
             case Cell.CELL_TYPE_ERROR:
                 return "ERRO";
-            case Cell.CELL_TYPE_FORMULA://nunca será formula após evaluator
             default:
                 return "";
         }
@@ -353,18 +297,6 @@ public class XlsParser<T> implements Parser<T> {
             }
         }
         return workbook;
-    }
-
-    private OPCPackage getOPCPackage() {
-        //não delegar para getWorkbook().getPackage() arquivo muito grande(33mb) lançariam OOME
-        if (opcPackage == null) {
-            try {
-                opcPackage = OPCPackage.open(excelInputStream);
-            } catch (IOException | InvalidFormatException e) {
-                throw Throwables.propagate(e);
-            }
-        }
-        return opcPackage;
     }
 
     @Override
