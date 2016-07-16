@@ -10,7 +10,7 @@ package br.com.tecsinapse.exporter.txt;
  * Representa cada coluna de uma linha no arquivo {@code .txt}
  * <br><br>
  * Exemplo de criação de um FieldTxt:
- * <p>
+ *
  * <pre>
  * {@code
  *     FieldTxt.newBuilder()
@@ -23,7 +23,7 @@ package br.com.tecsinapse.exporter.txt;
  * }
  * </pre>
  * Valores padrões:
- * <p>
+ *
  * <ul>
  * <li>separator: Separator.NONE</li>
  * <li>fixedSize: 0</li>
