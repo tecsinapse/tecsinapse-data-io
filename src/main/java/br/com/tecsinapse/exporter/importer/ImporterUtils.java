@@ -8,6 +8,9 @@ package br.com.tecsinapse.exporter.importer;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Multimaps.filterEntries;
+import static com.google.common.collect.Multimaps.transformValues;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -15,19 +18,48 @@ import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
+import org.reflections.ReflectionUtils;
+
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
+import br.com.tecsinapse.exporter.annotation.TableCellMappings;
+import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.importer.formatter.DataFormatterInternal;
 
 public class ImporterUtils {
+
+    public static final DataFormatter DATA_FORMATTER_INTERNAL = new DataFormatterInternal();
+
+    private static short DECIMAL_PRECISION = 10;
+
+    private static final LocalDate LOCAL_DATE_BIGBANG = LocalDate.fromDateFields(DateUtil.getJavaDate(0.0));
+
 
     public static <T> void removeBlankLinesOfEnd(List<T> resultList, Class<T> clazz) throws InvocationTargetException, IllegalAccessException, IntrospectionException {
         Collections.reverse(resultList);
@@ -99,5 +131,191 @@ public class ImporterUtils {
                 return propertyDescriptor.getReadMethod();
             }
         };
+    }
+
+    public static final Map<Method, TableCellMapping> getMappedMethods(Class<?> clazz, final Class<?> group) {
+
+        Set<Method> cellMappingMethods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
+        cellMappingMethods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMappings.class)));
+
+
+        Multimap<Method, Optional<TableCellMapping>> tableCellMappingByMethod = FluentIterable.from(cellMappingMethods)
+                .index(new Function<Method, Optional<TableCellMapping>>() {
+                    @Override
+                    public Optional<TableCellMapping> apply(Method method) {
+                        return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
+                                .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class), group));
+                    }
+                })
+                .inverse();
+
+        tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, new Predicate<Entry<Method, Optional<TableCellMapping>>>() {
+            @Override
+            public boolean apply(Entry<Method, Optional<TableCellMapping>> entry) {
+                return entry.getValue().isPresent()
+                        && any(Lists.newArrayList(entry.getValue().get().groups()), assignableTo(group));
+            }
+        });
+
+        Multimap<Method, TableCellMapping> methodByTableCellMapping = transformValues(tableCellMappingByMethod, new Function<Optional<TableCellMapping>, TableCellMapping>() {
+            @Override
+            public TableCellMapping apply(Optional<TableCellMapping> tcmOptional) {
+                return tcmOptional.get();
+            }
+        });
+
+        return Maps.transformValues(methodByTableCellMapping.asMap(), new Function<Collection<TableCellMapping>, TableCellMapping>() {
+            @Override
+            public TableCellMapping apply(Collection<TableCellMapping> tcms) {
+                return Iterables.getFirst(tcms, null);
+            }
+        });
+    }
+
+    private static Optional<TableCellMapping> getFirstTableCellMapping(TableCellMappings tcms, final Class<?> group) {
+        if (tcms == null) {
+            return Optional.absent();
+        }
+
+        return FluentIterable.from(Lists.newArrayList(tcms.value()))
+                .filter(new Predicate<TableCellMapping>() {
+                    @Override
+                    public boolean apply(TableCellMapping tcm) {
+                        return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
+                    }
+                })
+                .first();
+    }
+
+    private static Predicate<? super Class<?>> assignableTo(final Class<?> group) {
+        return new Predicate<Class<?>>() {
+            @Override
+            public boolean apply(Class<?> g) {
+                return g.isAssignableFrom(group);
+            }
+        };
+    }
+
+    public static <T> void parseSpreadsheetCell(Class<? extends TableCellConverter<?>> tcc, FormulaEvaluator evaluator, Cell cell, Method method, T instance, ParserFormatter parserFormatter) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        Object value = getValueOrEmptyAsObject(evaluator, cell);
+        try {
+            if (value == null) {
+                method.invoke(instance, value);
+            }
+            Class<?> targetType = getReturnType(tcc);
+            if (isInstanceOf(value, targetType)) {
+                method.invoke(instance, value);
+                return;
+            }
+            if (isInstanceOf(value, BigDecimal.class)) {
+                Object numericValue = toNumericValue((BigDecimal) value, targetType);
+                if (numericValue != null) {
+                    method.invoke(instance, numericValue);
+                    return;
+                }
+            }
+            if (isInstanceOf(value, LocalDateTime.class) || isInstanceOf(targetType, LocalDateTime.class)) {
+                Object dateTimeValue = toDateTimeValue((LocalDateTime) value, targetType, parserFormatter);
+                if (dateTimeValue != null) {
+                    method.invoke(instance, dateTimeValue);
+                    return;
+                }
+            }
+            TableCellConverter<?> converter = tcc.newInstance();
+            method.invoke(instance, converter.apply(value.toString()));
+        } catch (NoSuchMethodException e) {
+            TableCellConverter<?> converter = tcc.newInstance();
+            method.invoke(instance, converter.apply(value.toString()));
+        }
+    }
+
+    public static Object getValueOrEmptyAsObject(FormulaEvaluator evaluator, Cell cell) {
+        final CellValue cellValue = evaluator.evaluate(cell);
+        if (cellValue == null) {
+            return "";
+        }
+        switch (cellValue.getCellType()) {
+            case Cell.CELL_TYPE_BOOLEAN:
+                return Boolean.valueOf(cellValue.getBooleanValue());
+            case Cell.CELL_TYPE_NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    LocalDateTime localDateTime = LocalDateTime.fromDateFields(cell.getDateCellValue());
+                    return localDateTime;
+                }
+                BigDecimal bd = BigDecimal.valueOf(cell.getNumericCellValue()).setScale(DECIMAL_PRECISION, BigDecimal.ROUND_HALF_UP);
+                return bd.stripTrailingZeros();
+            case Cell.CELL_TYPE_STRING:
+                return cellValue.getStringValue();
+            case Cell.CELL_TYPE_ERROR:
+                return "ERRO";
+            default:
+                return "";
+        }
+    }
+
+    public static String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell, ParserFormatter parserFormatter) {
+        Object value = getValueOrEmptyAsObject(evaluator, cell);
+        if (value instanceof LocalDateTime) {
+            return formatLocalDateTimeAsString((LocalDateTime) value, parserFormatter);
+        }
+        if (value instanceof BigDecimal) {
+            return formatNumericAsString((BigDecimal) value, parserFormatter);
+        }
+        return value.toString();
+    }
+
+    private static Object toNumericValue(BigDecimal bigDecimal, Class<?> targetType) {
+        if (Integer.class.equals(targetType)) {
+            return bigDecimal.intValue();
+        }
+        if (Long.class.equals(targetType)) {
+            return bigDecimal.longValue();
+        }
+        return null;
+    }
+
+    private static Object toDateTimeValue(LocalDateTime localDateTime, Class<?> targetType, ParserFormatter parserFormatter) {
+        if (LocalDateTime.class.equals(targetType)) {
+            return localDateTime;
+        }
+        if (LocalDate.class.equals(targetType)) {
+            return localDateTime.toLocalDate();
+        }
+        if (LocalTime.class.equals(targetType)) {
+            return localDateTime.toLocalTime();
+        }
+        if (String.class.equals(targetType)) {
+            return formatLocalDateTimeAsString(localDateTime, parserFormatter);
+        }
+        return null;
+    }
+
+    private static String formatLocalDateTimeAsString(LocalDateTime localDateTime, ParserFormatter parserFormatter) {
+        LocalTime localTime = localDateTime.toLocalTime();
+        LocalDate localDate = localDateTime.toLocalDate();
+        if (LocalTime.MIDNIGHT.equals(localTime)) {
+            return parserFormatter.formatLocalDate(localDate);
+        }
+
+        if (LOCAL_DATE_BIGBANG.equals(localDate)) {
+            return parserFormatter.formatLocalTime(localTime);
+        }
+        return parserFormatter.formatLocalDateTime(localDateTime);
+    }
+
+    private static String formatNumericAsString(Number number, ParserFormatter parserFormatter) {
+        if (number == null) {
+            return null;
+        }
+        return parserFormatter.formatNumber(number);
+    }
+
+    private static boolean isInstanceOf(Object value, Class<?> targetType) throws NoSuchMethodException {
+        return value != null && targetType.isInstance(value);
+    }
+
+    private static Class<?> getReturnType(Class<?> converter) throws NoSuchMethodException {
+        Method converterMethod = converter.getMethod("apply", String.class);
+        return converterMethod.getReturnType();
     }
 }

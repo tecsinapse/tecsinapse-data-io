@@ -4,9 +4,7 @@
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
  */
-package br.com.tecsinapse.exporter.importer;
-
-import static br.com.tecsinapse.exporter.importer.Importer.getMappedMethods;
+package br.com.tecsinapse.exporter.importer.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,30 +19,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.xml.sax.SAXException;
+
 import br.com.tecsinapse.exporter.CSVUtil;
+import br.com.tecsinapse.exporter.ImporterType;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import br.com.tecsinapse.exporter.converter.group.Default;
+import br.com.tecsinapse.exporter.importer.Importer;
+import br.com.tecsinapse.exporter.importer.ImporterUtils;
+import br.com.tecsinapse.exporter.importer.Parser;
+import br.com.tecsinapse.exporter.importer.ParserFormatter;
 
-class CsvParser<T> implements Parser<T> {
+public class CsvParser<T> implements Parser<T> {
 
     private final Class<T> clazz;
     private final Class<?> group;
     private List<String> csvLines;
-    private int afterLine = Importer.DEFAULT_START_ROW;
+    private int headersRows = Importer.DEFAULT_START_ROW;
     private ParserFormatter parserFormatter = ParserFormatter.DEFAULT;
 
+    private boolean ignoreBlankLinesAtEnd = false;
 
-    CsvParser(Class<T> clazz, File file, Charset charset, int afterLine, Class<?> group) throws IOException {
+
+    public CsvParser(Class<T> clazz, File file, Charset charset, int afterLine, Class<?> group) throws IOException {
         this(clazz, file, charset, group);
-
-        this.afterLine = afterLine;
+        this.headersRows = afterLine;
     }
 
-    CsvParser(Class<T> clazz, InputStream input, Charset charset, int afterLine, Class<?> group) throws IOException {
+    public CsvParser(Class<T> clazz, InputStream input, Charset charset, int afterLine, Class<?> group) throws IOException {
         this(clazz, input, charset, group);
-
-        this.afterLine = afterLine;
+        this.headersRows = afterLine;
     }
 
     public CsvParser(Class<T> clazz, List<String> csvLines) {
@@ -78,20 +86,54 @@ class CsvParser<T> implements Parser<T> {
         return 1;
     }
 
+    @Override
+    public void setSheetNumber(int sheetNumber) {
 
-    public void setDateStringPattern(String dateStringPattern) {
     }
 
-
-    public void setDateAsLocalDateTime(boolean considerarLocalDateTime) {
+    @Override
+    public int getSheetNumber() {
+        return 0;
     }
 
+    @Override
+    public void setSheetNumberAsFirstNotHidden() {
 
-    public void setDateTimeStringPattern(String dateTimeStringPattern) {
     }
 
+    @Override
+    public ImporterType getImporterType() {
+        return ImporterType.CSV;
+    }
+
+    @Override
     public void setParserFormatter(ParserFormatter parserFormatter) {
         this.parserFormatter = parserFormatter;
+    }
+
+    @Override
+    public ParserFormatter getParserFormatter() {
+        return parserFormatter;
+    }
+
+    @Override
+    public void setHeadersRows(int headersRows) {
+        this.headersRows = headersRows;
+    }
+
+    @Override
+    public boolean isIgnoreBlankLinesAtEnd() {
+        return ignoreBlankLinesAtEnd;
+    }
+
+    @Override
+    public void setIgnoreBlankLinesAtEnd(boolean ignoreBlankLinesAtEnd) {
+        this.ignoreBlankLinesAtEnd = ignoreBlankLinesAtEnd;
+    }
+
+    @Override
+    public List<List<String>> getLines() throws SAXException, OpenXML4JException, ParserConfigurationException, IOException {
+        return null;
     }
 
     /**
@@ -106,13 +148,13 @@ class CsvParser<T> implements Parser<T> {
             InvocationTargetException, NoSuchMethodException {
         List<T> list = new ArrayList<>();
 
-        Map<Method, TableCellMapping> cellMappingByMethod = getMappedMethods(clazz, group);
+        Map<Method, TableCellMapping> cellMappingByMethod = ImporterUtils.getMappedMethods(clazz, group);
 
         final Constructor<T> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
         for (int i = 0; i < csvLines.size(); i++) {
             final String line = csvLines.get(i);
-            if ((i + 1) <= afterLine) {
+            if ((i + 1) <= headersRows) {
                 continue;
             }
 

@@ -7,9 +7,6 @@
 package br.com.tecsinapse.exporter.importer;
 
 import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Multimaps.filterEntries;
-import static com.google.common.collect.Multimaps.transformValues;
 
 import java.io.Closeable;
 import java.io.File;
@@ -17,32 +14,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import org.reflections.ReflectionUtils;
-
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 
+import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.FileType;
+import br.com.tecsinapse.exporter.ImporterType;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
-import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.group.Default;
+import br.com.tecsinapse.exporter.importer.parser.CsvParser;
+import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
 
 public class Importer<T> implements Closeable {
 
-    static final int DEFAULT_START_ROW = 1;
+    public static final int DEFAULT_START_ROW = 1;
     private final Class<?> group;
     private Class<T> clazz;
     private File file;
@@ -50,7 +37,7 @@ public class Importer<T> implements Closeable {
     private String filename;
     private Charset charset;
     private Parser<T> parser;
-    private int afterLine = DEFAULT_START_ROW;
+    private int headersRows = DEFAULT_START_ROW;
     private boolean isLastSheet;
     private ImporterXLSXType importerXLSXType = DEFAULT;
     private String dateStringPattern;
@@ -110,7 +97,7 @@ public class Importer<T> implements Closeable {
         this(clazz, group);
         this.inputStream = inputStream;
         this.filename = filename;
-        this.afterLine = afterLine;
+        this.headersRows = afterLine;
         this.isLastSheet = isLastSheet;
     }
 
@@ -124,68 +111,9 @@ public class Importer<T> implements Closeable {
         this.group = group;
     }
 
-    //FIXME Refatorar: deixar método comum para ExcelParser e CsvParser
+    @Deprecated
     protected static final Map<Method, TableCellMapping> getMappedMethods(Class<?> clazz, final Class<?> group) {
-
-        Set<Method> cellMappingMethods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
-        cellMappingMethods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMappings.class)));
-
-
-        Multimap<Method, Optional<TableCellMapping>> tableCellMappingByMethod = FluentIterable.from(cellMappingMethods)
-                .index(new Function<Method, Optional<TableCellMapping>>() {
-                    @Override
-                    public Optional<TableCellMapping> apply(Method method) {
-                        return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
-                                .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class), group));
-                    }
-                })
-                .inverse();
-
-        tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, new Predicate<Entry<Method, Optional<TableCellMapping>>>() {
-            @Override
-            public boolean apply(Entry<Method, Optional<TableCellMapping>> entry) {
-                return entry.getValue().isPresent()
-                        && any(Lists.newArrayList(entry.getValue().get().groups()), assignableTo(group));
-            }
-        });
-
-        Multimap<Method, TableCellMapping> methodByTableCellMapping = transformValues(tableCellMappingByMethod, new Function<Optional<TableCellMapping>, TableCellMapping>() {
-            @Override
-            public TableCellMapping apply(Optional<TableCellMapping> tcmOptional) {
-                return tcmOptional.get();
-            }
-        });
-
-        return Maps.transformValues(methodByTableCellMapping.asMap(), new Function<Collection<TableCellMapping>, TableCellMapping>() {
-            @Override
-            public TableCellMapping apply(Collection<TableCellMapping> tcms) {
-                return Iterables.getFirst(tcms, null);
-            }
-        });
-    }
-
-    private static Optional<TableCellMapping> getFirstTableCellMapping(TableCellMappings tcms, final Class<?> group) {
-        if (tcms == null) {
-            return Optional.absent();
-        }
-
-        return FluentIterable.from(Lists.newArrayList(tcms.value()))
-                .filter(new Predicate<TableCellMapping>() {
-                    @Override
-                    public boolean apply(TableCellMapping tcm) {
-                        return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
-                    }
-                })
-                .first();
-    }
-
-    private static Predicate<? super Class<?>> assignableTo(final Class<?> group) {
-        return new Predicate<Class<?>>() {
-            @Override
-            public boolean apply(Class<?> g) {
-                return g.isAssignableFrom(group);
-            }
-        };
+        return ImporterUtils.getMappedMethods(clazz, group);
     }
 
     private void beforeParser() throws IOException {
@@ -196,20 +124,25 @@ public class Importer<T> implements Closeable {
         FileType fileType = getFileType();
         if (fileType == FileType.XLSX || fileType == FileType.XLS) {
             if (file != null) {
-                parser = new ExcelParser<T>(clazz, file, afterLine, isLastSheet, importerXLSXType, group);
+                parser = new SpreadsheetParser<T>(clazz, file, group);
+                // TODO Last Row?
+                parser.setHeadersRows(headersRows);
                 return;
             }
             if (inputStream != null) {
-                parser = new ExcelParser<T>(clazz, inputStream, fileType.getExcelType(), afterLine, isLastSheet, importerXLSXType, group);
+                ImporterType importerType = fileType.getExcelType() == ExcelType.XLSX ? ImporterType.XLSX : ImporterType.XLS;
+                parser = new SpreadsheetParser<T>(clazz, inputStream, group, importerType);
+                // TODO Last Row?
+                parser.setHeadersRows(headersRows);
                 return;
             }
         }
         if (file != null) {
-            parser = new CsvParser<T>(clazz, file, charset, afterLine, group);
+            parser = new CsvParser<T>(clazz, file, charset, headersRows, group);
             return;
         }
         if (inputStream != null) {
-            parser = new CsvParser<T>(clazz, inputStream, charset, afterLine, group);
+            parser = new CsvParser<T>(clazz, inputStream, charset, headersRows, group);
             return;
         }
     }
@@ -226,7 +159,7 @@ public class Importer<T> implements Closeable {
     }
 
     public void setAfterLine(int afterLine) {
-        this.afterLine = afterLine;
+        this.headersRows = afterLine;
     }
 
     public void setDateStringPattern(String dateStringPattern) {

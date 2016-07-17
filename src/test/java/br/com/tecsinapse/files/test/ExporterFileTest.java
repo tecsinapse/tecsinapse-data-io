@@ -39,10 +39,13 @@ import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
 import br.com.tecsinapse.exporter.TableCellType;
 import br.com.tecsinapse.exporter.importer.ExcelParser;
+import br.com.tecsinapse.exporter.importer.ParserFormatter;
 
 public class ExporterFileTest {
 
     private static final List<Locale> LOCALES = Arrays.asList(new Locale("pt", "BR"), ENGLISH, FRENCH, Locale.getDefault());
+
+    private static ParserFormatter parserFormatter = ParserFormatter.DEFAULT;
 
     @DataProvider(name = "beans")
     public Object[][] beans() {
@@ -86,6 +89,7 @@ public class ExporterFileTest {
             @Override
             public List<List<String>> apply(File file) {
                 try (final ExcelParser<?> parser = new ExcelParser<>(null, file)) {
+                    parser.setParserFormatter(parserFormatter);
                     parser.setAfterLine(0);
                     return parser.getLines();
                 } catch (Exception e) {
@@ -126,7 +130,8 @@ public class ExporterFileTest {
             @Override
             public File apply(Table table) {
                 try {
-                    final File file = File.createTempFile("xls", ".xls");
+                    String ext = supplier.get() instanceof HSSFWorkbook ? ".xls" : ".xlsx";
+                    final File file = File.createTempFile("xls", ext);
                     file.deleteOnExit();
 
                     try (final FileOutputStream out = new FileOutputStream(file)) {
@@ -149,8 +154,8 @@ public class ExporterFileTest {
         for (Locale locale : LOCALES) {
             Locale.setDefault(locale);
             final String dataPattern = "dd/MM/yyyy";
-            final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern, new DecimalFormatSymbols(ENGLISH));
-
+            final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern, new DecimalFormatSymbols(locale));
+            parserFormatter = new ParserFormatter("dd/MM/yyyy HH:mm", dataPattern, "HH:mm", decimalPattern);
 
             final Table table = new Table();
 
@@ -183,9 +188,10 @@ public class ExporterFileTest {
             table.add("last", TableCellType.FOOTER);
             table.add(new TableCell("last tc", TableCellType.FOOTER));
 
-
+            table.setParserFormatter(parserFormatter);
             final File file = toFile.apply(table);
             final List<List<String>> lines = toLines.apply(file);
+            String fileName = file.getName();
 
             //asserts
             assertEquals(1 + beans.size() + 1, lines.size());
@@ -195,12 +201,12 @@ public class ExporterFileTest {
                 assertEquals(row.size(), 6);
 
                 if (i == 0) {//header
-                    assertEquals(row.get(0), "Cidade");
-                    assertEquals(row.get(1), "Estado");
-                    assertEquals(row.get(2), "Data");
-                    assertEquals(row.get(3), "");
-                    assertEquals(row.get(4), "Inteiro");
-                    assertEquals(row.get(5), "Decimal");
+                    assertEquals(row.get(0), "Cidade", fileName);
+                    assertEquals(row.get(1), "Estado", fileName);
+                    assertEquals(row.get(2), "Data", fileName);
+                    assertEquals(row.get(3), "", fileName);
+                    assertEquals(row.get(4), "Inteiro", fileName);
+                    assertEquals(row.get(5), "Decimal", fileName);
 
                     continue;
                 }
@@ -208,21 +214,21 @@ public class ExporterFileTest {
                 if (i <= beans.size()) { // body
                     final FileBean bean = beans.get(i - 1);
 
-                    assertEquals(row.get(0), bean.cidade);
-                    assertEquals(row.get(1), bean.estado);
-                    assertEquals(row.get(2), bean.data == null ? "" : bean.data.toString(dataPattern));
-                    assertEquals(row.get(3), "");
-                    assertEquals(row.get(4), decimalFormat.format(bean.inteiro));
-                    assertEquals(row.get(5), decimalFormat.format(bean.decimal));
+                    assertEquals(row.get(0), bean.cidade, fileName);
+                    assertEquals(row.get(1), bean.estado, fileName);
+                    assertEquals(row.get(2), bean.data == null ? "" : bean.data.toString(dataPattern), fileName);
+                    assertEquals(row.get(3), "", fileName);
+                    assertEquals(row.get(4), decimalFormat.format(bean.inteiro), fileName);
+                    assertEquals(row.get(5), decimalFormat.format(bean.decimal), fileName);
 
                 } else {//row teste
 
-                    assertEquals(row.get(0), "");
-                    assertEquals(row.get(1), " ");
-                    assertEquals(row.get(2), nullValue);
-                    assertEquals(row.get(3), nullValue);
-                    assertEquals(row.get(4), "last");
-                    assertEquals(row.get(5), "last tc");
+                    assertEquals(row.get(0), "", fileName);
+                    assertEquals(row.get(1), " ", fileName);
+                    assertEquals(row.get(2), nullValue, fileName);
+                    assertEquals(row.get(3), nullValue, fileName);
+                    assertEquals(row.get(4), "last", fileName);
+                    assertEquals(row.get(5), "last tc", fileName);
                 }
             }
         }

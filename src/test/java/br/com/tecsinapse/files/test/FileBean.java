@@ -23,13 +23,13 @@ import br.com.tecsinapse.files.test.ImporterFileTest.LocalDateConverter;
  */
 public final class FileBean {
 
-    String cidade;
-    String estado;
-    LocalDate data;
-    String vazia;
-    Integer inteiro;
-    BigDecimal decimal;
-    Integer numeroInteger;
+    public String cidade;
+    public String estado;
+    public LocalDate data;
+    public String vazia;
+    public Integer inteiro;
+    public BigDecimal decimal;
+    public Integer numeroInteger;
 
     FileBean() {
     }
@@ -61,32 +61,32 @@ public final class FileBean {
     }
 
     @TableCellMapping(columnIndex = 0)
-    private void setCidade(String cidade) {
+    public void setCidade(String cidade) {
         this.cidade = cidade;
     }
 
     @TableCellMapping(columnIndex = 1)
-    private void setEstado(String estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 
     @TableCellMapping(columnIndex = 2, converter = LocalDateConverter.class)
-    private void setData(LocalDate data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
     @TableCellMapping(columnIndex = 3)
-    private void setVazia(String vazia) {
+    public void setVazia(String vazia) {
         this.vazia = vazia;
     }
 
     @TableCellMapping(columnIndex = 4, converter = IntegerTableCellConverter.class)
-    private void setInteiro(Integer inteiro) {
+    public void setInteiro(Integer inteiro) {
         this.inteiro = inteiro;
     }
 
     @TableCellMapping(columnIndex = 5, converter = BigDecimalTableCellConverter.class)
-    private void setDecimal(BigDecimal decimal) {
+    public void setDecimal(BigDecimal decimal) {
         this.decimal = decimal;
     }
 

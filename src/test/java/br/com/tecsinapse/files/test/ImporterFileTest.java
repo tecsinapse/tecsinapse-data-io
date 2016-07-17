@@ -105,7 +105,7 @@ public class ImporterFileTest {
         for (Locale locale : LOCALES) {
             Locale.setDefault(locale);
             try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine, lastSheet, ImporterXLSXType.DEFAULT)) {
-                excelParser.setDateStringPattern(DD_MM_YYYY);
+                //excelParser.setDateStringPattern(DD_MM_YYYY);
 
                 final List<FileBean> beans = excelParser.parse();
                 for (int i = 0; i < beans.size(); i++) {
@@ -138,7 +138,6 @@ public class ImporterFileTest {
         for (Locale locale : LOCALES) {
             Locale.setDefault(locale);
             try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
-                excelParser.setDateStringPattern(DD_MM_YYYY);
                 assertFileBeanEquals(excelParser, sheets, arquivo);
             }
         }
@@ -149,7 +148,6 @@ public class ImporterFileTest {
         for (Locale locale : LOCALES) {
             Locale.setDefault(locale);
             try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
-                excelParser.setDateAsString(false);
                 assertFileBeanEquals(excelParser, sheets, arquivo);
             }
         }

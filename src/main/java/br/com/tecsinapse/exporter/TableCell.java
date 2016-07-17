@@ -8,12 +8,13 @@ package br.com.tecsinapse.exporter;
 
 import com.google.common.primitives.Doubles;
 
+import br.com.tecsinapse.exporter.importer.ParserFormatter;
 import br.com.tecsinapse.exporter.style.SpreadsheetCellStyle;
 
 public class TableCell {
 
     private static final int COLUMN_WIDTH = 256;
-    private String content = "";
+    private Object content = "";
     private Integer colspan = 1;
     private Integer rowspan = 1;
     private TableCellType tableCellType = TableCellType.BODY;
@@ -66,13 +67,12 @@ public class TableCell {
     }
 
     public TableCell(Number content) {
-        this(content != null ? content.toString() : null);
+        this.content = content;
         this.cellType = CellType.NUMERIC_TYPE;
     }
 
     public TableCell(Number content, boolean bold) {
-        this(content != null ? content.toString() : null);
-        this.cellType = CellType.NUMERIC_TYPE;
+        this(content);
         this.bold = bold;
     }
 
@@ -82,9 +82,8 @@ public class TableCell {
     }
 
     public TableCell(Number content, TableCellType tableCellType, boolean bold) {
-        this(content);
+        this(content, bold);
         this.tableCellType = tableCellType;
-        this.bold = bold;
     }
 
     public TableCell(String content, CellType cellType) {
@@ -132,14 +131,26 @@ public class TableCell {
     }
 
     int getDefaultColumnWidth() {
-        return content == null || content.trim().length() == 0 ? 0 : content.length() * COLUMN_WIDTH;
+        String value = getContent();
+        return value == null || value.trim().length() == 0 ? 0 : value.length() * COLUMN_WIDTH;
     }
 
     public String getContent() {
-        return content;
+        return content == null ? null : content.toString();
+    }
+
+    public String getContent(ParserFormatter parserFormatter) {
+        if (parserFormatter == null || content == null) {
+            return null;
+        }
+        return content instanceof Number ? parserFormatter.formatNumber((Number) content) : content.toString();
     }
 
     public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setContent(Number content) {
         this.content = content;
     }
 
@@ -184,7 +195,10 @@ public class TableCell {
     }
 
     public Double getContentAsDoubleOrNull() {
-        return content == null ? null : Doubles.tryParse(content);
+        if (content instanceof Number) {
+            return ((Number) content).doubleValue();
+        }
+        return content == null ? null : Doubles.tryParse(getContent());
     }
 
     public String getStyle() {
