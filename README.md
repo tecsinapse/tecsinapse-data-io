@@ -30,6 +30,49 @@ Gradle:
 compile "br.com.tecsinapse:tecsinapse-exporter:1.1.56"
 ```
 
+If you want to use snapshots first config OSS Sonatype Snapshots repository:
+
+Maven:
+
+``` xml
+<repositories>
+    <repository>
+        <id>oss-snapshots</id>
+        <name>OSS Snapshots</name>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+```
+
+Gradle:
+
+```groovy
+repositories {
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+```
+
+And then the dependency:
+
+``` xml
+<dependency>
+  <groupId>br.com.tecsinapse</groupId>
+  <artifactId>tecsinapse-exporter</artifactId>
+  <version>1.5.7-SNAPSHOT</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+compile 'br.com.tecsinapse:tecsinapse-exporter:1.5.7-SNAPSHOT'
+```
+
 Documentation and samples
 ---
 

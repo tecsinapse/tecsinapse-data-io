@@ -10,7 +10,7 @@ import com.google.common.base.Strings;
 
 /**
  * Representa o alinhamento que o campo deve utilizar dentro do arquivo
- * <p>
+ *
  * <ul>
  * <li>RIGHT: À Direita (Quando utilizar tamanho fixo irá preencher com o caracter especificado no FieldTxt à esquerda até completar o tamanho)</li>
  * <li>LEFT: À Esquerda (Quando utilizar tamanho fixo irá preencher com o caracter especificado no FieldTxt à direita até completar o tamanho)</li>
