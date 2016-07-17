@@ -10,15 +10,16 @@ import java.io.Closeable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import br.com.tecsinapse.exporter.ImporterType;
+import br.com.tecsinapse.exporter.ExporterFormatter;
+import br.com.tecsinapse.exporter.type.FileType;
 
 public interface Parser<T> extends Closeable {
 
     List<T> parse() throws IllegalAccessException, InstantiationException, InvocationTargetException, Exception;
 
-    void setParserFormatter(ParserFormatter parserFormatter);
+    void setExporterFormatter(ExporterFormatter exporterFormatter);
 
-    ParserFormatter getParserFormatter();
+    ExporterFormatter getExporterFormatter();
 
     void setHeadersRows(int headersRows);
 
@@ -36,5 +37,5 @@ public interface Parser<T> extends Closeable {
 
     void setSheetNumberAsFirstNotHidden();
 
-    ImporterType getImporterType();
+    FileType getFileType();
 }

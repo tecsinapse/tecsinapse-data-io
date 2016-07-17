@@ -4,7 +4,7 @@
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
  */
-package br.com.tecsinapse.exporter;
+package br.com.tecsinapse.exporter.util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +22,11 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
+
+import br.com.tecsinapse.exporter.EmptyTableCell;
+import br.com.tecsinapse.exporter.type.CellType;
+import br.com.tecsinapse.exporter.Table;
+import br.com.tecsinapse.exporter.TableCell;
 
 public class WorkbookUtil {
 

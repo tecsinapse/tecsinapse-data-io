@@ -6,8 +6,6 @@
  */
 package br.com.tecsinapse.exporter.importer;
 
-import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.DEFAULT;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -19,13 +17,11 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 
-import br.com.tecsinapse.exporter.ExcelType;
-import br.com.tecsinapse.exporter.FileType;
-import br.com.tecsinapse.exporter.ImporterType;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.group.Default;
 import br.com.tecsinapse.exporter.importer.parser.CsvParser;
 import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
+import br.com.tecsinapse.exporter.type.FileType;
 
 public class Importer<T> implements Closeable {
 
@@ -38,11 +34,6 @@ public class Importer<T> implements Closeable {
     private Charset charset;
     private Parser<T> parser;
     private int headersRows = DEFAULT_START_ROW;
-    private boolean isLastSheet;
-    private ImporterXLSXType importerXLSXType = DEFAULT;
-    private String dateStringPattern;
-    private String dateTimeStringPattern;
-    private boolean dateAsLocalDateTime = false;
 
     public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
         this(clazz, charset, Default.class);
@@ -52,11 +43,6 @@ public class Importer<T> implements Closeable {
     public Importer(Class<T> clazz, Charset charset, InputStream inputStream, String filename) throws IOException {
         this(clazz, inputStream, filename);
         this.charset = charset;
-    }
-
-    public Importer(Class<T> clazz, File file, ImporterXLSXType importerXLSXType) throws IOException {
-        this(clazz, file);
-        this.importerXLSXType = importerXLSXType;
     }
 
     public Importer(Class<T> clazz, File file) throws IOException {
@@ -76,11 +62,6 @@ public class Importer<T> implements Closeable {
         this(clazz, inputStream, filename, false, group);
     }
 
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) throws IOException {
-        this(clazz, inputStream, filename, false);
-        this.importerXLSXType = importerXLSXType;
-    }
-
     public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet) throws IOException {
         this(clazz, inputStream, filename, isLastSheet, Default.class);
     }
@@ -98,7 +79,7 @@ public class Importer<T> implements Closeable {
         this.inputStream = inputStream;
         this.filename = filename;
         this.headersRows = afterLine;
-        this.isLastSheet = isLastSheet;
+        //this.isLastSheet = isLastSheet;
     }
 
     private Importer(Class<T> clazz, Class<?> group) {
@@ -130,8 +111,7 @@ public class Importer<T> implements Closeable {
                 return;
             }
             if (inputStream != null) {
-                ImporterType importerType = fileType.getExcelType() == ExcelType.XLSX ? ImporterType.XLSX : ImporterType.XLS;
-                parser = new SpreadsheetParser<T>(clazz, inputStream, group, importerType);
+                parser = new SpreadsheetParser<T>(clazz, inputStream, group, fileType);
                 // TODO Last Row?
                 parser.setHeadersRows(headersRows);
                 return;
@@ -162,20 +142,8 @@ public class Importer<T> implements Closeable {
         this.headersRows = afterLine;
     }
 
-    public void setDateStringPattern(String dateStringPattern) {
-        this.dateStringPattern = dateStringPattern;
-    }
-
-    public void setDateTimeStringPattern(String dateTimeStringPattern) {
-        this.dateTimeStringPattern = dateTimeStringPattern;
-    }
-
     public void setCharset(Charset charset) {
         this.charset = charset;
-    }
-
-    public void setDateAsLocalDateTime(boolean dateAsLocalDateTime) {
-        this.dateAsLocalDateTime = dateAsLocalDateTime;
     }
 
     public List<T> parse() throws Exception {

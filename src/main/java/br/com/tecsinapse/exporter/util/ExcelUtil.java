@@ -4,7 +4,7 @@
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
  */
-package br.com.tecsinapse.exporter;
+package br.com.tecsinapse.exporter.util;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,6 +25,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
 import com.google.common.base.Strings;
+
+import br.com.tecsinapse.exporter.Table;
 
 public class ExcelUtil {
 

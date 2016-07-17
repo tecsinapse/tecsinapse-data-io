@@ -10,6 +10,8 @@ import java.io.File;
 
 import org.testng.annotations.Test;
 
+import br.com.tecsinapse.exporter.util.ZIPUtil;
+
 public class ZIPUtilTest {
 
     @Test

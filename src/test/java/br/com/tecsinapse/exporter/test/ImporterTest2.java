@@ -6,8 +6,6 @@
  */
 package br.com.tecsinapse.exporter.test;
 
-import static br.com.tecsinapse.exporter.importer.ImporterXLSXType.UNIQUE_DATA_VALUE;
-
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -34,7 +32,7 @@ public class ImporterTest2 {
 
     @Test(dataProvider = "arquivos")
     public void test(File file, String result) throws Exception {
-        List<FakePojo2> pojos = new Importer<>(FakePojo2.class, file, UNIQUE_DATA_VALUE).parse();
+        List<FakePojo2> pojos = new Importer<>(FakePojo2.class, file).parse();
         StringBuilder sb = new StringBuilder();
         for (FakePojo2 fp : pojos) {
             sb.append(fp);

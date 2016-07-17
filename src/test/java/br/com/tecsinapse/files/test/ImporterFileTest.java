@@ -28,11 +28,10 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 
-import br.com.tecsinapse.exporter.FileType;
+import br.com.tecsinapse.exporter.type.FileType;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
-import br.com.tecsinapse.exporter.importer.ExcelParser;
+import br.com.tecsinapse.exporter.importer.parser.ExcelParser;
 import br.com.tecsinapse.exporter.importer.Importer;
-import br.com.tecsinapse.exporter.importer.ImporterXLSXType;
 
 public class ImporterFileTest {
 
@@ -65,7 +64,6 @@ public class ImporterFileTest {
             Locale.setDefault(locale);
             try (final Importer<FileBean> importer = new Importer<>(FileBean.class, Charsets.UTF_8, arquivo)) {
                 importer.setAfterLine(afterLine);
-                importer.setDateStringPattern(DD_MM_YYYY);
 
                 assertEquals(importer.getFileType(), esperadoFileType);
 
@@ -104,7 +102,7 @@ public class ImporterFileTest {
     public void validaLastSheet(File arquivo, boolean lastSheet, int afterLine, List<FileBean> esperados) throws Exception {
         for (Locale locale : LOCALES) {
             Locale.setDefault(locale);
-            try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine, lastSheet, ImporterXLSXType.DEFAULT)) {
+            try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine, lastSheet)) {
                 //excelParser.setDateStringPattern(DD_MM_YYYY);
 
                 final List<FileBean> beans = excelParser.parse();

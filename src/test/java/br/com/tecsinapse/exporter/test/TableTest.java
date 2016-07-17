@@ -14,8 +14,8 @@ import org.testng.annotations.Test;
 
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.TableCellType;
-import br.com.tecsinapse.exporter.importer.ParserFormatter;
+import br.com.tecsinapse.exporter.type.TableCellType;
+import br.com.tecsinapse.exporter.ExporterFormatter;
 
 public class TableTest {
 
@@ -145,7 +145,7 @@ public class TableTest {
         t.addNewRow();
         t.add(10);
         t.add(10.2);
-        t.setParserFormatter(ParserFormatter.DEFAULT);
+        t.setExporterFormatter(ExporterFormatter.DEFAULT);
         String text = t.getStringMatrixAsString(t.toStringMatrix());
         Assert.assertEquals(text,
                 "|1|2.2\n" +

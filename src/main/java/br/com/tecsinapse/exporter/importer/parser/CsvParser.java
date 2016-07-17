@@ -24,15 +24,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.xml.sax.SAXException;
 
-import br.com.tecsinapse.exporter.CSVUtil;
-import br.com.tecsinapse.exporter.ImporterType;
+import br.com.tecsinapse.exporter.util.CSVUtil;
+import br.com.tecsinapse.exporter.type.FileType;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import br.com.tecsinapse.exporter.converter.group.Default;
 import br.com.tecsinapse.exporter.importer.Importer;
 import br.com.tecsinapse.exporter.importer.ImporterUtils;
 import br.com.tecsinapse.exporter.importer.Parser;
-import br.com.tecsinapse.exporter.importer.ParserFormatter;
+import br.com.tecsinapse.exporter.ExporterFormatter;
 
 public class CsvParser<T> implements Parser<T> {
 
@@ -40,7 +40,7 @@ public class CsvParser<T> implements Parser<T> {
     private final Class<?> group;
     private List<String> csvLines;
     private int headersRows = Importer.DEFAULT_START_ROW;
-    private ParserFormatter parserFormatter = ParserFormatter.DEFAULT;
+    private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
 
     private boolean ignoreBlankLinesAtEnd = false;
 
@@ -102,18 +102,16 @@ public class CsvParser<T> implements Parser<T> {
     }
 
     @Override
-    public ImporterType getImporterType() {
-        return ImporterType.CSV;
+    public FileType getFileType() {
+        return FileType.CSV;
     }
 
-    @Override
-    public void setParserFormatter(ParserFormatter parserFormatter) {
-        this.parserFormatter = parserFormatter;
+    public void setExporterFormatter(ExporterFormatter exporterFormatter) {
+        this.exporterFormatter = exporterFormatter;
     }
 
-    @Override
-    public ParserFormatter getParserFormatter() {
-        return parserFormatter;
+    public ExporterFormatter getExporterFormatter() {
+        return exporterFormatter;
     }
 
     @Override

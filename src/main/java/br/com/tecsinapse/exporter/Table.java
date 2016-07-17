@@ -13,11 +13,13 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import br.com.tecsinapse.exporter.importer.ParserFormatter;
+import br.com.tecsinapse.exporter.type.CellType;
+import br.com.tecsinapse.exporter.type.TableCellType;
+import br.com.tecsinapse.exporter.util.WorkbookUtil;
 
 public class Table {
 
-    private ParserFormatter parserFormatter = ParserFormatter.DEFAULT;
+    private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
 
     private String title;
     private boolean autoSizeColumnSheet = true;
@@ -192,7 +194,7 @@ public class Table {
                     c++;
                 }
                 if (!spanMark[r][c]) {
-                    matrix.get(r).set(c, cell.getContent(getParserFormatter()));
+                    matrix.get(r).set(c, cell.getContent(getExporterFormatter()));
 
                     int rowspan = cell.getRowspan();
                     int colspan = cell.getColspan();
@@ -418,11 +420,11 @@ public class Table {
         this.autoSizeColumnSheet = autoSizeColumnSheet;
     }
 
-    public ParserFormatter getParserFormatter() {
-        return parserFormatter;
+    public ExporterFormatter getExporterFormatter() {
+        return exporterFormatter;
     }
 
-    public void setParserFormatter(ParserFormatter parserFormatter) {
-        this.parserFormatter = parserFormatter;
+    public void setExporterFormatter(ExporterFormatter exporterFormatter) {
+        this.exporterFormatter = exporterFormatter;
     }
 }

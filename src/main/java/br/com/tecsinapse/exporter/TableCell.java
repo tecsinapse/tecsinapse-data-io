@@ -8,8 +8,9 @@ package br.com.tecsinapse.exporter;
 
 import com.google.common.primitives.Doubles;
 
-import br.com.tecsinapse.exporter.importer.ParserFormatter;
 import br.com.tecsinapse.exporter.style.SpreadsheetCellStyle;
+import br.com.tecsinapse.exporter.type.CellType;
+import br.com.tecsinapse.exporter.type.TableCellType;
 
 public class TableCell {
 
@@ -130,7 +131,7 @@ public class TableCell {
         this.rowspan = rowspan;
     }
 
-    int getDefaultColumnWidth() {
+    public int getDefaultColumnWidth() {
         String value = getContent();
         return value == null || value.trim().length() == 0 ? 0 : value.length() * COLUMN_WIDTH;
     }
@@ -139,11 +140,11 @@ public class TableCell {
         return content == null ? null : content.toString();
     }
 
-    public String getContent(ParserFormatter parserFormatter) {
-        if (parserFormatter == null || content == null) {
+    public String getContent(ExporterFormatter exporterFormatter) {
+        if (exporterFormatter == null || content == null) {
             return null;
         }
-        return content instanceof Number ? parserFormatter.formatNumber((Number) content) : content.toString();
+        return content instanceof Number ? exporterFormatter.formatNumber((Number) content) : content.toString();
     }
 
     public void setContent(String content) {

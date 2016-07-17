@@ -6,6 +6,7 @@
  */
 package br.com.tecsinapse.exporter.util;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +57,7 @@ public class ExportHtmlTest {
 
     @Test(dataProvider = "toHtmlDs")
     public void testNewInstance(Map<String, String> tableProps, List<List<String>> rows, String expected) throws Exception {
-        ExportHtml exportHtml = tableProps == null ? ExportHtml.newInstance() : ExportHtml.newInstance(tableProps);
+        ExportHtml exportHtml = tableProps == null ? ExportHtml.newInstance(Charset.forName("UTF-8")) : ExportHtml.newInstance(tableProps, Charset.forName("UTF-8"));
         Table table = rows.isEmpty() ? null : new Table();
         for(List<String> cols : rows) {
             table.addNewRow();

@@ -6,6 +6,7 @@
  */
 package br.com.tecsinapse.exporter.importer;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Iterables.any;
@@ -28,6 +29,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -47,6 +50,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
@@ -88,6 +92,9 @@ public class ImporterUtils {
         return new Predicate<PropertyDescriptor>() {
             @Override
             public boolean apply(PropertyDescriptor propertyDescriptor) {
+                if (propertyDescriptor == null) {
+                    return false;
+                }
                 final Method writeMethod = propertyDescriptor.getWriteMethod();
                 for (Annotation annotation : writeMethod.getDeclaredAnnotations()) {
                     if (annotation instanceof TableCellMapping) {
@@ -103,7 +110,7 @@ public class ImporterUtils {
         return new Predicate<PropertyDescriptor>() {
             @Override
             public boolean apply(PropertyDescriptor propertyDescriptor) {
-                return propertyDescriptor.getWriteMethod() != null &&
+                return propertyDescriptor != null && propertyDescriptor.getWriteMethod() != null &&
                         propertyDescriptor.getReadMethod() != null;
             }
         };
@@ -128,7 +135,7 @@ public class ImporterUtils {
         return new Function<PropertyDescriptor, Method>() {
             @Override
             public Method apply(PropertyDescriptor propertyDescriptor) {
-                return propertyDescriptor.getReadMethod();
+                return propertyDescriptor != null ? propertyDescriptor.getReadMethod() : null;
             }
         };
     }
@@ -142,7 +149,8 @@ public class ImporterUtils {
         Multimap<Method, Optional<TableCellMapping>> tableCellMappingByMethod = FluentIterable.from(cellMappingMethods)
                 .index(new Function<Method, Optional<TableCellMapping>>() {
                     @Override
-                    public Optional<TableCellMapping> apply(Method method) {
+                    public Optional<TableCellMapping> apply(@Nonnull Method method) {
+                        checkNotNull(method);
                         return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
                                 .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class), group));
                     }
@@ -151,7 +159,8 @@ public class ImporterUtils {
 
         tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, new Predicate<Entry<Method, Optional<TableCellMapping>>>() {
             @Override
-            public boolean apply(Entry<Method, Optional<TableCellMapping>> entry) {
+            public boolean apply(@Nonnull Entry<Method, Optional<TableCellMapping>> entry) {
+                checkNotNull(entry);
                 return entry.getValue().isPresent()
                         && any(Lists.newArrayList(entry.getValue().get().groups()), assignableTo(group));
             }
@@ -159,14 +168,16 @@ public class ImporterUtils {
 
         Multimap<Method, TableCellMapping> methodByTableCellMapping = transformValues(tableCellMappingByMethod, new Function<Optional<TableCellMapping>, TableCellMapping>() {
             @Override
-            public TableCellMapping apply(Optional<TableCellMapping> tcmOptional) {
+            public TableCellMapping apply(@Nonnull Optional<TableCellMapping> tcmOptional) {
+                checkNotNull(tcmOptional);
                 return tcmOptional.get();
             }
         });
 
         return Maps.transformValues(methodByTableCellMapping.asMap(), new Function<Collection<TableCellMapping>, TableCellMapping>() {
             @Override
-            public TableCellMapping apply(Collection<TableCellMapping> tcms) {
+            public TableCellMapping apply(@Nonnull Collection<TableCellMapping> tcms) {
+                checkNotNull(tcms);
                 return Iterables.getFirst(tcms, null);
             }
         });
@@ -180,7 +191,8 @@ public class ImporterUtils {
         return FluentIterable.from(Lists.newArrayList(tcms.value()))
                 .filter(new Predicate<TableCellMapping>() {
                     @Override
-                    public boolean apply(TableCellMapping tcm) {
+                    public boolean apply(@Nonnull TableCellMapping tcm) {
+                        checkNotNull(tcm);
                         return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
                     }
                 })
@@ -190,17 +202,19 @@ public class ImporterUtils {
     private static Predicate<? super Class<?>> assignableTo(final Class<?> group) {
         return new Predicate<Class<?>>() {
             @Override
-            public boolean apply(Class<?> g) {
+            public boolean apply(@Nonnull Class<?> g) {
+                checkNotNull(g);
                 return g.isAssignableFrom(group);
             }
         };
     }
 
-    public static <T> void parseSpreadsheetCell(Class<? extends TableCellConverter<?>> tcc, FormulaEvaluator evaluator, Cell cell, Method method, T instance, ParserFormatter parserFormatter) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static <T> void parseSpreadsheetCell(Class<? extends TableCellConverter<?>> tcc, FormulaEvaluator evaluator, Cell cell, Method method, T instance, ExporterFormatter exporterFormatter) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        checkNotNull(method);
         Object value = getValueOrEmptyAsObject(evaluator, cell);
         try {
             if (value == null) {
-                method.invoke(instance, value);
+                return;
             }
             Class<?> targetType = getReturnType(tcc);
             if (isInstanceOf(value, targetType)) {
@@ -215,7 +229,7 @@ public class ImporterUtils {
                 }
             }
             if (isInstanceOf(value, LocalDateTime.class) || isInstanceOf(targetType, LocalDateTime.class)) {
-                Object dateTimeValue = toDateTimeValue((LocalDateTime) value, targetType, parserFormatter);
+                Object dateTimeValue = toDateTimeValue((LocalDateTime) value, targetType, exporterFormatter);
                 if (dateTimeValue != null) {
                     method.invoke(instance, dateTimeValue);
                     return;
@@ -253,13 +267,13 @@ public class ImporterUtils {
         }
     }
 
-    public static String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell, ParserFormatter parserFormatter) {
+    public static String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell, ExporterFormatter exporterFormatter) {
         Object value = getValueOrEmptyAsObject(evaluator, cell);
         if (value instanceof LocalDateTime) {
-            return formatLocalDateTimeAsString((LocalDateTime) value, parserFormatter);
+            return formatLocalDateTimeAsString((LocalDateTime) value, exporterFormatter);
         }
         if (value instanceof BigDecimal) {
-            return formatNumericAsString((BigDecimal) value, parserFormatter);
+            return formatNumericAsString((BigDecimal) value, exporterFormatter);
         }
         return value.toString();
     }
@@ -274,7 +288,7 @@ public class ImporterUtils {
         return null;
     }
 
-    private static Object toDateTimeValue(LocalDateTime localDateTime, Class<?> targetType, ParserFormatter parserFormatter) {
+    private static Object toDateTimeValue(LocalDateTime localDateTime, Class<?> targetType, ExporterFormatter exporterFormatter) {
         if (LocalDateTime.class.equals(targetType)) {
             return localDateTime;
         }
@@ -285,29 +299,29 @@ public class ImporterUtils {
             return localDateTime.toLocalTime();
         }
         if (String.class.equals(targetType)) {
-            return formatLocalDateTimeAsString(localDateTime, parserFormatter);
+            return formatLocalDateTimeAsString(localDateTime, exporterFormatter);
         }
         return null;
     }
 
-    private static String formatLocalDateTimeAsString(LocalDateTime localDateTime, ParserFormatter parserFormatter) {
+    private static String formatLocalDateTimeAsString(LocalDateTime localDateTime, ExporterFormatter exporterFormatter) {
         LocalTime localTime = localDateTime.toLocalTime();
         LocalDate localDate = localDateTime.toLocalDate();
         if (LocalTime.MIDNIGHT.equals(localTime)) {
-            return parserFormatter.formatLocalDate(localDate);
+            return exporterFormatter.formatLocalDate(localDate);
         }
 
         if (LOCAL_DATE_BIGBANG.equals(localDate)) {
-            return parserFormatter.formatLocalTime(localTime);
+            return exporterFormatter.formatLocalTime(localTime);
         }
-        return parserFormatter.formatLocalDateTime(localDateTime);
+        return exporterFormatter.formatLocalDateTime(localDateTime);
     }
 
-    private static String formatNumericAsString(Number number, ParserFormatter parserFormatter) {
+    private static String formatNumericAsString(Number number, ExporterFormatter exporterFormatter) {
         if (number == null) {
             return null;
         }
-        return parserFormatter.formatNumber(number);
+        return exporterFormatter.formatNumber(number);
     }
 
     private static boolean isInstanceOf(Object value, Class<?> targetType) throws NoSuchMethodException {

@@ -8,13 +8,14 @@ package br.com.tecsinapse.exporter.example;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.testng.annotations.Test;
 
-import br.com.tecsinapse.exporter.ExcelUtil;
+import br.com.tecsinapse.exporter.util.ExcelUtil;
 import br.com.tecsinapse.exporter.ResourceUtils;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
@@ -48,7 +49,7 @@ public class ExcelCellColorExampleTest {
         Files.move(ExcelUtil.getXlsFile(table, xls).toPath(), ResourceUtils.newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         File htmlOutput = ResourceUtils.newFileTargetResource("HTML-cell-color.html");
-        ExportHtml.newInstance().toHtml(table, htmlOutput);
+        ExportHtml.newInstance(Charset.forName("UTF-8")).toHtml(table, htmlOutput);
     }
 
 

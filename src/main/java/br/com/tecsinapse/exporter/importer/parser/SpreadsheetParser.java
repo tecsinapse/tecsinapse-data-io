@@ -29,13 +29,13 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.google.common.base.Throwables;
 
-import br.com.tecsinapse.exporter.ImporterType;
+import br.com.tecsinapse.exporter.type.FileType;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.group.Default;
 import br.com.tecsinapse.exporter.importer.Importer;
 import br.com.tecsinapse.exporter.importer.ImporterUtils;
 import br.com.tecsinapse.exporter.importer.Parser;
-import br.com.tecsinapse.exporter.importer.ParserFormatter;
+import br.com.tecsinapse.exporter.ExporterFormatter;
 
 public class SpreadsheetParser<T> implements Parser<T> {
 
@@ -45,19 +45,19 @@ public class SpreadsheetParser<T> implements Parser<T> {
     private boolean ignoreBlankLinesAtEnd = true;
     private int headersRows = Importer.DEFAULT_START_ROW;
     private int sheetNumber = 0;
-    private ParserFormatter parserFormatter = ParserFormatter.DEFAULT;
+    private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
     private Workbook workbook;
-    private final ImporterType importerType;
+    private final FileType fileType;
     public SpreadsheetParser(Class<T> clazz, File file) throws IOException {
         this(clazz, file, Default.class);
     }
 
     public SpreadsheetParser(Class<T> clazz, File file, Class<?> group) throws IOException {
-        this(clazz, new FileInputStream(file), group, ImporterType.getImporterType(file.getName()));
+        this(clazz, new FileInputStream(file), group, FileType.getFileType(file.getName()));
     }
 
-    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, Class<?> group, ImporterType importerType) {
-        this.importerType = importerType;
+    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, Class<?> group, FileType fileType) {
+        this.fileType = fileType;
         this.clazz = clazz;
         this.inputStream = new BufferedInputStream(inputStream);
         this.group = group;
@@ -71,12 +71,12 @@ public class SpreadsheetParser<T> implements Parser<T> {
         this.ignoreBlankLinesAtEnd = ignoreBlankLinesAtEnd;
     }
 
-    public ParserFormatter getParserFormatter() {
-        return parserFormatter;
+    public ExporterFormatter getExporterFormatter() {
+        return exporterFormatter;
     }
 
-    public void setParserFormatter(ParserFormatter parserFormatter) {
-        this.parserFormatter = parserFormatter;
+    public void setExporterFormatter(ExporterFormatter exporterFormatter) {
+        this.exporterFormatter = exporterFormatter;
     }
 
     public void setHeadersRows(int headersRows) {
@@ -96,8 +96,8 @@ public class SpreadsheetParser<T> implements Parser<T> {
     }
 
     @Override
-    public ImporterType getImporterType() {
-        return importerType;
+    public FileType getFileType() {
+        return fileType;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
             T instance = constructor.newInstance();
             for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
                 TableCellMapping tcm = methodTcm.getValue();
-                ImporterUtils.parseSpreadsheetCell(tcm.converter(), evaluator, row.getCell(tcm.columnIndex()), methodTcm.getKey(), instance, parserFormatter);
+                ImporterUtils.parseSpreadsheetCell(tcm.converter(), evaluator, row.getCell(tcm.columnIndex()), methodTcm.getKey(), instance, exporterFormatter);
             }
             list.add(instance);
         }
@@ -158,7 +158,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
             Iterator<Cell> cells = row.cellIterator();
             while (cells.hasNext()) {
                 Cell cell = cells.next();
-                rowList.add(ImporterUtils.getValueOrEmpty(evaluator, cell, parserFormatter));
+                rowList.add(ImporterUtils.getValueOrEmpty(evaluator, cell, exporterFormatter));
             }
             list.add(rowList);
         }
@@ -172,7 +172,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
     public Workbook getWorkbook() {
         if (workbook == null) {
             try {
-                workbook = importerType.buildWorkbook(inputStream);
+                workbook = fileType.buildWorkbook(inputStream);
             } catch (IOException e) {
                 throw Throwables.propagate(e);
             }

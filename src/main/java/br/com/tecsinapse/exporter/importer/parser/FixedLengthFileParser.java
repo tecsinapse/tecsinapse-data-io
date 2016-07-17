@@ -4,7 +4,7 @@
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
  */
-package br.com.tecsinapse.exporter.importer;
+package br.com.tecsinapse.exporter.importer.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,10 +23,10 @@ import org.reflections.ReflectionUtils;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Ints;
 
-import br.com.tecsinapse.exporter.FixedLengthFileUtil;
 import br.com.tecsinapse.exporter.annotation.FixedLengthColumn;
 import br.com.tecsinapse.exporter.annotation.LineFixedLengthFile;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.util.FixedLengthFileUtil;
 
 public class FixedLengthFileParser<T> {
 

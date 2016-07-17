@@ -20,6 +20,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import br.com.tecsinapse.exporter.ResourceUtils;
+import br.com.tecsinapse.exporter.importer.parser.ExcelParser;
 import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
 
 public class ExcelParserTest {

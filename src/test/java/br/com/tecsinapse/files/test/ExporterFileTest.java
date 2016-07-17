@@ -33,19 +33,19 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
 
-import br.com.tecsinapse.exporter.CSVUtil;
-import br.com.tecsinapse.exporter.ExcelUtil;
+import br.com.tecsinapse.exporter.util.CSVUtil;
+import br.com.tecsinapse.exporter.util.ExcelUtil;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.TableCellType;
-import br.com.tecsinapse.exporter.importer.ExcelParser;
-import br.com.tecsinapse.exporter.importer.ParserFormatter;
+import br.com.tecsinapse.exporter.type.TableCellType;
+import br.com.tecsinapse.exporter.importer.parser.ExcelParser;
+import br.com.tecsinapse.exporter.ExporterFormatter;
 
 public class ExporterFileTest {
 
     private static final List<Locale> LOCALES = Arrays.asList(new Locale("pt", "BR"), ENGLISH, FRENCH, Locale.getDefault());
 
-    private static ParserFormatter parserFormatter = ParserFormatter.DEFAULT;
+    private static ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
 
     @DataProvider(name = "beans")
     public Object[][] beans() {
@@ -89,7 +89,7 @@ public class ExporterFileTest {
             @Override
             public List<List<String>> apply(File file) {
                 try (final ExcelParser<?> parser = new ExcelParser<>(null, file)) {
-                    parser.setParserFormatter(parserFormatter);
+                    parser.setExporterFormatter(exporterFormatter);
                     parser.setAfterLine(0);
                     return parser.getLines();
                 } catch (Exception e) {
@@ -155,7 +155,7 @@ public class ExporterFileTest {
             Locale.setDefault(locale);
             final String dataPattern = "dd/MM/yyyy";
             final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern, new DecimalFormatSymbols(locale));
-            parserFormatter = new ParserFormatter("dd/MM/yyyy HH:mm", dataPattern, "HH:mm", decimalPattern);
+            exporterFormatter = new ExporterFormatter("dd/MM/yyyy HH:mm", dataPattern, "HH:mm", decimalPattern);
 
             final Table table = new Table();
 
@@ -188,7 +188,7 @@ public class ExporterFileTest {
             table.add("last", TableCellType.FOOTER);
             table.add(new TableCell("last tc", TableCellType.FOOTER));
 
-            table.setParserFormatter(parserFormatter);
+            table.setExporterFormatter(exporterFormatter);
             final File file = toFile.apply(table);
             final List<List<String>> lines = toLines.apply(file);
             String fileName = file.getName();
