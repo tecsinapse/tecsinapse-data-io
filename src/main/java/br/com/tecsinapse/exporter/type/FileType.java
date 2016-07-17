@@ -27,12 +27,6 @@ public enum FileType {
             return new XSSFWorkbook(inputStream);
         }
     },
-    XLSM("MS Excel file (.xlsm)") {
-        @Override
-        public Workbook buildWorkbook(InputStream inputStream) throws IOException {
-            return new HSSFWorkbook(inputStream);
-        }
-    },
     CSV("CSV file"),
     TXT("Text file");
 
@@ -49,9 +43,6 @@ public enum FileType {
         if (filename.toLowerCase().endsWith(".xlsx")) {
             return XLSX;
         }
-        if (filename.toLowerCase().endsWith(".xlsm")) {
-            return XLSM;
-        }
         if (filename.toLowerCase().endsWith(".csv")) {
             return CSV;
         }
@@ -63,20 +54,6 @@ public enum FileType {
     }
 
     public Workbook buildWorkbook(InputStream inputStream) throws IOException {
-        return null;
-    }
-
-    @Deprecated
-    public ExcelType getExcelType() {
-        if (this == XLS) {
-            return ExcelType.XLS;
-        }
-        if (this == XLSX) {
-            return ExcelType.XLSX;
-        }
-        if (this == XLSM) {
-            return ExcelType.XLSM;
-        }
         return null;
     }
 

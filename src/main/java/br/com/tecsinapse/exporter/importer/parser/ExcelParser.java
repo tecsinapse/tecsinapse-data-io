@@ -66,9 +66,6 @@ public class ExcelParser<T> extends SpreadsheetParser<T> {
         if (type == ExcelType.XLSX) {
             return FileType.XLSX;
         }
-        if (type == ExcelType.XLSM) {
-            return FileType.XLSM;
-        }
         return FileType.XLS;
     }
 

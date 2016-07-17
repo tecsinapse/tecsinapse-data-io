@@ -29,13 +29,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.google.common.base.Throwables;
 
-import br.com.tecsinapse.exporter.type.FileType;
+import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.group.Default;
-import br.com.tecsinapse.exporter.importer.Importer;
 import br.com.tecsinapse.exporter.importer.ImporterUtils;
 import br.com.tecsinapse.exporter.importer.Parser;
-import br.com.tecsinapse.exporter.ExporterFormatter;
+import br.com.tecsinapse.exporter.type.FileType;
 
 public class SpreadsheetParser<T> implements Parser<T> {
 
@@ -43,8 +42,8 @@ public class SpreadsheetParser<T> implements Parser<T> {
     private final Class<?> group;
     private final InputStream inputStream;
     private boolean ignoreBlankLinesAtEnd = true;
-    private int headersRows = Importer.DEFAULT_START_ROW;
-    private int sheetNumber = 0;
+    private int headersRows;
+    private int sheetNumber;
     private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
     private Workbook workbook;
     private final FileType fileType;
@@ -61,6 +60,9 @@ public class SpreadsheetParser<T> implements Parser<T> {
         this.clazz = clazz;
         this.inputStream = new BufferedInputStream(inputStream);
         this.group = group;
+        setIgnoreBlankLinesAtEnd(true);
+        setSheetNumber(0);
+        setHeadersRows(0);
     }
 
     public boolean isIgnoreBlankLinesAtEnd() {
@@ -108,7 +110,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
     @Override
     public List<T> parse() throws Exception {
         List<T> resultList = parseCurrentSheet();
-        if (ignoreBlankLinesAtEnd) {
+        if (isIgnoreBlankLinesAtEnd()) {
             ImporterUtils.removeBlankLinesOfEnd(resultList, clazz);
         }
         return resultList;
@@ -127,8 +129,8 @@ public class SpreadsheetParser<T> implements Parser<T> {
         Iterator<Row> rowIterator = sheet.iterator();
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
-            if ((i + 1) <= headersRows) {
-                i++;
+            i++;
+            if (i <= headersRows) {
                 continue;
             }
             T instance = constructor.newInstance();
@@ -143,16 +145,16 @@ public class SpreadsheetParser<T> implements Parser<T> {
 
     private List<List<String>> parseCurrentSheetAsStringList() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException, NoSuchMethodException {
         workbook = getWorkbook();
-        Sheet sheet = workbook.getSheetAt(this.sheetNumber);
+        Sheet sheet = workbook.getSheetAt(getSheetNumber());
         final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
-        int i = 0;
         Iterator<Row> rowIterator = sheet.iterator();
         List<List<String>> list = new ArrayList<>();
+        int i = 0;
         while (rowIterator.hasNext()) {
             List<String> rowList = new ArrayList<>();
             Row row = rowIterator.next();
-            if ((i + 1) <= headersRows) {
-                i++;
+            i++;
+            if (i <= headersRows) {
                 continue;
             }
             Iterator<Cell> cells = row.cellIterator();

@@ -33,7 +33,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.joda.time.LocalDate;
@@ -54,11 +53,8 @@ import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
-import br.com.tecsinapse.exporter.importer.formatter.DataFormatterInternal;
 
 public class ImporterUtils {
-
-    public static final DataFormatter DATA_FORMATTER_INTERNAL = new DataFormatterInternal();
 
     private static short DECIMAL_PRECISION = 10;
 

@@ -10,14 +10,11 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.base.Strings;
 
-import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.group.Default;
 import br.com.tecsinapse.exporter.importer.parser.CsvParser;
 import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
@@ -90,11 +87,6 @@ public class Importer<T> implements Closeable {
         this.clazz = clazz;
         this.charset = charset;
         this.group = group;
-    }
-
-    @Deprecated
-    protected static final Map<Method, TableCellMapping> getMappedMethods(Class<?> clazz, final Class<?> group) {
-        return ImporterUtils.getMappedMethods(clazz, group);
     }
 
     private void beforeParser() throws IOException {

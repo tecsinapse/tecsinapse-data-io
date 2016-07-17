@@ -19,7 +19,6 @@ public class ExporterFormatter {
     public static final ExporterFormatter PT_BR = new ExporterFormatter("dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy", "HH:mm", "#,###,###.##########", new Locale("pt", "BR"));
     public static final ExporterFormatter DEFAULT = new ExporterFormatter("yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "HH:mm", "#,###,###.##########", Locale.ENGLISH);
 
-    private final Locale locale;
     private final String localDateTimeFormat;
     private final String localDateFormat;
     private final String localTimeFormat;
@@ -30,7 +29,6 @@ public class ExporterFormatter {
     }
 
     public ExporterFormatter(String localDateTimeFormat, String localDateFormat, String localTimeFormat, String decimalFormat, Locale locale) {
-        this.locale = locale;
         this.localDateTimeFormat = localDateTimeFormat;
         this.localDateFormat = localDateFormat;
         this.localTimeFormat = localTimeFormat;

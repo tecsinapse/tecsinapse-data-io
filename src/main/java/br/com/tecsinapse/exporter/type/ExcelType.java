@@ -6,6 +6,7 @@
  */
 package br.com.tecsinapse.exporter.type;
 
+@Deprecated
 public enum ExcelType {
 
     XLS("dd/MM/yyyy", "dd/MM/yyyy HH:mm:ss"),

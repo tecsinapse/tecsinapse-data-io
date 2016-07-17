@@ -19,11 +19,11 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.ResourceUtils;
-import br.com.tecsinapse.exporter.importer.parser.ExcelParser;
+import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
 
-@Deprecated
-public class ExcelParserTest {
+public class SpreadsheetParserTest {
 
     @DataProvider(name = "excelParserDs")
     private Object[][] excelParserDs() {
@@ -67,17 +67,21 @@ public class ExcelParserTest {
                         new DataParser(LocalDate.parse("2016-10-15"), LocalDateTime.parse("2017-10-15T21:13:15"), "356", 295, "Line 8", "", LocalTime.parse("17:35"))
                 ));
         return new Object[][]{
-                {"/files/excel-with-empty-lines.xlsx", map}
-                , {"/files/excel-with-empty-lines.xls", map}
+                {"/files/excel-with-empty-lines.xlsx", map, ExporterFormatter.DEFAULT},
+                {"/files/excel-with-empty-lines.xls", map, ExporterFormatter.DEFAULT},
+                {"/files/excel-with-empty-lines.xlsx", map, ExporterFormatter.PT_BR},
+                {"/files/excel-with-empty-lines.xls", map, ExporterFormatter.PT_BR}
 
         };
     }
 
-    @Test(dataProvider = "excelParserDs", enabled = true)
-    public void excelParserTest(String excel, CustomHashMap mapData) throws Exception {
+    @Test(dataProvider = "excelParserDs")
+    public void spreadsheetParserTest(String excel, CustomHashMap mapData, ExporterFormatter exporterFormatter) throws Exception {
 
         File file = ResourceUtils.getFileResource(excel);
-        ExcelParser<DataParser> parser = new ExcelParser<DataParser>(DataParser.class, file);
+        SpreadsheetParser<DataParser> parser = new SpreadsheetParser<>(DataParser.class, file);
+        parser.setHeadersRows(1);
+        parser.setExporterFormatter(exporterFormatter);
 
         int sheet = -1;
         Assert.assertEquals(parser.getNumberOfSheets(), mapData.size());
@@ -86,6 +90,7 @@ public class ExcelParserTest {
             sheet++;
             parser.setSheetNumber(sheet);
             Assert.assertEquals(parser.getSheetNumber(), sheet);
+
             List<DataParser> expected = entry.getValue();
             List<DataParser> actual = parser.parse();
             assertDataParser(actual, expected, testId);
