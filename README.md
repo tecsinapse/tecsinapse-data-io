@@ -63,14 +63,14 @@ And then the dependency:
 <dependency>
   <groupId>br.com.tecsinapse</groupId>
   <artifactId>tecsinapse-exporter</artifactId>
-  <version>1.5.7-SNAPSHOT</version>
+  <version>1.5.57-SNAPSHOT</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-compile 'br.com.tecsinapse:tecsinapse-exporter:1.5.7-SNAPSHOT'
+compile 'br.com.tecsinapse:tecsinapse-exporter:1.5.57-SNAPSHOT'
 ```
 
 Documentation and samples
