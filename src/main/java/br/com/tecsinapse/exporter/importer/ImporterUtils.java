@@ -6,6 +6,8 @@
  */
 package br.com.tecsinapse.exporter.importer;
 
+import static br.com.tecsinapse.exporter.util.Constants.DECIMAL_PRECISION;
+import static br.com.tecsinapse.exporter.util.Constants.LOCAL_DATE_BIGBANG;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -55,11 +57,6 @@ import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 
 public class ImporterUtils {
-
-    private static short DECIMAL_PRECISION = 10;
-
-    private static final LocalDate LOCAL_DATE_BIGBANG = LocalDate.fromDateFields(DateUtil.getJavaDate(0.0));
-
 
     public static <T> void removeBlankLinesOfEnd(List<T> resultList, Class<T> clazz) throws InvocationTargetException, IllegalAccessException, IntrospectionException {
         Collections.reverse(resultList);

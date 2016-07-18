@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
 
@@ -74,6 +75,7 @@ public class ExportHtml {
         }
         bw.append(">");
         bw.newLine();
+        ExporterFormatter tableExporterFormatter = table.getExporterFormatter();
         for (List<TableCell> cells : table.getCells()) {
             bw.append("<tr>");
             bw.newLine();
@@ -84,7 +86,7 @@ public class ExportHtml {
                 writeNonNullProperty(bw, "rowspan", cell.getRowspan());
                 writeNonNullProperty(bw, "colspan", cell.getColspan());
                 bw.append(">");
-                bw.append(cell.getContent());
+                bw.append(cell.getFormattedContentInternalFirst(tableExporterFormatter));
                 bw.append("</td>");
                 bw.newLine();
             }

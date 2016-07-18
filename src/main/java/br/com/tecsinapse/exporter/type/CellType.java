@@ -6,10 +6,43 @@
  */
 package br.com.tecsinapse.exporter.type;
 
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
+
 public enum CellType {
 
-    STRING_TYPE,
-    NUMERIC_TYPE,
-    BRL_TYPE
+    STRING_TYPE(false),
+    NUMERIC_TYPE(true),
+    LOCAL_DATE_TIME_TYPE(true),
+    LOCAL_DATE_TYPE(true),
+    LOCAL_TIME_TYPE(true),
+    @Deprecated
+    BRL_TYPE(true);
 
+    private final boolean allowFormat;
+
+    CellType(boolean allowFormat) {
+        this.allowFormat = allowFormat;
+    }
+
+    public static CellType byObject(Object o) {
+        if (o instanceof Number) {
+            return NUMERIC_TYPE;
+        }
+        if (o instanceof LocalDateTime) {
+            return LOCAL_DATE_TIME_TYPE;
+        }
+        if (o instanceof LocalDate) {
+            return LOCAL_DATE_TYPE;
+        }
+        if (o instanceof LocalTime) {
+            return LOCAL_TIME_TYPE;
+        }
+        return STRING_TYPE;
+    }
+
+    public boolean isAllowFormat() {
+        return allowFormat;
+    }
 }

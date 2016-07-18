@@ -194,7 +194,7 @@ public class Table {
                     c++;
                 }
                 if (!spanMark[r][c]) {
-                    matrix.get(r).set(c, cell.getContent(getExporterFormatter()));
+                    matrix.get(r).set(c, cell.getFormattedContentInternalFirst(getExporterFormatter()));
 
                     int rowspan = cell.getRowspan();
                     int colspan = cell.getColspan();
@@ -321,7 +321,7 @@ public class Table {
     }
 
     public Workbook toWorkBook(Workbook wb) {
-        return WorkbookUtil.toWorkBook(wb, this);
+        return WorkbookUtil.newWorkbookUtil().toWorkBook(wb, this);
     }
 
     public void addAll(List<String> values) {

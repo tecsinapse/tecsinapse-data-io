@@ -21,7 +21,10 @@ import org.testng.annotations.Test;
 
 import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.ResourceUtils;
+import br.com.tecsinapse.exporter.Table;
+import br.com.tecsinapse.exporter.TableCell;
 import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
+import br.com.tecsinapse.exporter.util.ExcelUtil;
 
 public class SpreadsheetParserTest {
 
@@ -77,7 +80,6 @@ public class SpreadsheetParserTest {
 
     @Test(dataProvider = "excelParserDs")
     public void spreadsheetParserTest(String excel, CustomHashMap mapData, ExporterFormatter exporterFormatter) throws Exception {
-
         File file = ResourceUtils.getFileResource(excel);
         SpreadsheetParser<DataParser> parser = new SpreadsheetParser<>(DataParser.class, file);
         parser.setHeadersRows(1);
@@ -95,7 +97,34 @@ public class SpreadsheetParserTest {
             List<DataParser> actual = parser.parse();
             assertDataParser(actual, expected, testId);
         }
+    }
 
+    @Test(dataProvider = "excelParserDs")
+    public void spreadsheetGenerateExcelTest(String excel, CustomHashMap mapData, ExporterFormatter exporterFormatter) throws Exception {
+
+        Table table = new Table();
+        table.setExporterFormatter(exporterFormatter);
+        for (Entry<String, List<DataParser>> entry : mapData.entrySet()) {
+            for(DataParser dataParser : entry.getValue()) {
+                table.addNewRow();
+                table.add(new TableCell(dataParser.getDate()));
+                table.add(new TableCell(dataParser.getDateTime()));
+                table.add(new TableCell(dataParser.getDecimal()));
+                table.add(new TableCell(dataParser.getInteger()));
+                table.add(new TableCell(dataParser.getString()));
+                table.add(new TableCell(dataParser.getEmpty()));
+                table.add(new TableCell(dataParser.getTime()));
+            }
+        }
+        if (excel.endsWith(".xlsx")) {
+            File file = ResourceUtils.newFileTargetResource(exporterFormatter.getLocale().getDisplayLanguage() + "teste.xlsx");
+            ExcelUtil.getXlsxFile(table, file.getAbsolutePath());
+            file.deleteOnExit();
+        } else {
+            File file = ResourceUtils.newFileTargetResource(exporterFormatter.getLocale().getDisplayLanguage() + "teste.xls");
+            ExcelUtil.getXlsFile(table, file.getAbsolutePath());
+            file.deleteOnExit();
+        }
     }
 
     private void assertDataParser(List<DataParser> actualList, List<DataParser> expectedList, String testId) {

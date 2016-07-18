@@ -155,7 +155,7 @@ public class ExporterFileTest {
             Locale.setDefault(locale);
             final String dataPattern = "dd/MM/yyyy";
             final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern, new DecimalFormatSymbols(locale));
-            exporterFormatter = new ExporterFormatter("dd/MM/yyyy HH:mm", dataPattern, "HH:mm", decimalPattern);
+            exporterFormatter = new ExporterFormatter("dd/MM/yyyy HH:mm", dataPattern, "HH:mm", decimalPattern, "#,###", locale);
 
             final Table table = new Table();
 
@@ -207,13 +207,11 @@ public class ExporterFileTest {
                     assertEquals(row.get(3), "", fileName);
                     assertEquals(row.get(4), "Inteiro", fileName);
                     assertEquals(row.get(5), "Decimal", fileName);
-
                     continue;
                 }
 
                 if (i <= beans.size()) { // body
                     final FileBean bean = beans.get(i - 1);
-
                     assertEquals(row.get(0), bean.cidade, fileName);
                     assertEquals(row.get(1), bean.estado, fileName);
                     assertEquals(row.get(2), bean.data == null ? "" : bean.data.toString(dataPattern), fileName);
@@ -222,7 +220,6 @@ public class ExporterFileTest {
                     assertEquals(row.get(5), decimalFormat.format(bean.decimal), fileName);
 
                 } else {//row teste
-
                     assertEquals(row.get(0), "", fileName);
                     assertEquals(row.get(1), " ", fileName);
                     assertEquals(row.get(2), nullValue, fileName);

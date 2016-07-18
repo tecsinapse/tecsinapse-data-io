@@ -6,13 +6,18 @@
  */
 package br.com.tecsinapse.exporter.util;
 
+import static br.com.tecsinapse.exporter.util.Constants.LOCAL_DATE_BIGBANG;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -22,18 +27,32 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 
 import br.com.tecsinapse.exporter.EmptyTableCell;
-import br.com.tecsinapse.exporter.type.CellType;
+import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
+import br.com.tecsinapse.exporter.type.CellType;
 
 public class WorkbookUtil {
 
-    public static Workbook toWorkBook(Workbook wb, Table table) {
+    private DataFormat defaultDataFormat;
+    private Map<String, DataFormat> dataFormatMap = new HashMap<>();
+    private CreationHelper creationHelper;
+
+    public static WorkbookUtil newWorkbookUtil() {
+        return new WorkbookUtil();
+    }
+
+    public Workbook toWorkBook(Workbook wb, Table table) {
         List<List<TableCell>> matrix = table.getCells();
         List<List<TableCell>> matrixFull = table.toTableCellMatrix();
 
+        creationHelper = wb.getCreationHelper();
         Sheet sheet = wb.createSheet();
         int titleRows = 0;
         int r = titleRows;
@@ -44,8 +63,9 @@ public class WorkbookUtil {
         CellStyle styleBody = body(getDefaultCellStyle(wb));
         CellStyle styleFooter = footer(getDefaultCellStyle(wb));
 
-        final DataFormat dataFormat = wb.createDataFormat();
+        defaultDataFormat = wb.createDataFormat();
         CellStyle cellStyle = wb.createCellStyle();
+        ExporterFormatter tableExporterFormatter = table.getExporterFormatter();
 
         for (List<TableCell> row : matrix) {
             Row sheetRow = sheet.createRow(r);
@@ -90,8 +110,8 @@ public class WorkbookUtil {
                     }
                 }
 
-                setConvertedValue(cell, tableCell);
-                setCellStyle(styleHeader, styleBody, styleFooter, cell, tableCell, wb, dataFormat, cellStyle);
+                String format = setConvertedValue(cell, tableCell, tableExporterFormatter);
+                setCellStyle(styleHeader, styleBody, styleFooter, cell, tableCell, wb, format, cellStyle);
                 c++;
             }
             r++;
@@ -100,12 +120,20 @@ public class WorkbookUtil {
 
         if (table.isAutoSizeColumnSheet()) {
             for (int i = 0; i <= maxColumns; ++i) {
-                sheet.autoSizeColumn(i, true);
+                if (sheet instanceof SXSSFSheet) {
+                    ((SXSSFSheet)sheet).trackColumnForAutoSizing(i);
+                } else {
+                    sheet.autoSizeColumn(i, true);
+                }
             }
         } else {
             for (int i = 0; i <= maxColumns; ++i) {
                 if (defaultColumnWidth.get(i) == null) {
-                    sheet.autoSizeColumn(i, true);
+                    if (sheet instanceof SXSSFSheet) {
+                        ((SXSSFSheet)sheet).trackColumnForAutoSizing(i);
+                    } else {
+                        sheet.autoSizeColumn(i, true);
+                    }
                 } else {
                     sheet.setColumnWidth(i, defaultColumnWidth.get(i));
                 }
@@ -114,12 +142,12 @@ public class WorkbookUtil {
         return wb;
     }
 
-    private static void setCellStyle(CellStyle defaultHeader, CellStyle defaultBody, CellStyle defaultFooter, Cell cell,
-                              TableCell tableCell, Workbook wb, DataFormat dataFormat, CellStyle cellStyle) {
+    private void setCellStyle(CellStyle defaultHeader, CellStyle defaultBody, CellStyle defaultFooter, Cell cell,
+                              TableCell tableCell, Workbook wb, String cellFormat, CellStyle cellStyle) {
         CellStyle style;
         if (tableCell.getSpreadsheetCellStyle() != null) {
             style = getDefaultCellStyle(wb);
-            cell.setCellStyle(tableCell.getSpreadsheetCellStyle().toCellStyle(style));
+            tableCell.getSpreadsheetCellStyle().toCellStyle(style);
         } else {
             switch (tableCell.getTableCellType()) {
                 case HEADER:
@@ -142,51 +170,84 @@ public class WorkbookUtil {
             style.setFont(font);
         }
 
-        if (tableCell.getCellType() == CellType.BRL_TYPE) {
-            cellStyle = getBrlCellStyle(dataFormat, style, cellStyle);
+        if (tableCell.getCellType() == CellType.BRL_TYPE && cellFormat == null) {
+            cellStyle = getBrlCellStyle(defaultDataFormat, style, cellStyle);
             cell.setCellStyle(cellStyle);
-        } else {
-            cell.setCellStyle(style);
+            return;
         }
-
+        if (cellFormat != null) {
+            cell.setCellStyle(getCellStyleWithDataFormat(style, getDefaultCellStyle(wb), cellFormat));
+            return;
+        }
+        cell.setCellStyle(style);
     }
 
-    private static void setConvertedValue(Cell cell, TableCell tableCell) {
-        if (tableCell.getCellType() == CellType.NUMERIC_TYPE || tableCell.getCellType() == CellType.BRL_TYPE) {
-            Double dValue = tableCell.getContentAsDoubleOrNull();
-            if (dValue != null) {
-                cell.setCellValue(dValue.doubleValue());
-                return;
+    private String setConvertedValue(Cell cell, TableCell tableCell, ExporterFormatter tableExporterFormatter) {
+        Object cellValue = tableCell.getContentObject();
+        if (cellValue == null) {
+            return null;
+        }
+        if (tableCell.getCellType().isAllowFormat()) {
+            ExporterFormatter cellExporterFormatter = tableCell.getExporterFormatter();
+            ExporterFormatter exporterFormatter = cellExporterFormatter == null ? tableExporterFormatter : tableCell.getExporterFormatter();
+            String dataFormat = exporterFormatter != null ? exporterFormatter.getStringFormatByType(cellValue) : null;
+            if (dataFormat != null && setCellValueByType(cell, cellValue)) {
+                return dataFormat;
             }
         }
-
-        //somente seta valor quando diferente de nulo. Default "" SXSSF não suporta nulos
-        final String content = tableCell.getContent();
-        if (content != null) {
-            cell.setCellValue(content);
-        }
+        cell.setCellValue(tableCell.getFormattedContentInternalFirst(tableExporterFormatter));
+        return null;
     }
 
-    private static CellStyle header(CellStyle style) {
+    private boolean setCellValueByType(Cell cell, Object o) {
+        if (o instanceof LocalDateTime) {
+            cell.setCellValue(toExcelDate(toDate((LocalDateTime) o)));
+            return true;
+        }
+        if (o instanceof LocalDate) {
+            cell.setCellValue(toExcelDate(toDate((LocalDate) o)));
+            return true;
+        }
+        if (o instanceof LocalTime) {
+            cell.setCellValue(toExcelDate(toDate((LocalTime) o)));
+            return true;
+        }
+        if (o instanceof Number) {
+            Number number = (Number) o;
+            cell.setCellValue(number.doubleValue());
+            return true;
+        }
+        return false;
+    }
+
+    private CellStyle header(CellStyle style) {
         style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
         return style;
     }
 
-    private static CellStyle body(CellStyle style) {
+    private CellStyle body(CellStyle style) {
         style.setFillForegroundColor(IndexedColors.WHITE.getIndex());
         return style;
     }
 
-    private static CellStyle footer(CellStyle style) {
+    private CellStyle footer(CellStyle style) {
         style.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
         return style;
     }
 
+    @Deprecated
     private static CellStyle getBrlCellStyle(DataFormat dataFormat, CellStyle styleFrom, CellStyle style) {
         style.cloneStyleFrom(styleFrom);
         style.setDataFormat(dataFormat.getFormat("_$R$ #,##0.00"));
         return style;
     }
+
+    private CellStyle getCellStyleWithDataFormat(CellStyle styleFrom, CellStyle style, String pattern) {
+        style.cloneStyleFrom(styleFrom);
+        style.setDataFormat(defaultDataFormat.getFormat(pattern));
+        return style;
+    }
+
 
     private static CellStyle getDefaultCellStyle(Workbook wb) {
         CellStyle style = wb.createCellStyle();
@@ -202,6 +263,22 @@ public class WorkbookUtil {
         style.setAlignment((short) HorizontalAlignment.CENTER.ordinal());
         style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         return style;
+    }
+
+    private double toExcelDate(Date date) {
+        return DateUtil.getExcelDate(date);
+    }
+
+    private Date toDate(LocalDateTime localDateTime) {
+        return localDateTime.toDate();
+    }
+
+    private Date toDate(LocalDate localDate) {
+        return localDate.toDate();
+    }
+
+    private Date toDate(LocalTime localTime) {
+        return LOCAL_DATE_BIGBANG.toDateTime(localTime).toDate();
     }
 
 }

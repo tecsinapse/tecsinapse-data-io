@@ -24,111 +24,117 @@ public class TableCell {
     private String style;
     private String styleClass;
     private boolean bold = false;
+    private ExporterFormatter exporterFormatter;
 
     public TableCell() {
-        super();
+
     }
 
-    public TableCell(String content) {
-        this();
-        this.content = content;
-    }
-
+    @Deprecated
     public TableCell(String content, boolean bold) {
-        this();
-        this.content = content;
-        this.bold = bold;
+        this(content);
+        setBold(bold);
     }
 
+    @Deprecated
     public TableCell(String content, String style) {
         this(content);
-        this.style = style;
+        setStyle(style);
     }
 
+    @Deprecated
     public TableCell(String content, String style, int colspan) {
         this(content);
-        this.style = style;
-        this.colspan = colspan;
+        setStyle(style);
+        setColspan(colspan);
     }
 
+    @Deprecated
     public TableCell(String content, String style, int colspan, int rowspan) {
-        this(content, colspan);
-        this.style = style;
-        this.rowspan = rowspan;
+        this(content);
+        setStyle(style);
+        setColspan(colspan);
+        setRowspan(rowspan);
     }
 
+    @Deprecated
     public TableCell(String content, int colspan) {
         this(content);
-        this.colspan = colspan;
+        setColspan(colspan);
     }
 
+    @Deprecated
     public TableCell(String content, int colspan, int rowspan) {
-        this(content, colspan);
-        this.rowspan = rowspan;
+        this(content);
+        setRowspan(rowspan);
     }
 
-    public TableCell(Number content) {
-        this.content = content;
-        this.cellType = CellType.NUMERIC_TYPE;
-    }
-
+    @Deprecated
     public TableCell(Number content, boolean bold) {
         this(content);
-        this.bold = bold;
+        setBold(bold);
     }
 
-    public TableCell(Number content, TableCellType tableCellType) {
-        this(content);
-        this.tableCellType = tableCellType;
-    }
-
+    @Deprecated
     public TableCell(Number content, TableCellType tableCellType, boolean bold) {
-        this(content, bold);
-        this.tableCellType = tableCellType;
+        this(content, tableCellType);
+        setBold(bold);
     }
 
+    @Deprecated
     public TableCell(String content, CellType cellType) {
         this(content);
-        this.cellType = cellType;
+        setCellType(cellType);
     }
 
-    public TableCell(String content, TableCellType tableCellType) {
-        this(content);
-        this.tableCellType = tableCellType;
-    }
-
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, boolean bold) {
-        this(content);
-        this.tableCellType = tableCellType;
-        this.bold = bold;
+        this(content, tableCellType);
+        setBold(bold);
     }
 
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, int colspan) {
         this(content, tableCellType);
-        this.colspan = colspan;
+        setColspan(colspan);
     }
 
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, int colspan, int rowspan) {
-        this(content, tableCellType, colspan);
-        this.rowspan = rowspan;
+        this(content, tableCellType);
+        setColspan(colspan);
+        setRowspan(rowspan);
     }
 
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, String style) {
-        this(content);
-        this.style = style;
-        this.tableCellType = tableCellType;
+        this(content, tableCellType);
+        setStyle(style);
     }
 
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, String style, int colspan) {
         this(content, tableCellType);
-        this.style = style;
-        this.colspan = colspan;
+        setStyle(style);
+        setColspan(colspan);
     }
 
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, String style, int colspan, int rowspan) {
-        this(content, tableCellType, colspan);
-        this.style = style;
-        this.rowspan = rowspan;
+        this(content, tableCellType);
+        setStyle(style);
+        setColspan(colspan);
+        setRowspan(rowspan);
+    }
+
+    public TableCell(Object content) {
+        this(content, TableCellType.BODY);
+    }
+
+    public TableCell(Object content, TableCellType tableCellType) {
+        this.content = content;
+        this.tableCellType = tableCellType;
+        setCellType(CellType.byObject(content));
     }
 
     public int getDefaultColumnWidth() {
@@ -136,18 +142,33 @@ public class TableCell {
         return value == null || value.trim().length() == 0 ? 0 : value.length() * COLUMN_WIDTH;
     }
 
-    public String getContent() {
-        return content == null ? null : content.toString();
+    public Object getContentObject() {
+        return content;
     }
 
-    public String getContent(ExporterFormatter exporterFormatter) {
-        if (exporterFormatter == null || content == null) {
+    public String getContent() {
+        return getFormattedContent(exporterFormatter);
+    }
+
+    public String getFormattedContentInternalFirst(ExporterFormatter externalExporterFormatter) {
+        return getFormattedContent(exporterFormatter == null ? externalExporterFormatter : exporterFormatter);
+    }
+
+    public String getFormattedContent(ExporterFormatter exporterFormatter) {
+        if (content == null) {
             return null;
         }
-        return content instanceof Number ? exporterFormatter.formatNumber((Number) content) : content.toString();
+        if (exporterFormatter != null) {
+            return exporterFormatter.formatByType(content);
+        }
+        return content.toString();
     }
 
     public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setContent(Object content) {
         this.content = content;
     }
 
@@ -230,5 +251,13 @@ public class TableCell {
 
     public void setSpreadsheetCellStyle(SpreadsheetCellStyle spreadsheetCellStyle) {
         this.spreadsheetCellStyle = spreadsheetCellStyle;
+    }
+
+    public ExporterFormatter getExporterFormatter() {
+        return exporterFormatter;
+    }
+
+    public void setExporterFormatter(ExporterFormatter exporterFormatter) {
+        this.exporterFormatter = exporterFormatter;
     }
 }
