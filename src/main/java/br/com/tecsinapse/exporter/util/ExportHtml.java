@@ -83,8 +83,8 @@ public class ExportHtml {
                 bw.append("<td");
                 writeNonNullProperty(bw, "style", cell.getStyle());
                 writeNonNullProperty(bw, "class", cell.getStyleClass());
-                writeNonNullProperty(bw, "rowspan", cell.getRowspan());
-                writeNonNullProperty(bw, "colspan", cell.getColspan());
+                writeNonNullPropertyIgnoreOne(bw, "rowspan", cell.getRowspan());
+                writeNonNullPropertyIgnoreOne(bw, "colspan", cell.getColspan());
                 bw.append(">");
                 bw.append(cell.getFormattedContentInternalFirst(tableExporterFormatter));
                 bw.append("</td>");
@@ -102,7 +102,12 @@ public class ExportHtml {
         if (s != null) {
             bw.append(String.format(" %s=\"%s\"", property, s));
         }
+    }
 
+    private void writeNonNullPropertyIgnoreOne(BufferedWriter bw, String property, Object s) throws IOException {
+        if (s != null && !s.toString().isEmpty() && !"1".equals(s.toString())) {
+            bw.append(String.format(" %s=\"%s\"", property, s));
+        }
     }
 
     public Map<String, String> getTableHtmlProperties() {

@@ -22,7 +22,7 @@ public final class EmptyTableCell extends TableCell {
     }
 
     @Override
-    public void setContent(String content) {
+    public void setContent(Object content) {
         throw new UnsupportedOperationException(
                 "EmptyTableCell: não é possível alterar o conteúdo");
     }

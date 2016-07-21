@@ -11,22 +11,20 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.type.TableCellType;
+import br.com.tecsinapse.exporter.style.TableCellStyle;
 
 public class TableCellBuilderTest {
 
     @Test
     public void tableCellBuilderTest() {
         TableCell tableCell = TableCellBuilder.newTableCellBuilder()
-                .tableCellType(TableCellType.BODY)
-                .bold(true)
+                .tableCellStyle(TableCellStyle.BODY)
                 .colspan(10)
                 .rowspan(5)
                 .style("noStyle")
                 .content("c1")
                 .build();
-        Assert.assertEquals(tableCell.getTableCellType(), TableCellType.BODY);
-        Assert.assertTrue(tableCell.isBold());
+        Assert.assertEquals(tableCell.getTableCellStyle(), TableCellStyle.BODY);
         Assert.assertEquals(tableCell.getColspan(), Integer.valueOf(10));
         Assert.assertEquals(tableCell.getRowspan(), Integer.valueOf(5));
         Assert.assertEquals(tableCell.getStyle(), "noStyle");

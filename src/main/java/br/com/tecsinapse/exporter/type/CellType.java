@@ -17,6 +17,7 @@ public enum CellType {
     LOCAL_DATE_TIME_TYPE(true),
     LOCAL_DATE_TYPE(true),
     LOCAL_TIME_TYPE(true),
+    CURRENCY_TYPE(true),
     @Deprecated
     BRL_TYPE(true);
 

@@ -8,6 +8,7 @@ package br.com.tecsinapse.exporter.type;
 
 import br.com.tecsinapse.exporter.style.Style;
 
+@Deprecated
 public enum TableCellType {
 
     BODY("body", Style.VERTICAL_ALIGN_MIDDLE),

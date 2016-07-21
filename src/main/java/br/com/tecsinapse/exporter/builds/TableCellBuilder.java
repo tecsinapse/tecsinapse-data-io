@@ -8,7 +8,7 @@
 package br.com.tecsinapse.exporter.builds;
 
 import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.type.TableCellType;
+import br.com.tecsinapse.exporter.style.TableCellStyle;
 
 public class TableCellBuilder {
 
@@ -31,8 +31,8 @@ public class TableCellBuilder {
         return this;
     }
 
-    public TableCellBuilder tableCellType(TableCellType tableCellType) {
-        toBuild.setTableCellType(tableCellType);
+    public TableCellBuilder tableCellStyle(TableCellStyle tableCellStyle) {
+        toBuild.setTableCellStyle(tableCellStyle);
         return this;
     }
 
@@ -48,11 +48,6 @@ public class TableCellBuilder {
 
     public TableCellBuilder rowspan(int rowspan) {
         toBuild.setRowspan(rowspan);
-        return this;
-    }
-
-    public TableCellBuilder bold(boolean bold) {
-        toBuild.setBold(bold);
         return this;
     }
 

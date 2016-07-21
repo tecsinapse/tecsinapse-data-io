@@ -14,30 +14,43 @@ import org.apache.poi.ss.util.DateFormatConverter;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
 
 public class ExporterFormatter {
 
-    public static final ExporterFormatter PT_BR = new ExporterFormatter("dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy", "HH:mm", "#,###,###.##", "#,###,###", new Locale("pt", "BR"));
-    public static final ExporterFormatter DEFAULT = new ExporterFormatter("yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "HH:mm", "#,###,###.##",  "#,###,###", Locale.ENGLISH);
+    public static final ExporterFormatter PT_BR = new ExporterFormatter(new Locale("pt", "BR"));
+    public static final ExporterFormatter DEFAULT = new ExporterFormatter(Locale.ENGLISH);
 
     private final String localDateTimeFormat;
     private final String localDateFormat;
     private final String localTimeFormat;
     private final DecimalFormat decimalFormat;
     private final DecimalFormat integerFormat;
+    private final DecimalFormat currencyFormat;
     private final Locale locale;
 
-    public ExporterFormatter(String localDateTimeFormat, String localDateFormat, String localTimeFormat, String decimalFormat, String integerFormat) {
-        this(localDateTimeFormat, localDateFormat, localTimeFormat, decimalFormat, integerFormat, Locale.getDefault());
+    public ExporterFormatter(Locale locale) {
+        this.locale = locale;
+        this.localDateTimeFormat = DateTimeFormat.patternForStyle("MM", locale);
+        this.localDateFormat = DateTimeFormat.patternForStyle("M-", locale);
+        this.localTimeFormat = DateTimeFormat.patternForStyle("-S", locale);
+        this.decimalFormat = (DecimalFormat) DecimalFormat.getInstance(locale);
+        this.integerFormat = (DecimalFormat) DecimalFormat.getIntegerInstance(locale);
+        this.currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(locale);
     }
 
-    public ExporterFormatter(String localDateTimeFormat, String localDateFormat, String localTimeFormat, String decimalFormat, String integerFormat, Locale locale) {
+    public ExporterFormatter(String localDateTimeFormat, String localDateFormat, String localTimeFormat, String decimalFormat, String integerFormat, String currencyFormat) {
+        this(localDateTimeFormat, localDateFormat, localTimeFormat, decimalFormat, integerFormat, currencyFormat, Locale.getDefault());
+    }
+
+    public ExporterFormatter(String localDateTimeFormat, String localDateFormat, String localTimeFormat, String decimalFormat, String integerFormat, String currencyFormat, Locale locale) {
         this.locale = locale;
         this.localDateTimeFormat = localDateTimeFormat;
         this.localDateFormat = localDateFormat;
         this.localTimeFormat = localTimeFormat;
         this.decimalFormat = new DecimalFormat(decimalFormat, DecimalFormatSymbols.getInstance(locale));
         this.integerFormat = new DecimalFormat(integerFormat, DecimalFormatSymbols.getInstance(locale));
+        this.currencyFormat = new DecimalFormat(currencyFormat, DecimalFormatSymbols.getInstance(locale));
     }
 
     public String getLocalDateTimeFormat() {
@@ -56,8 +69,12 @@ public class ExporterFormatter {
         return decimalFormat.toPattern();
     }
 
-    public DecimalFormat getIntegerFormat() {
-        return integerFormat;
+    public String getIntegerFormat() {
+        return integerFormat.toPattern();
+    }
+
+    public String getCurrencyFormat() {
+        return currencyFormat.toPattern();
     }
 
     public Locale getLocale() {
@@ -83,7 +100,11 @@ public class ExporterFormatter {
         return decimalFormat.format(number);
     }
 
-    public String formatByType(Object o) {
+    public String formatCurrency(Number number) {
+        return currencyFormat.format(number);
+    }
+
+    public String formatByType(Object o, boolean isCurrency) {
         if (o instanceof LocalDateTime) {
             return formatLocalDateTime((LocalDateTime) o);
         }
@@ -94,20 +115,26 @@ public class ExporterFormatter {
             return formatLocalTime((LocalTime) o);
         }
         if (o instanceof Number) {
+            if (isCurrency) {
+                return formatCurrency((Number) o);
+            }
             return formatNumber((Number) o);
         }
         return o.toString();
     }
 
-    public String getStringFormatByType(Object o) {
-        String pattern = getStringByType(o);
+    public String getStringFormatByType(Object o, boolean isCurrency) {
+        String pattern = getStringByType(o, isCurrency);
         if (pattern == null) {
             return null;
+        }
+        if (o instanceof Number) {
+            return pattern;
         }
         return DateFormatConverter.convert(locale, pattern);
     }
 
-    private String getStringByType(Object o) {
+    private String getStringByType(Object o, boolean isCurrency) {
         if (o instanceof LocalDateTime) {
             return localDateTimeFormat;
         }
@@ -120,12 +147,13 @@ public class ExporterFormatter {
         if (o instanceof Integer || o instanceof Long) {
             return integerFormat.toPattern();
         }
+        if (o instanceof Number && isCurrency) {
+            return currencyFormat.toPattern();
+        }
         if (o instanceof Number) {
             return decimalFormat.toPattern();
         }
         return null;
     }
-
-
 
 }

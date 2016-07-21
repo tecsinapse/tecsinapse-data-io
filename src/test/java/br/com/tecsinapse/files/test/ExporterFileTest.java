@@ -155,7 +155,7 @@ public class ExporterFileTest {
             Locale.setDefault(locale);
             final String dataPattern = "dd/MM/yyyy";
             final DecimalFormat decimalFormat = new DecimalFormat(decimalPattern, new DecimalFormatSymbols(locale));
-            exporterFormatter = new ExporterFormatter("dd/MM/yyyy HH:mm", dataPattern, "HH:mm", decimalPattern, "#,###", locale);
+            exporterFormatter = new ExporterFormatter("dd/MM/yyyy HH:mm", dataPattern, "HH:mm", decimalPattern, "#,###", "R$ #,##0.00", locale);
 
             final Table table = new Table();
 

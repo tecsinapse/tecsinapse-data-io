@@ -8,7 +8,7 @@ package br.com.tecsinapse.exporter;
 
 import com.google.common.primitives.Doubles;
 
-import br.com.tecsinapse.exporter.style.SpreadsheetCellStyle;
+import br.com.tecsinapse.exporter.style.TableCellStyle;
 import br.com.tecsinapse.exporter.type.CellType;
 import br.com.tecsinapse.exporter.type.TableCellType;
 
@@ -18,12 +18,11 @@ public class TableCell {
     private Object content = "";
     private Integer colspan = 1;
     private Integer rowspan = 1;
-    private TableCellType tableCellType = TableCellType.BODY;
     private CellType cellType = CellType.STRING_TYPE;
-    private SpreadsheetCellStyle spreadsheetCellStyle;
+    private boolean userDefinedCellType = false;
+    private TableCellStyle tableCellStyle = TableCellStyle.BODY;
     private String style;
     private String styleClass;
-    private boolean bold = false;
     private ExporterFormatter exporterFormatter;
 
     public TableCell() {
@@ -67,6 +66,7 @@ public class TableCell {
     public TableCell(String content, int colspan, int rowspan) {
         this(content);
         setRowspan(rowspan);
+        setColspan(colspan);
     }
 
     @Deprecated
@@ -127,14 +127,20 @@ public class TableCell {
         setRowspan(rowspan);
     }
 
-    public TableCell(Object content) {
-        this(content, TableCellType.BODY);
+    @Deprecated
+    public TableCell(Object content, TableCellType tableCellType) {
+        this(content);
+        setTableCellType(tableCellType);
     }
 
-    public TableCell(Object content, TableCellType tableCellType) {
+    public TableCell(Object content) {
         this.content = content;
-        this.tableCellType = tableCellType;
-        setCellType(CellType.byObject(content));
+        this.cellType = CellType.byObject(content);
+    }
+
+    public TableCell(Object content, CellType cellType) {
+        this.content = content;
+        setCellType(cellType);
     }
 
     public int getDefaultColumnWidth() {
@@ -159,21 +165,16 @@ public class TableCell {
             return null;
         }
         if (exporterFormatter != null) {
-            return exporterFormatter.formatByType(content);
+            return exporterFormatter.formatByType(content, cellType == CellType.CURRENCY_TYPE);
         }
         return content.toString();
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public void setContent(Object content) {
         this.content = content;
-    }
-
-    public void setContent(Number content) {
-        this.content = content;
+        if (!userDefinedCellType) {
+            this.cellType = CellType.byObject(content);
+        }
     }
 
     public Integer getColspan() {
@@ -192,20 +193,33 @@ public class TableCell {
         this.rowspan = rowspan;
     }
 
+    @Deprecated
     public boolean isBold() {
-        return bold;
+        return tableCellStyle != null ? tableCellStyle.isBold() : false;
     }
 
+    @Deprecated
     public void setBold(boolean bold) {
-        this.bold = bold;
+        if (tableCellStyle == null) {
+            tableCellStyle = TableCellStyle.BODY;
+        }
+        tableCellStyle.setBold(bold);
     }
 
-    public TableCellType getTableCellType() {
-        return tableCellType;
-    }
-
+    @Deprecated
     public void setTableCellType(TableCellType tableCellType) {
-        this.tableCellType = tableCellType;
+        if (tableCellType == TableCellType.BODY) {
+            setTableCellStyle(TableCellStyle.BODY);
+            return;
+        }
+        if (tableCellType == TableCellType.HEADER) {
+            setTableCellStyle(TableCellStyle.HEADER);
+            return;
+        }
+        if (tableCellType == TableCellType.FOOTER) {
+            setTableCellStyle(TableCellStyle.FOOTER);
+            return;
+        }
     }
 
     public CellType getCellType() {
@@ -213,6 +227,7 @@ public class TableCell {
     }
 
     public void setCellType(CellType cellType) {
+        this.userDefinedCellType = true;
         this.cellType = cellType;
     }
 
@@ -224,11 +239,8 @@ public class TableCell {
     }
 
     public String getStyle() {
-        if (style == null && styleClass == null) {
-            if (spreadsheetCellStyle != null) {
-                return spreadsheetCellStyle.getCssStyle();
-            }
-            return getTableCellType().getDefaultStyle();
+        if (style == null && styleClass == null && tableCellStyle != null) {
+            return tableCellStyle.getCssStyle();
         }
         return style;
     }
@@ -245,12 +257,12 @@ public class TableCell {
         this.styleClass = styleClass;
     }
 
-    public SpreadsheetCellStyle getSpreadsheetCellStyle() {
-        return spreadsheetCellStyle;
+    public TableCellStyle getTableCellStyle() {
+        return tableCellStyle;
     }
 
-    public void setSpreadsheetCellStyle(SpreadsheetCellStyle spreadsheetCellStyle) {
-        this.spreadsheetCellStyle = spreadsheetCellStyle;
+    public void setTableCellStyle(TableCellStyle tableCellStyle) {
+        this.tableCellStyle = tableCellStyle;
     }
 
     public ExporterFormatter getExporterFormatter() {

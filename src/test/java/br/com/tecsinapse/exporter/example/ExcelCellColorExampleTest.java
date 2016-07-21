@@ -19,7 +19,7 @@ import br.com.tecsinapse.exporter.util.ExcelUtil;
 import br.com.tecsinapse.exporter.ResourceUtils;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.style.SpreadsheetCellStyle;
+import br.com.tecsinapse.exporter.style.TableCellStyle;
 import br.com.tecsinapse.exporter.util.ExportHtml;
 
 public class ExcelCellColorExampleTest {
@@ -33,13 +33,14 @@ public class ExcelCellColorExampleTest {
             table.addNewRow();
             line++;
             TableCell tableCell = new TableCell(String.format("Line %d - Color: %s", line, color.getClass().getSimpleName()));
-            tableCell.setSpreadsheetCellStyle(new SpreadsheetCellStyle(color));
+            TableCellStyle style = new TableCellStyle(color);
+            tableCell.setTableCellStyle(style);
             table.add(tableCell);
             for (int i = 0; i < 10; i++) {
                 tableCell = new TableCell(String.format("Col %d", i));
-                tableCell.setSpreadsheetCellStyle(new SpreadsheetCellStyle(color));
+                tableCell.setTableCellStyle(style);
+                style.setBold(true);
                 table.add(tableCell);
-
             }
         }
         String xlsx = "XLSX-cell-color.xlsx";

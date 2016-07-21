@@ -14,16 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
@@ -59,12 +54,9 @@ public class WorkbookUtil {
         int c = 0;
         int maxColumns = -1;
         Map<Integer, Integer> defaultColumnWidth = new HashMap<>();
-        CellStyle styleHeader = header(getDefaultCellStyle(wb));
-        CellStyle styleBody = body(getDefaultCellStyle(wb));
-        CellStyle styleFooter = footer(getDefaultCellStyle(wb));
 
         defaultDataFormat = wb.createDataFormat();
-        CellStyle cellStyle = wb.createCellStyle();
+
         ExporterFormatter tableExporterFormatter = table.getExporterFormatter();
 
         for (List<TableCell> row : matrix) {
@@ -111,7 +103,7 @@ public class WorkbookUtil {
                 }
 
                 String format = setConvertedValue(cell, tableCell, tableExporterFormatter);
-                setCellStyle(styleHeader, styleBody, styleFooter, cell, tableCell, wb, format, cellStyle);
+                setCellStyle(cell, tableCell, wb, format);
                 c++;
             }
             r++;
@@ -142,44 +134,11 @@ public class WorkbookUtil {
         return wb;
     }
 
-    private void setCellStyle(CellStyle defaultHeader, CellStyle defaultBody, CellStyle defaultFooter, Cell cell,
-                              TableCell tableCell, Workbook wb, String cellFormat, CellStyle cellStyle) {
-        CellStyle style;
-        if (tableCell.getSpreadsheetCellStyle() != null) {
-            style = getDefaultCellStyle(wb);
-            tableCell.getSpreadsheetCellStyle().toCellStyle(style);
-        } else {
-            switch (tableCell.getTableCellType()) {
-                case HEADER:
-                    style = tableCell.isBold() ? header(getDefaultCellStyle(wb)) : defaultHeader;
-                    break;
-                case BODY:
-                    style = tableCell.isBold() ? body(getDefaultCellStyle(wb)) : defaultBody;
-                    break;
-                case FOOTER:
-                    style = tableCell.isBold() ? footer(getDefaultCellStyle(wb)) : defaultFooter;
-                    break;
-                default:
-                    throw new IllegalStateException("CellStyle " + tableCell.getTableCellType() + " is not supported.");
-            }
+    private void setCellStyle(Cell cell, TableCell tableCell, Workbook wb, String cellFormat) {
+        if (tableCell.getCellType() == CellType.BRL_TYPE) {
+            cellFormat = "_$R$ #,##0.00";
         }
-
-        if (tableCell.isBold()) {
-            Font font = wb.createFont();
-            font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-            style.setFont(font);
-        }
-
-        if (tableCell.getCellType() == CellType.BRL_TYPE && cellFormat == null) {
-            cellStyle = getBrlCellStyle(defaultDataFormat, style, cellStyle);
-            cell.setCellStyle(cellStyle);
-            return;
-        }
-        if (cellFormat != null) {
-            cell.setCellStyle(getCellStyleWithDataFormat(style, getDefaultCellStyle(wb), cellFormat));
-            return;
-        }
-        cell.setCellStyle(style);
+        cell.setCellStyle(tableCell.getTableCellStyle().toCellStyle(wb, cellFormat));
     }
 
     private String setConvertedValue(Cell cell, TableCell tableCell, ExporterFormatter tableExporterFormatter) {
@@ -190,7 +149,8 @@ public class WorkbookUtil {
         if (tableCell.getCellType().isAllowFormat()) {
             ExporterFormatter cellExporterFormatter = tableCell.getExporterFormatter();
             ExporterFormatter exporterFormatter = cellExporterFormatter == null ? tableExporterFormatter : tableCell.getExporterFormatter();
-            String dataFormat = exporterFormatter != null ? exporterFormatter.getStringFormatByType(cellValue) : null;
+            boolean isCurrency = tableCell.getCellType() == CellType.CURRENCY_TYPE;
+            String dataFormat = exporterFormatter != null ? exporterFormatter.getStringFormatByType(cellValue, isCurrency) : null;
             if (dataFormat != null && setCellValueByType(cell, cellValue)) {
                 return dataFormat;
             }
@@ -218,51 +178,6 @@ public class WorkbookUtil {
             return true;
         }
         return false;
-    }
-
-    private CellStyle header(CellStyle style) {
-        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        return style;
-    }
-
-    private CellStyle body(CellStyle style) {
-        style.setFillForegroundColor(IndexedColors.WHITE.getIndex());
-        return style;
-    }
-
-    private CellStyle footer(CellStyle style) {
-        style.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        return style;
-    }
-
-    @Deprecated
-    private static CellStyle getBrlCellStyle(DataFormat dataFormat, CellStyle styleFrom, CellStyle style) {
-        style.cloneStyleFrom(styleFrom);
-        style.setDataFormat(dataFormat.getFormat("_$R$ #,##0.00"));
-        return style;
-    }
-
-    private CellStyle getCellStyleWithDataFormat(CellStyle styleFrom, CellStyle style, String pattern) {
-        style.cloneStyleFrom(styleFrom);
-        style.setDataFormat(defaultDataFormat.getFormat(pattern));
-        return style;
-    }
-
-
-    private static CellStyle getDefaultCellStyle(Workbook wb) {
-        CellStyle style = wb.createCellStyle();
-        style.setBorderBottom(CellStyle.BORDER_THIN);
-        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderLeft(CellStyle.BORDER_THIN);
-        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderRight(CellStyle.BORDER_THIN);
-        style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-        style.setBorderTop(CellStyle.BORDER_THIN);
-        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
-        style.setVerticalAlignment((short) VerticalAlignment.CENTER.ordinal());
-        style.setAlignment((short) HorizontalAlignment.CENTER.ordinal());
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        return style;
     }
 
     private double toExcelDate(Date date) {
