@@ -27,6 +27,12 @@ public enum FileType {
             return new XSSFWorkbook(inputStream);
         }
     },
+    XLSM("MS Excel file (.xlsm)") {
+        @Override
+        public Workbook buildWorkbook(InputStream inputStream) throws IOException {
+            return XLSX.buildWorkbook(inputStream);
+        }
+    },
     CSV("CSV file"),
     TXT("Text file");
 
@@ -37,14 +43,17 @@ public enum FileType {
     }
 
     public static FileType getFileType(String filename) {
-        if (filename.toLowerCase().endsWith(".xls")) {
-            return XLS;
-        }
         if (filename.toLowerCase().endsWith(".xlsx")) {
             return XLSX;
         }
+        if (filename.toLowerCase().endsWith(".xls")) {
+            return XLS;
+        }
         if (filename.toLowerCase().endsWith(".csv")) {
             return CSV;
+        }
+        if (filename.toLowerCase().endsWith(".xlsm")) {
+            return XLSM;
         }
         return TXT;
     }
