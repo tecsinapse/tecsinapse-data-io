@@ -143,6 +143,11 @@ public class TableCell {
         setCellType(cellType);
     }
 
+    public TableCell(Object content, TableCellStyle tableCellStyle) {
+        this(content);
+        setTableCellStyle(tableCellStyle);
+    }
+
     public int getDefaultColumnWidth() {
         String value = getContent();
         return value == null || value.trim().length() == 0 ? 0 : value.length() * COLUMN_WIDTH;

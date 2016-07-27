@@ -55,6 +55,10 @@ public class SpreadsheetParser<T> implements Parser<T> {
         this(clazz, new FileInputStream(file), group, FileType.getFileType(file.getName()));
     }
 
+    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, FileType fileType) {
+        this(clazz, inputStream, Default.class, fileType);
+    }
+
     public SpreadsheetParser(Class<T> clazz, InputStream inputStream, Class<?> group, FileType fileType) {
         this.fileType = fileType;
         this.clazz = clazz;
