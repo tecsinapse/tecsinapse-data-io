@@ -6,6 +6,7 @@
  */
 package br.com.tecsinapse.exporter.util;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,27 +29,27 @@ public class ExportHtmlTest {
                 {null, Arrays.asList(), ""},
                 {null, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")), "<table>\n" +
                         "<tr>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c1</td>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c2</td>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c3</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c1</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c2</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c3</td>\n" +
                         "</tr>\n" +
                         "<tr>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c4</td>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c5</td>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c6</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c4</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c5</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c6</td>\n" +
                         "</tr>\n" +
                         "</table>\n"},
                 {tableMap, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")),
                         "<table style=\"background-color: #DFDFDF\" border=\"1\">\n" +
                         "<tr>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c1</td>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c2</td>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c3</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c1</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c2</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c3</td>\n" +
                         "</tr>\n" +
                         "<tr>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c4</td>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c5</td>\n" +
-                        "<td style=\"vertical-align: middle;\" rowspan=\"1\" colspan=\"1\">c6</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c4</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c5</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c6</td>\n" +
                         "</tr>\n" +
                         "</table>\n"}
         };
@@ -56,7 +57,7 @@ public class ExportHtmlTest {
 
     @Test(dataProvider = "toHtmlDs")
     public void testNewInstance(Map<String, String> tableProps, List<List<String>> rows, String expected) throws Exception {
-        ExportHtml exportHtml = tableProps == null ? ExportHtml.newInstance() : ExportHtml.newInstance(tableProps);
+        ExportHtml exportHtml = tableProps == null ? ExportHtml.newInstance(Charset.forName("UTF-8")) : ExportHtml.newInstance(tableProps, Charset.forName("UTF-8"));
         Table table = rows.isEmpty() ? null : new Table();
         for(List<String> cols : rows) {
             table.addNewRow();

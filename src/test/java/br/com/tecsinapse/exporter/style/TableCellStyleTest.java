@@ -16,17 +16,17 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class SpreadsheetCellStyleTest {
+public class TableCellStyleTest {
 
     @DataProvider(name = "cssDs")
     private Object[][] cssDataSource() {
         return new Object[][] {
-                {new HSSFColor.BLACK(), "background-color: #000000", new HSSFColor.WHITE(), "background-color: #FFFFFF"},
-                {new HSSFColor.WHITE(), "background-color: #FFFFFF", new HSSFColor.RED(), "background-color: #FF0000"},
-                {new HSSFColor.RED(), "background-color: #FF0000", new HSSFColor.BLUE(), "background-color: #0000FF"},
-                {new HSSFColor.BLUE(), "background-color: #0000FF", new HSSFColor.BRIGHT_GREEN(), "background-color: #00FF00"},
-                {new HSSFColor.BRIGHT_GREEN(), "background-color: #00FF00", new HSSFColor.BLACK(), "background-color: #000000"},
-                {null, null, new HSSFColor.BLACK(), "background-color: #000000"}
+                {new HSSFColor.BLACK(), "background-color:#000000;", new HSSFColor.WHITE(), "background-color:#FFFFFF;"},
+                {new HSSFColor.WHITE(), "background-color:#FFFFFF;", new HSSFColor.RED(), "background-color:#FF0000;"},
+                {new HSSFColor.RED(), "background-color:#FF0000;", new HSSFColor.BLUE(), "background-color:#0000FF;"},
+                {new HSSFColor.BLUE(), "background-color:#0000FF;", new HSSFColor.BRIGHT_GREEN(), "background-color:#00FF00;"},
+                {new HSSFColor.BRIGHT_GREEN(), "background-color:#00FF00;", new HSSFColor.BLACK(), "background-color:#000000;"},
+                {null, null, new HSSFColor.BLACK(), "background-color:#000000;"}
         };
     }
 
@@ -41,7 +41,7 @@ public class SpreadsheetCellStyleTest {
 
     @Test(dataProvider = "cssDs")
     public void cssStyleTest(HSSFColor hssfColor, String cssStyle, HSSFColor hssfColorPost, String cssStylePost) {
-        SpreadsheetCellStyle style = new SpreadsheetCellStyle(hssfColor);
+        TableCellStyle style = new TableCellStyle(hssfColor);
         Assert.assertEquals(style.getCssStyle(), cssStyle);
         style.setBackgroundColor(hssfColorPost);
         Assert.assertEquals(style.getCssStyle(), cssStylePost);
@@ -49,9 +49,9 @@ public class SpreadsheetCellStyleTest {
 
     @Test(dataProvider = "toStyleDs")
     public void toCellStyleTest(HSSFColor color, int index) {
-        SpreadsheetCellStyle style = new SpreadsheetCellStyle(color);
+        TableCellStyle style = new TableCellStyle(color);
         HSSFWorkbook wb = new HSSFWorkbook();
-        CellStyle cellStyle = style.toCellStyle(wb.createCellStyle());
+        CellStyle cellStyle = style.toCellStyle(wb, null);
         Assert.assertEquals(cellStyle.getFillForegroundColor(), index);
     }
 

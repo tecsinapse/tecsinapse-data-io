@@ -8,139 +8,177 @@ package br.com.tecsinapse.exporter;
 
 import com.google.common.primitives.Doubles;
 
-import br.com.tecsinapse.exporter.style.SpreadsheetCellStyle;
+import br.com.tecsinapse.exporter.style.TableCellStyle;
+import br.com.tecsinapse.exporter.type.CellType;
 
 public class TableCell {
 
     private static final int COLUMN_WIDTH = 256;
-    private String content = "";
+    private Object content = "";
     private Integer colspan = 1;
     private Integer rowspan = 1;
-    private TableCellType tableCellType = TableCellType.BODY;
     private CellType cellType = CellType.STRING_TYPE;
-    private SpreadsheetCellStyle spreadsheetCellStyle;
+    private boolean userDefinedCellType = false;
+    private TableCellStyle tableCellStyle = TableCellStyle.BODY;
     private String style;
     private String styleClass;
-    private boolean bold = false;
+    private ExporterFormatter exporterFormatter;
 
     public TableCell() {
-        super();
+
     }
 
-    public TableCell(String content) {
-        this();
-        this.content = content;
-    }
-
+    @Deprecated
     public TableCell(String content, boolean bold) {
-        this();
-        this.content = content;
-        this.bold = bold;
+        this(content);
+        setBold(bold);
     }
 
+    @Deprecated
     public TableCell(String content, String style) {
         this(content);
-        this.style = style;
+        setStyle(style);
     }
 
+    @Deprecated
     public TableCell(String content, String style, int colspan) {
         this(content);
-        this.style = style;
-        this.colspan = colspan;
+        setStyle(style);
+        setColspan(colspan);
     }
 
+    @Deprecated
     public TableCell(String content, String style, int colspan, int rowspan) {
-        this(content, colspan);
-        this.style = style;
-        this.rowspan = rowspan;
+        this(content);
+        setStyle(style);
+        setColspan(colspan);
+        setRowspan(rowspan);
     }
 
+    @Deprecated
     public TableCell(String content, int colspan) {
         this(content);
-        this.colspan = colspan;
+        setColspan(colspan);
     }
 
+    @Deprecated
     public TableCell(String content, int colspan, int rowspan) {
-        this(content, colspan);
-        this.rowspan = rowspan;
+        this(content);
+        setRowspan(rowspan);
+        setColspan(colspan);
     }
 
-    public TableCell(Number content) {
-        this(content != null ? content.toString() : null);
-        this.cellType = CellType.NUMERIC_TYPE;
-    }
-
+    @Deprecated
     public TableCell(Number content, boolean bold) {
-        this(content != null ? content.toString() : null);
-        this.cellType = CellType.NUMERIC_TYPE;
-        this.bold = bold;
-    }
-
-    public TableCell(Number content, TableCellType tableCellType) {
         this(content);
-        this.tableCellType = tableCellType;
+        setBold(bold);
     }
 
+    @Deprecated
     public TableCell(Number content, TableCellType tableCellType, boolean bold) {
-        this(content);
-        this.tableCellType = tableCellType;
-        this.bold = bold;
+        this(content, tableCellType);
+        setBold(bold);
     }
 
+    @Deprecated
     public TableCell(String content, CellType cellType) {
         this(content);
-        this.cellType = cellType;
+        setCellType(cellType);
     }
 
-    public TableCell(String content, TableCellType tableCellType) {
-        this(content);
-        this.tableCellType = tableCellType;
-    }
-
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, boolean bold) {
-        this(content);
-        this.tableCellType = tableCellType;
-        this.bold = bold;
+        this(content, tableCellType);
+        setBold(bold);
     }
 
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, int colspan) {
         this(content, tableCellType);
-        this.colspan = colspan;
+        setColspan(colspan);
     }
 
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, int colspan, int rowspan) {
-        this(content, tableCellType, colspan);
-        this.rowspan = rowspan;
+        this(content, tableCellType);
+        setColspan(colspan);
+        setRowspan(rowspan);
     }
 
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, String style) {
-        this(content);
-        this.style = style;
-        this.tableCellType = tableCellType;
+        this(content, tableCellType);
+        setStyle(style);
     }
 
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, String style, int colspan) {
         this(content, tableCellType);
-        this.style = style;
-        this.colspan = colspan;
+        setStyle(style);
+        setColspan(colspan);
     }
 
+    @Deprecated
     public TableCell(String content, TableCellType tableCellType, String style, int colspan, int rowspan) {
-        this(content, tableCellType, colspan);
-        this.style = style;
-        this.rowspan = rowspan;
+        this(content, tableCellType);
+        setStyle(style);
+        setColspan(colspan);
+        setRowspan(rowspan);
     }
 
-    int getDefaultColumnWidth() {
-        return content == null || content.trim().length() == 0 ? 0 : content.length() * COLUMN_WIDTH;
+    @Deprecated
+    public TableCell(Object content, TableCellType tableCellType) {
+        this(content);
+        setTableCellType(tableCellType);
     }
 
-    public String getContent() {
+    public TableCell(Object content) {
+        this.content = content;
+        this.cellType = CellType.byObject(content);
+    }
+
+    public TableCell(Object content, CellType cellType) {
+        this.content = content;
+        setCellType(cellType);
+    }
+
+    public TableCell(Object content, TableCellStyle tableCellStyle) {
+        this(content);
+        setTableCellStyle(tableCellStyle);
+    }
+
+    public int getDefaultColumnWidth() {
+        String value = getContent();
+        return value == null || value.trim().length() == 0 ? 0 : value.length() * COLUMN_WIDTH;
+    }
+
+    public Object getContentObject() {
         return content;
     }
 
-    public void setContent(String content) {
+    public String getContent() {
+        return getFormattedContent(exporterFormatter);
+    }
+
+    public String getFormattedContentInternalFirst(ExporterFormatter externalExporterFormatter) {
+        return getFormattedContent(exporterFormatter == null ? externalExporterFormatter : exporterFormatter);
+    }
+
+    public String getFormattedContent(ExporterFormatter exporterFormatter) {
+        if (content == null) {
+            return null;
+        }
+        if (exporterFormatter != null) {
+            return exporterFormatter.formatByType(content, cellType == CellType.CURRENCY_TYPE);
+        }
+        return content.toString();
+    }
+
+    public void setContent(Object content) {
         this.content = content;
+        if (!userDefinedCellType) {
+            this.cellType = CellType.byObject(content);
+        }
     }
 
     public Integer getColspan() {
@@ -159,20 +197,33 @@ public class TableCell {
         this.rowspan = rowspan;
     }
 
+    @Deprecated
     public boolean isBold() {
-        return bold;
+        return tableCellStyle != null ? tableCellStyle.isBold() : false;
     }
 
+    @Deprecated
     public void setBold(boolean bold) {
-        this.bold = bold;
+        if (tableCellStyle == null) {
+            tableCellStyle = TableCellStyle.BODY;
+        }
+        tableCellStyle.setBold(bold);
     }
 
-    public TableCellType getTableCellType() {
-        return tableCellType;
-    }
-
+    @Deprecated
     public void setTableCellType(TableCellType tableCellType) {
-        this.tableCellType = tableCellType;
+        if (tableCellType == TableCellType.BODY) {
+            setTableCellStyle(TableCellStyle.BODY);
+            return;
+        }
+        if (tableCellType == TableCellType.HEADER) {
+            setTableCellStyle(TableCellStyle.HEADER);
+            return;
+        }
+        if (tableCellType == TableCellType.FOOTER) {
+            setTableCellStyle(TableCellStyle.FOOTER);
+            return;
+        }
     }
 
     public CellType getCellType() {
@@ -180,19 +231,20 @@ public class TableCell {
     }
 
     public void setCellType(CellType cellType) {
+        this.userDefinedCellType = true;
         this.cellType = cellType;
     }
 
     public Double getContentAsDoubleOrNull() {
-        return content == null ? null : Doubles.tryParse(content);
+        if (content instanceof Number) {
+            return ((Number) content).doubleValue();
+        }
+        return content == null ? null : Doubles.tryParse(getContent());
     }
 
     public String getStyle() {
-        if (style == null && styleClass == null) {
-            if (spreadsheetCellStyle != null) {
-                return spreadsheetCellStyle.getCssStyle();
-            }
-            return getTableCellType().getDefaultStyle();
+        if (style == null && styleClass == null && tableCellStyle != null) {
+            return tableCellStyle.getCssStyle();
         }
         return style;
     }
@@ -209,11 +261,19 @@ public class TableCell {
         this.styleClass = styleClass;
     }
 
-    public SpreadsheetCellStyle getSpreadsheetCellStyle() {
-        return spreadsheetCellStyle;
+    public TableCellStyle getTableCellStyle() {
+        return tableCellStyle;
     }
 
-    public void setSpreadsheetCellStyle(SpreadsheetCellStyle spreadsheetCellStyle) {
-        this.spreadsheetCellStyle = spreadsheetCellStyle;
+    public void setTableCellStyle(TableCellStyle tableCellStyle) {
+        this.tableCellStyle = tableCellStyle;
+    }
+
+    public ExporterFormatter getExporterFormatter() {
+        return exporterFormatter;
+    }
+
+    public void setExporterFormatter(ExporterFormatter exporterFormatter) {
+        this.exporterFormatter = exporterFormatter;
     }
 }

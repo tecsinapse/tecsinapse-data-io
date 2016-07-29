@@ -10,22 +10,32 @@ import java.io.Closeable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import br.com.tecsinapse.exporter.ExporterFormatter;
+import br.com.tecsinapse.exporter.type.FileType;
+
 public interface Parser<T> extends Closeable {
 
     List<T> parse() throws IllegalAccessException, InstantiationException, InvocationTargetException, Exception;
 
-    /**
-     * Quantidade de sheets na planilha
-     * Para csv sempre retorna 1, apenas para centralizar processamento pelo Importer idependente do arquivo
-     *
-     * @return quantidade de sheets
-     */
+    void setExporterFormatter(ExporterFormatter exporterFormatter);
+
+    ExporterFormatter getExporterFormatter();
+
+    void setHeadersRows(int headersRows);
+
+    boolean isIgnoreBlankLinesAtEnd();
+
+    void setIgnoreBlankLinesAtEnd(boolean ignoreBlankLinesAtEnd);
+
+    List<List<String>> getLines() throws Exception;
+
     int getNumberOfSheets();
 
-    void setDateStringPattern(String dateStringPattern);
+    void setSheetNumber(int sheetNumber);
 
-    void setDateTimeStringPattern(String dateTimeStringPattern);
+    int getSheetNumber();
 
-    void setDateAsLocalDateTime(boolean considerarLocalDateTime);
+    void setSheetNumberAsFirstNotHidden();
 
+    FileType getFileType();
 }

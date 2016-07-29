@@ -12,7 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import br.com.tecsinapse.exporter.ExcelUtil;
+import br.com.tecsinapse.exporter.util.ExcelUtil;
 
 public class ExcelUtilTest {
 

@@ -13,7 +13,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import br.com.tecsinapse.exporter.builds.TableCellBuilder;
+import br.com.tecsinapse.exporter.style.TableCellStyle;
+import br.com.tecsinapse.exporter.type.CellType;
+import br.com.tecsinapse.exporter.util.WorkbookUtil;
+
 public class Table {
+
+    private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
 
     private String title;
     private boolean autoSizeColumnSheet = true;
@@ -63,68 +70,90 @@ public class Table {
         getLastRow().add(cell);
     }
 
-    public void add(String content) {
-        add(new TableCell(content));
-    }
-
+    @Deprecated
     public void add(String content, boolean bold) {
         add(new TableCell(content, bold));
     }
 
+    @Deprecated
     public void add(String content, TableCellType tableCellType) {
         add(new TableCell(content, tableCellType));
     }
 
+    @Deprecated
     public void add(String content, TableCellType tableCellType, boolean bold) {
         add(new TableCell(content, tableCellType, bold));
     }
 
+    @Deprecated
     public void add(String content, TableCellType tableCellType, int colspan) {
         add(new TableCell(content, tableCellType, colspan));
     }
 
+    @Deprecated
     public void add(String content, TableCellType tableCellType, int colspan, int rowspan) {
         add(new TableCell(content, tableCellType, colspan, rowspan));
     }
 
+    @Deprecated
     public void add(String content, TableCellType tableCellType, String style, int colspan) {
         add(new TableCell(content, tableCellType, style, colspan));
     }
 
+    @Deprecated
     public void add(String content, TableCellType tableCellType, String style, int colspan, int rowspan) {
         add(new TableCell(content, tableCellType, style, colspan, rowspan));
     }
 
+    @Deprecated
     public void add(String content, String style) {
         add(new TableCell(content, style));
     }
 
+    @Deprecated
     public void add(String content, String style, int colspan) {
         add(new TableCell(content, style, colspan));
     }
 
+    @Deprecated
     public void add(String content, String style, int colspan, int rowspan) {
         add(new TableCell(content, style, colspan, rowspan));
     }
 
+    @Deprecated
     public void add(String content, int colspan) {
         add(new TableCell(content, colspan));
     }
 
+    @Deprecated
     public void add(String content, int colspan, int rowspan) {
         add(new TableCell(content, colspan, rowspan));
     }
 
+    @Deprecated
     public void add(String content, CellType cellType) {
         add(new TableCell(content, cellType));
     }
 
-    public void add(Number content) {
+    @Deprecated
+    public void add(Number content, boolean bold) {
+        add(new TableCell(content, bold));
+    }
+
+    public void add(Object content) {
         add(new TableCell(content));
     }
 
-    public void add(Number content, boolean bold) {
-        add(new TableCell(content, bold));
+    public void add(Object content, TableCellStyle tableCellStyle) {
+        add(new TableCell(content, tableCellStyle));
+    }
+
+    public void add(Object content, TableCellStyle tableCellStyle, int colspan) {
+        add(TableCellBuilder.newTableCellBuilder()
+                .content(content)
+                .tableCellStyle(tableCellStyle)
+                .colspan(colspan)
+        );
     }
 
     public void addOnNewRow(TableCell cell) {
@@ -188,7 +217,7 @@ public class Table {
                     c++;
                 }
                 if (!spanMark[r][c]) {
-                    matrix.get(r).set(c, cell.getContent());
+                    matrix.get(r).set(c, cell.getFormattedContentInternalFirst(getExporterFormatter()));
 
                     int rowspan = cell.getRowspan();
                     int colspan = cell.getColspan();
@@ -315,7 +344,7 @@ public class Table {
     }
 
     public Workbook toWorkBook(Workbook wb) {
-        return WorkbookUtil.toWorkBook(wb, this);
+        return WorkbookUtil.newWorkbookUtil().toWorkBook(wb, this);
     }
 
     public void addAll(List<String> values) {
@@ -414,4 +443,11 @@ public class Table {
         this.autoSizeColumnSheet = autoSizeColumnSheet;
     }
 
+    public ExporterFormatter getExporterFormatter() {
+        return exporterFormatter;
+    }
+
+    public void setExporterFormatter(ExporterFormatter exporterFormatter) {
+        this.exporterFormatter = exporterFormatter;
+    }
 }
