@@ -1,8 +1,8 @@
 tecsinapse-exporter
 ==========
 [![License (LGPL version 3)](https://img.shields.io/badge/license-GNU%20LGPL%20version%203.0-blue.svg)](https://github.com/tecsinapse/tecsinapse-exporter/blob/master/LICENCE)
-[![Build Status](https://travis-ci.org/tecsinapse/tecsinapse-exporter.svg?branch=master)](https://travis-ci.org/tecsinapse/tecsinapse-exporter)
-[![Coverage Status](https://img.shields.io/coveralls/tecsinapse/tecsinapse-exporter.svg?branch=master)](https://coveralls.io/github/tecsinapse/tecsinapse-exporter?branch=master)
+[![Build Status](https://travis-ci.org/tecsinapse/tecsinapse-exporter.svg?branch=milestone-v1.6.0)](https://travis-ci.org/tecsinapse/tecsinapse-exporter)
+[![Coverage Status](https://img.shields.io/coveralls/tecsinapse/tecsinapse-exporter.svg?branch=milestone-v1.6.0)](https://coveralls.io/github/tecsinapse/tecsinapse-exporter?branch=milestone-v1.6.0)
 [![Dependency Status](https://www.versioneye.com/user/projects/576ff9fb671894004e1a90c3/badge.svg)](https://www.versioneye.com/user/projects/576ff9fb671894004e1a90c3)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/br.com.tecsinapse/tecsinapse-exporter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/br.com.tecsinapse/tecsinapse-exporter/)
 [![Javadoc](http://www.javadoc.io/badge/br.com.tecsinapse/tecsinapse-exporter.svg)](http://www.javadoc.io/doc/br.com.tecsinapse/tecsinapse-exporter)
