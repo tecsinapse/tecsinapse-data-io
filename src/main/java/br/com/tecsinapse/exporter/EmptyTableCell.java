@@ -6,8 +6,6 @@
  */
 package br.com.tecsinapse.exporter;
 
-import br.com.tecsinapse.exporter.type.TableCellType;
-
 public final class EmptyTableCell extends TableCell {
 
     public static final EmptyTableCell EMPTY_CELL = new EmptyTableCell();

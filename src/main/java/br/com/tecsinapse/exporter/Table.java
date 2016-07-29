@@ -16,7 +16,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import br.com.tecsinapse.exporter.builds.TableCellBuilder;
 import br.com.tecsinapse.exporter.style.TableCellStyle;
 import br.com.tecsinapse.exporter.type.CellType;
-import br.com.tecsinapse.exporter.type.TableCellType;
 import br.com.tecsinapse.exporter.util.WorkbookUtil;
 
 public class Table {

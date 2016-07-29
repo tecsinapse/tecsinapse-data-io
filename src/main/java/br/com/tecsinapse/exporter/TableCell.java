@@ -10,7 +10,6 @@ import com.google.common.primitives.Doubles;
 
 import br.com.tecsinapse.exporter.style.TableCellStyle;
 import br.com.tecsinapse.exporter.type.CellType;
-import br.com.tecsinapse.exporter.type.TableCellType;
 
 public class TableCell {
 

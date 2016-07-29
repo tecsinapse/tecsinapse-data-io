@@ -4,20 +4,29 @@
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
  */
-package br.com.tecsinapse.exporter.importer.parser;
+
+/*
+ * TecSinapse Exporter
+ *
+ * License: GNU Lesser General Public License (LGPL), version 3 or later
+ * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
+package br.com.tecsinapse.exporter.importer;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.converter.group.Default;
-import br.com.tecsinapse.exporter.importer.Importer;
-import br.com.tecsinapse.exporter.type.ExcelType;
-import br.com.tecsinapse.exporter.type.FileType;
+import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
+import br.com.tecsinapse.exporter.FileType;
 
 /**
- * Usage new Class FileImporter
+ * Does some thing in old style. It will be removed in version 1.6.1.
+ *
+ * @deprecated use {@link br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser}
  */
 @Deprecated
 public class ExcelParser<T> extends SpreadsheetParser<T> {
@@ -70,7 +79,7 @@ public class ExcelParser<T> extends SpreadsheetParser<T> {
     }
 
     private ExcelParser(Class<T> clazz, InputStream inputStream, Class<?> group, FileType fileType) {
-        super(clazz, inputStream, group, fileType);
+        super(clazz, inputStream, group, fileType.toNewFileType());
     }
 
 

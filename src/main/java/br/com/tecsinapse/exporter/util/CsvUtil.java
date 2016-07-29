@@ -21,7 +21,7 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 
-public class CSVUtil {
+public class CsvUtil {
 
     private static final String SEPARATOR = ";";
     private static final char DEFAULT_SEPARATOR_CHAR = ';';

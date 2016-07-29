@@ -24,7 +24,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.xml.sax.SAXException;
 
-import br.com.tecsinapse.exporter.util.CSVUtil;
+import br.com.tecsinapse.exporter.util.CsvUtil;
 import br.com.tecsinapse.exporter.type.FileType;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
@@ -64,7 +64,7 @@ public class CsvParser<T> implements Parser<T> {
     }
 
     public CsvParser(Class<T> clazz, File file, Charset charset, Class<?> group) throws IOException {
-        this(clazz, CSVUtil.processCSV(new FileInputStream(file), charset), group);
+        this(clazz, CsvUtil.processCSV(new FileInputStream(file), charset), group);
     }
 
     public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset) throws IOException {
@@ -72,7 +72,7 @@ public class CsvParser<T> implements Parser<T> {
     }
 
     public CsvParser(Class<T> clazz, InputStream inputStream, Charset charset, Class<?> group) throws IOException {
-        this(clazz, CSVUtil.processCSV(inputStream, charset), group);
+        this(clazz, CsvUtil.processCSV(inputStream, charset), group);
     }
 
     public CsvParser(Class<T> clazz, List<String> csvLines, Class<?> group) {

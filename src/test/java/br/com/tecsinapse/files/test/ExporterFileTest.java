@@ -33,12 +33,12 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
 
-import br.com.tecsinapse.exporter.util.CSVUtil;
+import br.com.tecsinapse.exporter.util.CsvUtil;
 import br.com.tecsinapse.exporter.util.ExcelUtil;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.type.TableCellType;
-import br.com.tecsinapse.exporter.importer.parser.ExcelParser;
+import br.com.tecsinapse.exporter.TableCellType;
+import br.com.tecsinapse.exporter.importer.ExcelParser;
 import br.com.tecsinapse.exporter.ExporterFormatter;
 
 public class ExporterFileTest {
@@ -71,7 +71,7 @@ public class ExporterFileTest {
             @Override
             public List<List<String>> apply(File input) {
                 try {
-                    final List<String> strings = CSVUtil.processCSV(new FileInputStream(input), Charsets.ISO_8859_1);
+                    final List<String> strings = CsvUtil.processCSV(new FileInputStream(input), Charsets.ISO_8859_1);
 
                     return FluentIterable.from(strings).transform(new Function<String, List<String>>() {
                         @Override

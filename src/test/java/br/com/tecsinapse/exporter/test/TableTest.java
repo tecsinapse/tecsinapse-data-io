@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.type.TableCellType;
+import br.com.tecsinapse.exporter.TableCellType;
 import br.com.tecsinapse.exporter.ExporterFormatter;
 
 public class TableTest {

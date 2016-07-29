@@ -10,8 +10,6 @@ package br.com.tecsinapse.exporter;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import br.com.tecsinapse.exporter.type.TableCellType;
-
 public class EmptyTableCellTest {
 
     private EmptyTableCell emptyTableCell;

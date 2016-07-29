@@ -125,7 +125,7 @@ public class ExcelUtil {
 
     public static void exportCsv(Table t, String chartsetName, OutputStream out) throws IOException {
         List<List<String>> csv = t.toStringMatrix();
-        CSVUtil.write(csv, out, chartsetName);
+        CsvUtil.write(csv, out, chartsetName);
     }
 
     public static File getCsvFile(Table t, String fileName, String charsetName) throws IOException {
@@ -134,7 +134,7 @@ public class ExcelUtil {
 
     public static File getCsvFile(Table t, File f, String charsetName) throws IOException {
         try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
-            CSVUtil.write(t.toStringMatrix(), fos, charsetName);
+            CsvUtil.write(t.toStringMatrix(), fos, charsetName);
         }
         return f;
     }
@@ -142,7 +142,7 @@ public class ExcelUtil {
     public static File getSvFile(Table t, String file, String charsetName, char separator) throws IOException {
         File f = createFile(file);
         try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
-            CSVUtil.write(t.toStringMatrix(), fos, charsetName, separator);
+            CsvUtil.write(t.toStringMatrix(), fos, charsetName, separator);
         }
         return f;
     }

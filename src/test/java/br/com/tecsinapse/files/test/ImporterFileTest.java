@@ -30,7 +30,7 @@ import com.google.common.base.Charsets;
 
 import br.com.tecsinapse.exporter.type.FileType;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
-import br.com.tecsinapse.exporter.importer.parser.ExcelParser;
+import br.com.tecsinapse.exporter.importer.ExcelParser;
 import br.com.tecsinapse.exporter.importer.Importer;
 
 public class ImporterFileTest {
