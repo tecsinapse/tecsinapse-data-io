@@ -17,24 +17,26 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class ExporterFormatterTest {
+    private Locale PT_BR = new Locale("pt", "BR");
 
     @DataProvider(name = "exporterFormatterDs")
     private Object[][] exporterFormatterDs() {
         return new Object[][]{
-                { ExporterFormatter.DEFAULT, LocalDateTime.parse("2016-02-28T15:45:46"), "Fev 28, 2016 3:45:46 PM", LocalDate.parse("2016-02-28"), "Fev 28, 2016", LocalTime.parse("15:45:46"), "3:45 PM", 12025.5, "12,025.5"},
-                { ExporterFormatter.PT_BR, LocalDateTime.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", LocalDate.parse("2016-02-28"), "28/02/2016", LocalTime.parse("15:45:46"), "15:45", 12025.5, "12.025,5"},
-                { ExporterFormatter.DEFAULT, LocalDateTime.parse("2016-02-28T15:45:46"), "Fev 28, 2016 3:45:46 PM", LocalDate.parse("2016-02-28"), "Fev 28, 2016", LocalTime.parse("15:45:46"), "3:45 PM", 12025, "12,025"},
-                { ExporterFormatter.PT_BR, LocalDateTime.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", LocalDate.parse("2016-02-28"), "28/02/2016", LocalTime.parse("15:45:46"), "15:45", 12025, "12.025"},
-                { new ExporterFormatter("yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "HH:mm:ss", "#,##0.00", "#,###", "R$ #,##0.00", Locale.ENGLISH), LocalDateTime.parse("2016-02-28T15:45:46"), "2016-02-28 15:45:46", LocalDate.parse("2016-02-28"), "2016-02-28", LocalTime.parse("15:45:46"), "15:45:46", 12025.5, "12,025.50"},
-                { new ExporterFormatter("dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy", "HH:mm:ss", "#,##0.00", "#,###", "R$ #,##0.00", new Locale("pt", "BR")), LocalDateTime.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", LocalDate.parse("2016-02-28"), "28/02/2016", LocalTime.parse("15:45:46"), "15:45:46", 12025.5, "12.025,50"}
+                { Locale.ENGLISH, ExporterFormatter.DEFAULT, LocalDateTime.parse("2016-02-28T15:45:46"), "Feb 28, 2016 3:45:46 PM", LocalDate.parse("2016-02-28"), "Feb 28, 2016", LocalTime.parse("15:45:46"), "3:45 PM", 12025.5, "12,025.5"},
+                { PT_BR, ExporterFormatter.PT_BR, LocalDateTime.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", LocalDate.parse("2016-02-28"), "28/02/2016", LocalTime.parse("15:45:46"), "15:45", 12025.5, "12.025,5"},
+                { Locale.ENGLISH, ExporterFormatter.DEFAULT, LocalDateTime.parse("2016-02-28T15:45:46"), "Feb 28, 2016 3:45:46 PM", LocalDate.parse("2016-02-28"), "Feb 28, 2016", LocalTime.parse("15:45:46"), "3:45 PM", 12025, "12,025"},
+                { PT_BR, ExporterFormatter.PT_BR, LocalDateTime.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", LocalDate.parse("2016-02-28"), "28/02/2016", LocalTime.parse("15:45:46"), "15:45", 12025, "12.025"},
+                { Locale.ENGLISH, new ExporterFormatter("yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "HH:mm:ss", "#,##0.00", "#,###", "R$ #,##0.00", Locale.ENGLISH), LocalDateTime.parse("2016-02-28T15:45:46"), "2016-02-28 15:45:46", LocalDate.parse("2016-02-28"), "2016-02-28", LocalTime.parse("15:45:46"), "15:45:46", 12025.5, "12,025.50"},
+                { PT_BR, new ExporterFormatter("dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy", "HH:mm:ss", "#,##0.00", "#,###", "R$ #,##0.00", new Locale("pt", "BR")), LocalDateTime.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", LocalDate.parse("2016-02-28"), "28/02/2016", LocalTime.parse("15:45:46"), "15:45:46", 12025.5, "12.025,50"}
         };
     }
 
     @Test(dataProvider = "exporterFormatterDs")
-    public void ExporterFormatterTest(ExporterFormatter formatter, LocalDateTime ldt, String ldtExpected,
+    public void ExporterFormatterTest(Locale locale, ExporterFormatter formatter, LocalDateTime ldt, String ldtExpected,
                                       LocalDate ld, String ldExpected, LocalTime lt, String ltExpected,
                                       Number number, String nExpected) {
 
+        Locale.setDefault(locale);
         Assert.assertNotNull(formatter.getLocalDateTimeFormat());
         Assert.assertNotNull(formatter.getLocalDateFormat());
         Assert.assertNotNull(formatter.getLocalTimeFormat());

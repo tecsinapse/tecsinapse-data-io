@@ -63,6 +63,10 @@ public class ExcelParser<T> extends SpreadsheetParser<T> {
         this(clazz, inputStream, type, afterLine, isLastSheet, Default.class);
     }
 
+    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet, ImporterXLSXType importerXLSXType) {
+        this(clazz, inputStream, type, afterLine, isLastSheet);
+    }
+
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet, Class<?> group) {
         this(clazz, inputStream, group, excelTypeToFileType(type));
         if (isLastSheet) {

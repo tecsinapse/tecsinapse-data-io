@@ -30,6 +30,7 @@ public class Importer<T> implements Closeable {
     private String filename;
     private Charset charset;
     private Parser<T> parser;
+    private FileType fileType;
     private int headersRows = DEFAULT_START_ROW;
 
     public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
@@ -57,6 +58,11 @@ public class Importer<T> implements Closeable {
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename, Class<?> group) throws IOException {
         this(clazz, inputStream, filename, false, group);
+    }
+
+    @Deprecated
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) throws IOException {
+        this(clazz, inputStream, filename, false, Default.class);
     }
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet) throws IOException {
