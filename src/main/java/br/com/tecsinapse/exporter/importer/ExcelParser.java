@@ -21,7 +21,6 @@ import java.io.InputStream;
 import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.converter.group.Default;
 import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
-import br.com.tecsinapse.exporter.FileType;
 
 /**
  * Does some thing in old style. It will be removed in version 1.6.1.
@@ -68,22 +67,15 @@ public class ExcelParser<T> extends SpreadsheetParser<T> {
     }
 
     public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet, Class<?> group) {
-        this(clazz, inputStream, group, excelTypeToFileType(type));
+        this(clazz, inputStream, group, type.getFileType());
         if (isLastSheet) {
             setSheetNumber(getNumberOfSheets() - 1);
         }
         setHeadersRows(afterLine);
     }
 
-    private static FileType excelTypeToFileType(ExcelType type) {
-        if (type == ExcelType.XLSX) {
-            return FileType.XLSX;
-        }
-        return FileType.XLS;
-    }
-
-    private ExcelParser(Class<T> clazz, InputStream inputStream, Class<?> group, FileType fileType) {
-        super(clazz, inputStream, group, fileType.toNewFileType());
+    private ExcelParser(Class<T> clazz, InputStream inputStream, Class<?> group, br.com.tecsinapse.exporter.type.FileType fileType) {
+        super(clazz, inputStream, group, fileType);
     }
 
 
