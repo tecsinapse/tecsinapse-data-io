@@ -17,7 +17,7 @@ import br.com.tecsinapse.exporter.style.Style;
 import br.com.tecsinapse.exporter.style.TableCellStyle;
 
 /**
- * Does some thing in old style. It will be removed in version 1.6.1.
+ * Does some thing in old style. It will be removed in version 2.0.0
  *
  * @deprecated use {@link br.com.tecsinapse.exporter.style.TableCellStyle}
  */

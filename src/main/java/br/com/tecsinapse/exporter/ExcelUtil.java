@@ -8,7 +8,7 @@
 package br.com.tecsinapse.exporter;
 
 /**
- * This class is moved. It will be removed in version 1.6.1.
+ * This class is moved. It will be removed in version 2.0.0
  *
  * @deprecated use {@link br.com.tecsinapse.exporter.util.ExcelUtil}
  */
