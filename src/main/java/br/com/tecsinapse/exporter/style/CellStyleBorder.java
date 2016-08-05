@@ -74,7 +74,7 @@ public class CellStyleBorder implements Cloneable {
     }
 
     public CellStyle toCellStyle(CellStyle cellStyle) {
-        if (!left && !right && !bottom && !top) {
+        if (cellStyle == null || !left && !right && !bottom && !top) {
             return cellStyle;
         }
         if (left) {
@@ -106,16 +106,16 @@ public class CellStyleBorder implements Cloneable {
         }
         StringBuilder builder = new StringBuilder();
         if (left) {
-            builder.append(String.format(format, "left", StyleColorUtil.toHexColor(borderColor), size));
+            builder.append(String.format(format, "-left", StyleColorUtil.toHexColor(borderColor), size));
         }
         if (right) {
-            builder.append(String.format(format, "right", StyleColorUtil.toHexColor(borderColor), size));
+            builder.append(String.format(format, "-right", StyleColorUtil.toHexColor(borderColor), size));
         }
         if (bottom) {
-            builder.append(String.format(format, "bottom", StyleColorUtil.toHexColor(borderColor), size));
+            builder.append(String.format(format, "-bottom", StyleColorUtil.toHexColor(borderColor), size));
         }
         if (top) {
-            builder.append(String.format(format, "top", StyleColorUtil.toHexColor(borderColor), size));
+            builder.append(String.format(format, "-top", StyleColorUtil.toHexColor(borderColor), size));
         }
         return builder.toString();
     }
