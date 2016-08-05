@@ -7,7 +7,7 @@
 package br.com.tecsinapse.exporter.importer;
 
 /**
- * No more usage. It will be removed in version 1.6.1.
+ * No more usage. It will be removed in version 2.0.0
  *
  * @deprecated use {@link br.com.tecsinapse.exporter.style.TableCellStyle}
  */

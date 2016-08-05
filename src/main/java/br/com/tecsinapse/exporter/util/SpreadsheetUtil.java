@@ -28,7 +28,7 @@ import com.google.common.base.Strings;
 
 import br.com.tecsinapse.exporter.Table;
 
-public class ExcelUtil {
+public class SpreadsheetUtil {
 
     private static HttpServletResponse getResponseForExcel(String filenameWithExtension, FacesContext context) {
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();

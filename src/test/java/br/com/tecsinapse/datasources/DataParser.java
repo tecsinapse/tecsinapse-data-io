@@ -4,13 +4,14 @@
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
  */
-package br.com.tecsinapse.exporter.importer;
+package br.com.tecsinapse.datasources;
 
 import java.math.BigDecimal;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+import org.testng.Assert;
 
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.BigDecimalTableCellConverter;
@@ -20,8 +21,7 @@ import br.com.tecsinapse.exporter.converter.LocalDateTimeTableCellConverter;
 import br.com.tecsinapse.exporter.converter.LocalTimeTableCellConverter;
 import br.com.tecsinapse.exporter.converter.StringTableCellConverter;
 
-public class DataParser {
-
+public class DataParser implements ApplyTest<DataParser> {
 
     private LocalDate date;
     private LocalDateTime dateTime;
@@ -31,17 +31,20 @@ public class DataParser {
     private String empty;
     private LocalTime time;
 
+    private DataParser actual;
+    private String identifier;
+
     public DataParser() {
     }
 
-    public DataParser(LocalDate date, LocalDateTime dateTime, String decimal, Integer integer, String string, String empty, LocalTime time) {
-        this.date = date;
-        this.dateTime = dateTime;
+    public DataParser(String date, String dateTime, String decimal, Integer integer, String string, String empty, String time) {
+        this.date = LocalDate.parse(date);
+        this.dateTime = LocalDateTime.parse(dateTime);
         this.decimal = decimal != null ? new BigDecimal(decimal) : null;
         this.integer = integer;
         this.string = string;
         this.empty = empty;
-        this.time = time;
+        this.time = LocalTime.parse(time);
     }
 
     public LocalDate getDate() {
@@ -105,5 +108,22 @@ public class DataParser {
     @TableCellMapping(columnIndex = 6, converter = LocalTimeTableCellConverter.class)
     public void setTime(LocalTime time) {
         this.time = time;
+    }
+
+    @Override
+    public void test() {
+        Assert.assertEquals(actual.getDate(), getDate(), identifier);
+        Assert.assertEquals(actual.getDateTime(), getDateTime(), identifier);
+        Assert.assertEquals(actual.getDecimal(), getDecimal(), identifier);
+        Assert.assertEquals(actual.getInteger(), getInteger(), identifier);
+        Assert.assertEquals(actual.getString(), getString(), identifier);
+        Assert.assertEquals(actual.getEmpty(), getEmpty(), identifier);
+        Assert.assertEquals(actual.getTime(), getTime(), identifier);
+    }
+
+    @Override
+    public void setActual(DataParser actual, String identifier) {
+        this.actual = actual;
+        this.identifier = identifier;
     }
 }

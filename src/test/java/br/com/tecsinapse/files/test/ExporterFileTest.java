@@ -34,7 +34,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
 
 import br.com.tecsinapse.exporter.util.CsvUtil;
-import br.com.tecsinapse.exporter.util.ExcelUtil;
+import br.com.tecsinapse.exporter.util.SpreadsheetUtil;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
 import br.com.tecsinapse.exporter.TableCellType;
@@ -59,7 +59,7 @@ public class ExporterFileTest {
                     final File csv = File.createTempFile("csv", ".csv");
                     csv.deleteOnExit();
 
-                    ExcelUtil.exportCsv(table, Charsets.ISO_8859_1.displayName(), new FileOutputStream(csv));
+                    SpreadsheetUtil.exportCsv(table, Charsets.ISO_8859_1.displayName(), new FileOutputStream(csv));
 
                     return csv;
                 } catch (IOException e) {
