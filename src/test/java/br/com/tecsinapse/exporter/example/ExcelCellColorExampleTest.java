@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.testng.annotations.Test;
 
-import br.com.tecsinapse.exporter.util.ExcelUtil;
+import br.com.tecsinapse.exporter.util.SpreadsheetUtil;
 import br.com.tecsinapse.exporter.ResourceUtils;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
@@ -44,10 +44,10 @@ public class ExcelCellColorExampleTest {
             }
         }
         String xlsx = "XLSX-cell-color.xlsx";
-        Files.move(ExcelUtil.getXlsFile(table, xlsx).toPath(), ResourceUtils.newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(SpreadsheetUtil.getXlsFile(table, xlsx).toPath(), ResourceUtils.newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         String xls = "XLS-cell-color.xls";
-        Files.move(ExcelUtil.getXlsFile(table, xls).toPath(), ResourceUtils.newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(SpreadsheetUtil.getXlsFile(table, xls).toPath(), ResourceUtils.newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         File htmlOutput = ResourceUtils.newFileTargetResource("HTML-cell-color.html");
         ExportHtml.newInstance(Charset.forName("UTF-8")).toHtml(table, htmlOutput);

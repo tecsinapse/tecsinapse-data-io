@@ -7,11 +7,13 @@
 
 package br.com.tecsinapse.exporter;
 
+import br.com.tecsinapse.exporter.util.SpreadsheetUtil;
+
 /**
  * This class is moved. It will be removed in version 2.0.0
  *
- * @deprecated use {@link br.com.tecsinapse.exporter.util.ExcelUtil}
+ * @deprecated use {@link SpreadsheetUtil}
  */
 @Deprecated
-public class ExcelUtil extends br.com.tecsinapse.exporter.util.ExcelUtil {
+public class ExcelUtil extends SpreadsheetUtil {
 }

@@ -16,9 +16,11 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 
+import br.com.tecsinapse.exporter.util.Constants;
+
 public class ExporterFormatter {
 
-    public static final ExporterFormatter PT_BR = new ExporterFormatter(new Locale("pt", "BR"));
+    public static final ExporterFormatter PT_BR = new ExporterFormatter(Constants.LOCALE_PT_BR);
     public static final ExporterFormatter DEFAULT = new ExporterFormatter(Locale.ENGLISH);
 
     private final String localDateTimeFormat;

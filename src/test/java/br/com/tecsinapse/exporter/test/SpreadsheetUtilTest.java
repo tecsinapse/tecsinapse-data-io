@@ -12,9 +12,9 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import br.com.tecsinapse.exporter.util.ExcelUtil;
+import br.com.tecsinapse.exporter.util.SpreadsheetUtil;
 
-public class ExcelUtilTest {
+public class SpreadsheetUtilTest {
 
     @DataProvider(name = "columnNames")
     public Object[][] columnNames() throws URISyntaxException {
@@ -27,7 +27,7 @@ public class ExcelUtilTest {
 
     @Test(dataProvider = "columnNames")
     public void getColumnIndex(String columnName, int result) {
-        Assert.assertEquals(ExcelUtil.getColumnIndexByColumnName(columnName), result);
+        Assert.assertEquals(SpreadsheetUtil.getColumnIndexByColumnName(columnName), result);
     }
 
     @DataProvider(name = "columnIndexes")
@@ -41,7 +41,7 @@ public class ExcelUtilTest {
 
     @Test(dataProvider = "columnIndexes")
     public void getColumnName(int columnIndex, String result) {
-        Assert.assertEquals(ExcelUtil.getColumnNameByColumnIndex(columnIndex), result);
+        Assert.assertEquals(SpreadsheetUtil.getColumnNameByColumnIndex(columnIndex), result);
     }
 }
 
