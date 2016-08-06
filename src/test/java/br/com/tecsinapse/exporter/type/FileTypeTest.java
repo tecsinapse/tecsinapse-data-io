@@ -24,6 +24,7 @@ public class FileTypeTest {
         return new Object[][] {
                 {"XLS", ResourceFiles.MOCK_PLANILHA_XLS, FileType.XLS, HSSFWorkbook.class},
                 {"XLSX", ResourceFiles.MOCK_PLANILHA_XLSX, FileType.XLSX, XSSFWorkbook.class},
+                {"XLSM", ResourceFiles.EXCEL_XLSM, FileType.XLSM, XSSFWorkbook.class},
                 {"CSV", ResourceFiles.MOCK_PLANILHA_CSV, FileType.CSV, null},
                 {"TXT", ResourceFiles.FIXED_LENGTH_FILE_TXT, FileType.TXT, null},
                 {"TXT", ResourceFiles.FIXED_LENGTH_FILE_WITH_HEADER_DAT, FileType.TXT, null}

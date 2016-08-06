@@ -103,13 +103,15 @@ public class Importer<T> implements Closeable {
         FileType fileType = getFileType();
         if (fileType == FileType.XLSX || fileType == FileType.XLS) {
             if (file != null) {
-                parser = new SpreadsheetParser<T>(clazz, file, group);
+                parser = new SpreadsheetParser<T>(clazz, file);
+                parser.setGroup(group);
                 // TODO Last Row?
                 parser.setHeadersRows(headersRows);
                 return;
             }
             if (inputStream != null) {
-                parser = new SpreadsheetParser<T>(clazz, inputStream, group, fileType);
+                parser = new SpreadsheetParser<T>(clazz, inputStream, filename, fileType);
+                parser.setGroup(group);
                 // TODO Last Row?
                 parser.setHeadersRows(headersRows);
                 return;

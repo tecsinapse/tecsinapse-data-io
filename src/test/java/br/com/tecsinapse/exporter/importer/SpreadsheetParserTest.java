@@ -7,12 +7,15 @@
 package br.com.tecsinapse.exporter.importer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import br.com.tecsinapse.ResourceFiles;
 import br.com.tecsinapse.datasources.DataParser;
 import br.com.tecsinapse.datasources.FileDataParser;
 import br.com.tecsinapse.datasources.SpreadsheetDs;
@@ -32,6 +35,8 @@ public class SpreadsheetParserTest extends SpreadsheetDs {
         SpreadsheetParser<DataParser> parser = new SpreadsheetParser<>(DataParser.class, fileDataParser.getFile());
         parser.setHeadersRows(1);
         parser.setExporterFormatter(exporterFormatter);
+        Assert.assertEquals(parser.getExporterFormatter(), exporterFormatter);
+        Assert.assertEquals(parser.getFileType(), fileDataParser.getExpectedFileType());
         fileDataParser.setParser(parser);
         fileDataParser.test();
     }
@@ -59,6 +64,20 @@ public class SpreadsheetParserTest extends SpreadsheetDs {
             File file = ResourceUtils.newFileTargetResource(exporterFormatter.getLocale().getDisplayLanguage() + "-teste." + fileType.name().toLowerCase());
             SpreadsheetUtil.getXlsxFile(table, file.getAbsolutePath()).deleteOnExit();
         }
+    }
+
+    @Test(expectedExceptions = {IOException.class})
+    public void throwIOException() throws IOException {
+        SpreadsheetParser<DataParser> parser = new SpreadsheetParser<>(DataParser.class, new File(""));
+        Assert.assertNull(parser.getWorkbook());
+    }
+
+    @Test
+    public void parseListString() throws Exception {
+        SpreadsheetParser<DataParser> parser = new SpreadsheetParser<>(DataParser.class, ResourceFiles.EXCEL_XLSX.getFile());
+        parser.setHeadersRows(0);
+        List<List<String>> rows = parser.getLines();
+        Assert.assertEquals(rows.size(), 3);
     }
 
 }

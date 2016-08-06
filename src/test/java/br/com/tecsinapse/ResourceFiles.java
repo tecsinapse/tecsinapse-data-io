@@ -10,6 +10,7 @@ package br.com.tecsinapse;
 import static br.com.tecsinapse.exporter.type.FileType.CSV;
 import static br.com.tecsinapse.exporter.type.FileType.TXT;
 import static br.com.tecsinapse.exporter.type.FileType.XLS;
+import static br.com.tecsinapse.exporter.type.FileType.XLSM;
 import static br.com.tecsinapse.exporter.type.FileType.XLSX;
 
 import java.io.File;
@@ -26,12 +27,13 @@ public enum ResourceFiles {
     MOCK_PLANILHA_COM_PRIMEIRA_ABA_INVISIVEL_XLSX("/files/mock/planilha-com-primeira-aba-invisivel.xlsx", XLSX),
     EXCEL_XLS("/files/excel.xls", XLS),
     EXCEL_XLSX("/files/excel.xlsx", XLSX),
+    EXCEL_XLSM("/files/excel.xlsm", XLSM),
     EXCEL_DATES_XLSX("/files/excel-dates.xlsx", XLSX),
     EXCEL_NUMERIC_XLSX("/files/excel-numeric.xlsx", XLSX),
     EXCEL_WITH_EMPTY_LINES_XLS("/files/excel-with-empty-lines.xls", XLS) {
         @Override
         public FileDataParser getFileDataParser() {
-            FileDataParser fileDataParser = new FileDataParser(this.getFile());
+            FileDataParser fileDataParser = new FileDataParser(this.getFile(), getFileType());
             fileDataParser.newSheet()
                     .addRow(new DataParser("2016-01-01", "2016-01-01T00:13:15", "0.5", 127, "Line 1", "", "0:47"))
                     .addRow(new DataParser("2016-02-01", "2016-02-01T01:13:15", "0.568", 135, "Line 2", "", "1:35"))
@@ -72,7 +74,7 @@ public enum ResourceFiles {
     EXCEL_WITH_EMPTY_LINES_XLSX("/files/excel-with-empty-lines.xlsx", XLSX) {
         @Override
         public FileDataParser getFileDataParser() {
-            FileDataParser fileDataParser = new FileDataParser(this.getFile());
+            FileDataParser fileDataParser = new FileDataParser(this.getFile(), getFileType());
             fileDataParser.newSheet()
                     .addRow(new DataParser("2016-01-01", "2016-01-01T00:13:15", "0.5", 127, "Line 1", "", "0:47"))
                     .addRow(new DataParser("2016-02-01", "2016-02-01T01:13:15", "0.568", 135, "Line 2", "", "1:35"))
