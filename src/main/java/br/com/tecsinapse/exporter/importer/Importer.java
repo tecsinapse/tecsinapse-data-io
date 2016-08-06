@@ -110,7 +110,7 @@ public class Importer<T> implements Closeable {
                 return;
             }
             if (inputStream != null) {
-                parser = new SpreadsheetParser<T>(clazz, inputStream, filename, fileType);
+                parser = new SpreadsheetParser<T>(clazz, inputStream, fileType);
                 parser.setGroup(group);
                 // TODO Last Row?
                 parser.setHeadersRows(headersRows);

@@ -6,6 +6,7 @@
  */
 package br.com.tecsinapse.exporter.importer;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -66,18 +67,18 @@ public class SpreadsheetParserTest extends SpreadsheetDs {
         }
     }
 
-    @Test(expectedExceptions = {IOException.class})
+    @Test(expectedExceptions = {Exception.class})
     public void throwIOException() throws IOException {
-        SpreadsheetParser<DataParser> parser = new SpreadsheetParser<>(DataParser.class, new File(""));
+        SpreadsheetParser<DataParser> parser = new SpreadsheetParser<>(DataParser.class, new ByteArrayInputStream(new byte[0]), FileType.XLSX);
         Assert.assertNull(parser.getWorkbook());
     }
 
     @Test
     public void parseListString() throws Exception {
         SpreadsheetParser<DataParser> parser = new SpreadsheetParser<>(DataParser.class, ResourceFiles.EXCEL_XLSX.getFile());
-        parser.setHeadersRows(0);
+        parser.setHeadersRows(1);
         List<List<String>> rows = parser.getLines();
-        Assert.assertEquals(rows.size(), 3);
+        Assert.assertEquals(rows.size(), 2);
     }
 
 }

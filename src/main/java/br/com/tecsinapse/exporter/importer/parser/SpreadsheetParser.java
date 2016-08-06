@@ -47,17 +47,15 @@ public class SpreadsheetParser<T> implements Parser<T> {
     private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
     private Workbook workbook;
     private final FileType fileType;
-    private final String fileName;
     public SpreadsheetParser(Class<T> clazz, File file) throws IOException {
         this(clazz, new FileInputStream(file), file.getName());
     }
 
-    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, String fileName) {
-        this(clazz, inputStream, fileName, FileType.getFileType(fileName));
+    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, String filename) {
+        this(clazz, inputStream, FileType.getFileType(filename));
     }
 
-    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, String fileName, FileType fileType) {
-        this.fileName = fileName;
+    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, FileType fileType) {
         this.fileType = fileType;
         this.clazz = clazz;
         this.inputStream = new BufferedInputStream(inputStream);
@@ -182,7 +180,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
         if (workbook == null) {
             try {
                 workbook = fileType.buildWorkbook(inputStream);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw Throwables.propagate(e);
             }
         }
