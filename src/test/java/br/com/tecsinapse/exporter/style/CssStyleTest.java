@@ -14,6 +14,6 @@ public class CssStyleTest {
     @Test
     public void checkNullAsEmpty() {
         Assert.assertTrue(CssStyle.toTextColor(null).isEmpty());
-        Assert.assertTrue(CssStyle.toTextColor(null).isEmpty());
+        Assert.assertTrue(CssStyle.toBackgroundColor(null).isEmpty());
     }
 }

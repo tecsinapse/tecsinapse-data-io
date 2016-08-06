@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import org.testng.Assert;
 
 import br.com.tecsinapse.exporter.importer.Parser;
+import br.com.tecsinapse.exporter.type.FileType;
 
 public class FileDataParser<T extends ApplyTest<T>> implements ApplyTest {
 
@@ -24,10 +25,12 @@ public class FileDataParser<T extends ApplyTest<T>> implements ApplyTest {
     private List<T> currentSheet;
     private final File file;
     private Parser<T> parser;
+    private final FileType expectedFileType;
 
 
-    public FileDataParser(File file) {
+    public FileDataParser(File file, FileType expectedFileType) {
         this.file = file;
+        this.expectedFileType = expectedFileType;
     }
 
     public void setParser(Parser<T> parser) {
@@ -47,6 +50,10 @@ public class FileDataParser<T extends ApplyTest<T>> implements ApplyTest {
     public FileDataParser addRow(T data) {
         currentSheet.add(data);
         return this;
+    }
+
+    public FileType getExpectedFileType() {
+        return expectedFileType;
     }
 
     public Map<Integer, List<T>> getSheets() {

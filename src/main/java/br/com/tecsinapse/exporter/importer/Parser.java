@@ -38,4 +38,6 @@ public interface Parser<T> extends Closeable {
     void setSheetNumberAsFirstNotHidden();
 
     FileType getFileType();
+
+    void setGroup(Class<?> group);
 }

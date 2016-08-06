@@ -37,7 +37,7 @@ import br.com.tecsinapse.exporter.ExporterFormatter;
 public class CsvParser<T> implements Parser<T> {
 
     private final Class<T> clazz;
-    private final Class<?> group;
+    private Class<?> group;
     private List<String> csvLines;
     private int headersRows = Importer.DEFAULT_START_ROW;
     private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
@@ -104,6 +104,11 @@ public class CsvParser<T> implements Parser<T> {
     @Override
     public FileType getFileType() {
         return FileType.CSV;
+    }
+
+    @Override
+    public void setGroup(Class<?> group) {
+        this.group = group;
     }
 
     public void setExporterFormatter(ExporterFormatter exporterFormatter) {

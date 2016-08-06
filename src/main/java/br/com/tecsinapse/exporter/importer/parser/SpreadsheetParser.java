@@ -39,7 +39,7 @@ import br.com.tecsinapse.exporter.type.FileType;
 public class SpreadsheetParser<T> implements Parser<T> {
 
     private final Class<T> clazz;
-    private final Class<?> group;
+    private Class<?> group;
     private final InputStream inputStream;
     private boolean ignoreBlankLinesAtEnd = true;
     private int headersRows;
@@ -47,23 +47,21 @@ public class SpreadsheetParser<T> implements Parser<T> {
     private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
     private Workbook workbook;
     private final FileType fileType;
+    private final String fileName;
     public SpreadsheetParser(Class<T> clazz, File file) throws IOException {
-        this(clazz, file, Default.class);
+        this(clazz, new FileInputStream(file), file.getName());
     }
 
-    public SpreadsheetParser(Class<T> clazz, File file, Class<?> group) throws IOException {
-        this(clazz, new FileInputStream(file), group, FileType.getFileType(file.getName()));
+    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, String fileName) {
+        this(clazz, inputStream, fileName, FileType.getFileType(fileName));
     }
 
-    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, FileType fileType) {
-        this(clazz, inputStream, Default.class, fileType);
-    }
-
-    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, Class<?> group, FileType fileType) {
+    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, String fileName, FileType fileType) {
+        this.fileName = fileName;
         this.fileType = fileType;
         this.clazz = clazz;
         this.inputStream = new BufferedInputStream(inputStream);
-        this.group = group;
+        this.group = Default.class;
         setIgnoreBlankLinesAtEnd(true);
         setSheetNumber(0);
         setHeadersRows(0);
@@ -99,6 +97,11 @@ public class SpreadsheetParser<T> implements Parser<T> {
 
     public void setSheetNumberAsFirstNotHidden() {
         sheetNumber = getWorkbook().getFirstVisibleTab();
+    }
+
+    @Override
+    public void setGroup(Class<?> group) {
+        this.group = group;
     }
 
     @Override

@@ -49,12 +49,14 @@ public class ExportHtml {
     }
 
     public String toHtml(Table table, Charset charset) throws IOException {
+        checkNpe(table);
         ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
         writeToHtml(table, arrayOutputStream);
         return new String(arrayOutputStream.toByteArray(), charset);
     }
 
-    public void toHtml(Table table, File file) throws IOException {
+    public void toHtml(Table table, File file) throws IOException, NullPointerException {
+        checkNpe(table);
         if (!file.exists() && !file.createNewFile()) {
             throw new FileNotFoundException(file.getAbsolutePath());
         }
@@ -64,10 +66,7 @@ public class ExportHtml {
     }
 
     public void writeToHtml(Table table, OutputStream outputStream) throws IOException {
-        if (table == null) {
-            return;
-        }
-
+        checkNpe(table);
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream, charset));
         bw.append("<table");
         for (Entry<String, String> prop : tableHtmlProperties.entrySet()) {
@@ -112,5 +111,11 @@ public class ExportHtml {
 
     public Map<String, String> getTableHtmlProperties() {
         return tableHtmlProperties;
+    }
+
+    private <TP> void checkNpe(TP o) {
+        if (o == null) {
+            throw new NullPointerException("Object is null.");
+        }
     }
 }
