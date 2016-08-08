@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.com.tecsinapse.exporter.builds.TableCellBuilder;
@@ -338,10 +337,6 @@ public class Table {
 
     public Workbook toXSSFWorkBook() {
         return toWorkBook(new XSSFWorkbook());
-    }
-
-    public Workbook toSXSSFWorkbook() {
-        return toWorkBook(new SXSSFWorkbook());
     }
 
     public Workbook toHSSFWorkBook() {
