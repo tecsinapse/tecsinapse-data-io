@@ -9,7 +9,6 @@ package br.com.tecsinapse.exporter.util;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -57,8 +56,8 @@ public class ExportHtml {
 
     public void toHtml(Table table, File file) throws IOException, NullPointerException {
         checkNpe(table);
-        if (!file.exists() && !file.createNewFile()) {
-            throw new FileNotFoundException(file.getAbsolutePath());
+        if (!file.exists()) {
+            file.createNewFile();
         }
         FileOutputStream fos = new FileOutputStream(file);
         writeToHtml(table, fos);

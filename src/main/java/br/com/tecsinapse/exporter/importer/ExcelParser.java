@@ -75,7 +75,7 @@ public class ExcelParser<T> extends SpreadsheetParser<T> {
     }
 
     private ExcelParser(Class<T> clazz, InputStream inputStream, Class<?> group, br.com.tecsinapse.exporter.type.FileType fileType) {
-        super(clazz, inputStream, "noname", fileType);
+        super(clazz, inputStream, fileType);
         super.setGroup(group);
     }
 

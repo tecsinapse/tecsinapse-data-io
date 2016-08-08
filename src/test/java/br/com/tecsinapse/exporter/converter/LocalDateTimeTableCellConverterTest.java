@@ -11,7 +11,7 @@ import org.testng.annotations.DataProvider;
 
 public class LocalDateTimeTableCellConverterTest extends AbstractTableCellConverter<LocalDateTime, LocalDateTimeTableCellConverter> {
 
-    private static final String LOCAL_DATE_TIME = "2016-01-01 12:00:00";
+    private static final String LOCAL_DATE_TIME = "2016-01-01T12:00:00";
 
     private final LocalDateTimeTableCellConverter converter = new LocalDateTimeTableCellConverter();
 

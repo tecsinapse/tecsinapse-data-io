@@ -15,10 +15,9 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.common.io.ByteStreams;
+
+import br.com.tecsinapse.exporter.servlet.ExportServletUtil;
 
 public final class ZIPUtil {
 
@@ -47,34 +46,19 @@ public final class ZIPUtil {
         try (FileInputStream fis = new FileInputStream(file)) {
             ZipEntry entry = new ZipEntry(file.getName());
             zos.putNextEntry(entry);
-
             ByteStreams.copy(fis, zos);
-
             zos.closeEntry();
         }
     }
 
+    /**
+     * This method is moved. It will be removed in version 2.0.0
+     *
+     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil}
+     */
+    @Deprecated
     public static void exportZip(String fileName, String fileExtension, ByteArrayOutputStream baos) throws IOException {
-        final FacesContext context = FacesContext.getCurrentInstance();
-        final HttpServletResponse response = getResponseForZip(fileName, context);
-
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream())) {
-            zipOutputStream.putNextEntry(new ZipEntry(fileName + "." + fileExtension));
-            zipOutputStream.write(baos.toByteArray());
-            zipOutputStream.closeEntry();
-        }
-
-        context.responseComplete();
-    }
-
-    public static HttpServletResponse getResponseForZip(String fileName, FacesContext context) {
-        final HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        response.setContentType("application/zip");
-        response.setHeader("Expires", "0");
-        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-        response.setHeader("Pragma", "public");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".zip");
-        return response;
+        ExportServletUtil.facesDownloadZip(baos, fileName + "." + fileExtension);
     }
 
 }
