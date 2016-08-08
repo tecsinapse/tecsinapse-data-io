@@ -80,7 +80,7 @@ public final class ExporterUtil {
     }
 
     private static void writeXlsx(Table table, OutputStream outputStream) throws IOException {
-        table.toSXSSFWorkbook().write(outputStream);
+        table.toXSSFWorkBook().write(outputStream);
     }
 
     private static void writeXls(Table table, OutputStream outputStream) throws IOException {
