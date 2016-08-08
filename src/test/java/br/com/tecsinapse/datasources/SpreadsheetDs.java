@@ -36,7 +36,7 @@ public class SpreadsheetDs {
     }
 
     protected List<Object> getFileWithLocales(ResourceFiles resourceFiles, List<Locale> withLocale) {
-        FileDataParser fileDataParser = resourceFiles.getFileDataParser();
+        FileDataParser<DataParser> fileDataParser = resourceFiles.getFileDataParser();
         List<Object> objects = new ArrayList<>();
         for(Locale locale : withLocale) {
             objects.add(new Object[]{fileDataParser, ExporterFormatter.PT_BR, locale});

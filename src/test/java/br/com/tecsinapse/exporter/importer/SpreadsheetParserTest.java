@@ -8,7 +8,6 @@ package br.com.tecsinapse.exporter.importer;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -26,7 +25,7 @@ import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
 import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
 import br.com.tecsinapse.exporter.type.FileType;
-import br.com.tecsinapse.exporter.util.SpreadsheetUtil;
+import br.com.tecsinapse.exporter.util.ExporterUtil;
 
 public class SpreadsheetParserTest extends SpreadsheetDs {
 
@@ -63,12 +62,12 @@ public class SpreadsheetParserTest extends SpreadsheetDs {
         FileType fileType = FileType.getFileType(fileDataParser.getFile().getName());
         if (fileType == FileType.XLSX || fileType == FileType.XLSX) {
             File file = ResourceUtils.newFileTargetResource(exporterFormatter.getLocale().getDisplayLanguage() + "-teste." + fileType.name().toLowerCase());
-            SpreadsheetUtil.getXlsxFile(table, file.getAbsolutePath()).deleteOnExit();
+            ExporterUtil.getXlsxFile(table, file.getAbsolutePath()).deleteOnExit();
         }
     }
 
     @Test(expectedExceptions = {Exception.class})
-    public void throwIOException() throws IOException {
+    public void throwIOException() throws Exception {
         SpreadsheetParser<DataParser> parser = new SpreadsheetParser<>(DataParser.class, new ByteArrayInputStream(new byte[0]), FileType.XLSX);
         Assert.assertNull(parser.getWorkbook());
     }

@@ -21,10 +21,13 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 
+import br.com.tecsinapse.exporter.type.SeparatorType;
+
 public class CsvUtil {
 
-    private static final String SEPARATOR = ";";
-    private static final char DEFAULT_SEPARATOR_CHAR = ';';
+    private static final char DEFAULT_SEPARATOR_CHAR = SeparatorType.SEMICOLON.getSeparator();
+
+    private static final String SEPARATOR = String.valueOf(DEFAULT_SEPARATOR_CHAR);
 
     public static List<String> processInputCSV(InputStream inputStream, Charset charset) throws IOException {
         return processInputCSV(inputStream, true, charset);

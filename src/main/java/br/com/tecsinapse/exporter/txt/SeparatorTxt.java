@@ -7,17 +7,11 @@
 package br.com.tecsinapse.exporter.txt;
 
 /**
- * Representa os tipos de separadores possíveis para utilizar entre as colunas do arquivo {@code .txt} gerado.
- * <br><br>
- * <b>Separadores:</b>
- * <ul>
- * <li>TAB: \t (Tabulação)</li>
- * <li>NONE: '' (Vazio)</li>
- * <li>SPACE: ' ' (Espaço em branco)</li>
- * <li>SEMICOLON: ';' (Ponto e vírgula)</li>
- * <li>COMMA: ',' (Vírgula)</li>
- * </ul>
+ * This class is moved. It will be removed in version 2.0.0
+ *
+ * @deprecated use {@link br.com.tecsinapse.exporter.type.SeparatorType}
  */
+@Deprecated
 public enum SeparatorTxt {
 
     TAB("\t"),

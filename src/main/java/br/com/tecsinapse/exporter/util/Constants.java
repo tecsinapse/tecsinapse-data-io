@@ -17,4 +17,5 @@ public interface Constants {
     LocalDate LOCAL_DATE_BIGBANG = LocalDate.fromDateFields(DateUtil.getJavaDate(0.0, true));
     Locale LOCALE_PT_BR = new Locale("pt", "BR");
     Locale LOCALE_ES_ES = new Locale("es", "ES");
+    String DATE_TIME_FILE_NAME = "yyyy-MM-dd_HH-mm";
 }

@@ -33,13 +33,13 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
 
-import br.com.tecsinapse.exporter.util.CsvUtil;
-import br.com.tecsinapse.exporter.util.SpreadsheetUtil;
+import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
 import br.com.tecsinapse.exporter.TableCellType;
 import br.com.tecsinapse.exporter.importer.ExcelParser;
-import br.com.tecsinapse.exporter.ExporterFormatter;
+import br.com.tecsinapse.exporter.util.CsvUtil;
+import br.com.tecsinapse.exporter.util.ExporterUtil;
 
 public class ExporterFileTest {
 
@@ -59,7 +59,7 @@ public class ExporterFileTest {
                     final File csv = File.createTempFile("csv", ".csv");
                     csv.deleteOnExit();
 
-                    SpreadsheetUtil.exportCsv(table, Charsets.ISO_8859_1.displayName(), new FileOutputStream(csv));
+                    ExporterUtil.writeCsvToOutput(table, Charsets.ISO_8859_1.displayName(), new FileOutputStream(csv));
 
                     return csv;
                 } catch (IOException e) {
