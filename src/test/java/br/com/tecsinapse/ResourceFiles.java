@@ -12,6 +12,7 @@ import static br.com.tecsinapse.exporter.type.FileType.TXT;
 import static br.com.tecsinapse.exporter.type.FileType.XLS;
 import static br.com.tecsinapse.exporter.type.FileType.XLSM;
 import static br.com.tecsinapse.exporter.type.FileType.XLSX;
+import static br.com.tecsinapse.exporter.type.FileType.ZIP;
 
 import java.io.File;
 
@@ -119,7 +120,8 @@ public enum ResourceFiles {
     FIXED_LENGTH_FILE_WITH_LONG_HEADER_TXT("/files/fixed-length-file-with-long-header.txt", TXT),
     FIXED_LENGTH_FILE_WITH_LONG_HEADER_AND_EOF_TXT("/files/fixed-length-file-with-long-header-and-eof.txt", TXT),
     FIXED_LENGTH_FILE_WITH_SPACE_LINE_AND_LONG_HEADER_AND_EOF_TXT("/files/fixed-length-file-with-space-line-and-long-header-and-eof.txt", TXT),
-    TESTE_SEM_RAZAO_XLSX("/files/teste_sem_razao.xlsx", XLSX);
+    TESTE_SEM_RAZAO_XLSX("/files/teste_sem_razao.xlsx", XLSX),
+    EXCEL_XLS_ZIP("/files/excel.xls.zip", ZIP),;
 
     private final String fileName;
     private final FileType fileType;

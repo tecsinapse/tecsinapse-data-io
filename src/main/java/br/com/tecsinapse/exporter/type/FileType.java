@@ -86,7 +86,7 @@ public enum FileType {
             return filenameWithExtension;
         }
         String now = LocalDateTime.now().toString(localDateTimeFormat);
-        String filenameOnly = filenameWithExtension.length() >= extension.length() ? filenameWithExtension.substring(0, filename.length() - extension.length()) : filenameWithExtension;
+        String filenameOnly = filenameWithExtension.length() >= extension.length() ? filenameWithExtension.substring(0, filenameWithExtension.length() - extension.length()) : filenameWithExtension;
         return  filenameOnly + "_" +  now  + extension;
     }
 }
