@@ -22,7 +22,7 @@ public class CellStyleBorder implements Cloneable {
     private short size = 1;
 
     public CellStyleBorder(boolean left, boolean right, boolean top, boolean bottom) {
-        this(new HSSFColor.BLACK(), left, right, top, bottom);
+        this(Colors.BLACK, left, right, top, bottom);
     }
 
     public CellStyleBorder(HSSFColor borderColor, boolean left, boolean right, boolean top, boolean bottom) {

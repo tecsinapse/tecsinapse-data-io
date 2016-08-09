@@ -32,40 +32,40 @@ public class ExportHtmlTest {
         return new Object[][] {
                 {null, 1, 1, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")), "<table>\n" +
                         "<tr>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c1</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c2</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c3</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c1</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c2</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c3</td>\n" +
                         "</tr>\n" +
                         "<tr>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c4</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c5</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c6</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c4</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c5</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c6</td>\n" +
                         "</tr>\n" +
                         "</table>\n"},
                 {tableMap, 1, 1, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")),
                         "<table style=\"background-color: #DFDFDF\" border=\"1\">\n" +
                         "<tr>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c1</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c2</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c3</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c1</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c2</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c3</td>\n" +
                         "</tr>\n" +
                         "<tr>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c4</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c5</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\">c6</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c4</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c5</td>\n" +
+                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c6</td>\n" +
                         "</tr>\n" +
                         "</table>\n"},
                 {tableMap, 2, 2, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")),
                         "<table style=\"background-color: #DFDFDF\" border=\"1\">\n" +
                                 "<tr>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\" rowspan=\"2\" colspan=\"2\">c1</td>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\" rowspan=\"2\" colspan=\"2\">c2</td>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\" rowspan=\"2\" colspan=\"2\">c3</td>\n" +
+                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c1</td>\n" +
+                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c2</td>\n" +
+                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c3</td>\n" +
                                 "</tr>\n" +
                                 "<tr>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\" rowspan=\"2\" colspan=\"2\">c4</td>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\" rowspan=\"2\" colspan=\"2\">c5</td>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;\" rowspan=\"2\" colspan=\"2\">c6</td>\n" +
+                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c4</td>\n" +
+                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c5</td>\n" +
+                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c6</td>\n" +
                                 "</tr>\n" +
                                 "</table>\n"}
         };
