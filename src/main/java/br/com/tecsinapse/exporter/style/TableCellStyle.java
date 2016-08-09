@@ -46,6 +46,7 @@ public class TableCellStyle implements Cloneable {
     private boolean italic = false;
     private boolean underline = false;
     private boolean strikeout = false;
+    private String cellFormat;
 
     public TableCellStyle(HSSFColor backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -131,6 +132,14 @@ public class TableCellStyle implements Cloneable {
         this.border = border;
     }
 
+    public String getCellFormat() {
+        return cellFormat;
+    }
+
+    public void setCellFormat(String cellFormat) {
+        this.cellFormat = cellFormat;
+    }
+
     public String getCssStyle() {
         StringBuilder css = new StringBuilder();
         if (getBackgroundColor() != null) {
@@ -149,7 +158,7 @@ public class TableCellStyle implements Cloneable {
         return css.length() > 0 ? css.toString() : null;
     }
 
-    public CellStyle toCellStyle(Workbook wb, String cellFormat) {
+    public CellStyle toCellStyle(Workbook wb) {
         CellStyle cellStyle = wb.createCellStyle();
         Font font = wb.createFont();
         if (getBackgroundColor() != null) {
@@ -263,6 +272,9 @@ public class TableCellStyle implements Cloneable {
             return false;
         }
         if (border != null ? !border.equals(that.border) : that.border != null) {
+            return false;
+        }
+        if (cellFormat != null ? !cellFormat.equals(that.cellFormat) : that.cellFormat != null) {
             return false;
         }
         return fontSize != null ? fontSize.equals(that.fontSize) : that.fontSize == null;
