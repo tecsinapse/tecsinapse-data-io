@@ -46,6 +46,7 @@ public class TableCellStyle implements Cloneable {
     private boolean italic = false;
     private boolean underline = false;
     private boolean strikeout = false;
+    private String cellFormat;
 
     public TableCellStyle(HSSFColor backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -131,6 +132,14 @@ public class TableCellStyle implements Cloneable {
         this.border = border;
     }
 
+    public String getCellFormat() {
+        return cellFormat;
+    }
+
+    public void setCellFormat(String cellFormat) {
+        this.cellFormat = cellFormat;
+    }
+
     public String getCssStyle() {
         StringBuilder css = new StringBuilder();
         if (getBackgroundColor() != null) {
@@ -149,7 +158,7 @@ public class TableCellStyle implements Cloneable {
         return css.length() > 0 ? css.toString() : null;
     }
 
-    public CellStyle toCellStyle(Workbook wb, String cellFormat) {
+    public CellStyle toCellStyle(Workbook wb) {
         CellStyle cellStyle = wb.createCellStyle();
         Font font = wb.createFont();
         if (getBackgroundColor() != null) {
@@ -227,4 +236,63 @@ public class TableCellStyle implements Cloneable {
         return tcs;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof TableCellStyle)) {
+            return false;
+        }
+
+        final TableCellStyle that = (TableCellStyle) o;
+
+        if (bold != that.bold) {
+            return false;
+        }
+        if (italic != that.italic) {
+            return false;
+        }
+        if (underline != that.underline) {
+            return false;
+        }
+        if (strikeout != that.strikeout) {
+            return false;
+        }
+        if (backgroundColor != null ? !backgroundColor.equals(that.backgroundColor) : that.backgroundColor != null) {
+            return false;
+        }
+        if (fontColor != null ? !fontColor.equals(that.fontColor) : that.fontColor != null) {
+            return false;
+        }
+        if (vAlign != that.vAlign) {
+            return false;
+        }
+        if (hAlign != that.hAlign) {
+            return false;
+        }
+        if (border != null ? !border.equals(that.border) : that.border != null) {
+            return false;
+        }
+        if (cellFormat != null ? !cellFormat.equals(that.cellFormat) : that.cellFormat != null) {
+            return false;
+        }
+        return fontSize != null ? fontSize.equals(that.fontSize) : that.fontSize == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = backgroundColor != null ? backgroundColor.hashCode() : 0;
+        result = 31 * result + (fontColor != null ? fontColor.hashCode() : 0);
+        result = 31 * result + (vAlign != null ? vAlign.hashCode() : 0);
+        result = 31 * result + (hAlign != null ? hAlign.hashCode() : 0);
+        result = 31 * result + (border != null ? border.hashCode() : 0);
+        result = 31 * result + (fontSize != null ? fontSize.hashCode() : 0);
+        result = 31 * result + (bold ? 1 : 0);
+        result = 31 * result + (italic ? 1 : 0);
+        result = 31 * result + (underline ? 1 : 0);
+        result = 31 * result + (strikeout ? 1 : 0);
+        return result;
+    }
 }

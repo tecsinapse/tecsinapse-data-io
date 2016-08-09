@@ -102,7 +102,7 @@ public class TableCellStyleTest {
         HSSFWorkbook wb = new HSSFWorkbook();
         TableCellStyle style = new TableCellStyle(bgColor);
         style.setFontColor(fontColor);
-        CellStyle cellStyle = style.toCellStyle(wb, null);
+        CellStyle cellStyle = style.toCellStyle(wb);
         Assert.assertEquals(cellStyle.getFillForegroundColor(), bgIndex);
     }
 

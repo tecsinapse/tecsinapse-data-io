@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -31,13 +30,12 @@ import br.com.tecsinapse.exporter.EmptyTableCell;
 import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
+import br.com.tecsinapse.exporter.style.TableCellStyle;
 import br.com.tecsinapse.exporter.type.CellType;
 
 public class WorkbookUtil {
 
-    private DataFormat defaultDataFormat;
-    private Map<String, DataFormat> dataFormatMap = new HashMap<>();
-    private CreationHelper creationHelper;
+    private Map<TableCellStyle, CellStyle> cellStyleMap = new HashMap<>();
 
     public static WorkbookUtil newWorkbookUtil() {
         return new WorkbookUtil();
@@ -47,15 +45,12 @@ public class WorkbookUtil {
         List<List<TableCell>> matrix = table.getCells();
         List<List<TableCell>> matrixFull = table.toTableCellMatrix();
 
-        creationHelper = wb.getCreationHelper();
         Sheet sheet = wb.createSheet();
         int titleRows = 0;
         int r = titleRows;
         int c = 0;
         int maxColumns = -1;
         Map<Integer, Integer> defaultColumnWidth = new HashMap<>();
-
-        defaultDataFormat = wb.createDataFormat();
 
         ExporterFormatter tableExporterFormatter = table.getExporterFormatter();
 
@@ -138,7 +133,19 @@ public class WorkbookUtil {
         if (tableCell.getCellType() == CellType.BRL_TYPE) {
             cellFormat = "_$R$ #,##0.00";
         }
-        cell.setCellStyle(tableCell.getTableCellStyle().toCellStyle(wb, cellFormat));
+        TableCellStyle tableCellStyle = tableCell.getTableCellStyle().clone();
+        tableCellStyle.setCellFormat(cellFormat);
+        cell.setCellStyle(getOrNewCellStyle(tableCellStyle, wb));
+    }
+
+    private CellStyle getOrNewCellStyle(TableCellStyle tableCellStyle, Workbook workbook) {
+        CellStyle cellStyle = cellStyleMap.get(tableCellStyle);
+        if (cellStyle != null) {
+            return cellStyle;
+        }
+        cellStyle = tableCellStyle.toCellStyle(workbook);
+        cellStyleMap.put(tableCellStyle, cellStyle);
+        return cellStyle;
     }
 
     private String setConvertedValue(Cell cell, TableCell tableCell, ExporterFormatter tableExporterFormatter) {

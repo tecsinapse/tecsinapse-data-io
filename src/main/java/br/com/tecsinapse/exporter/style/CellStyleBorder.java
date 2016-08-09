@@ -124,4 +124,44 @@ public class CellStyleBorder implements Cloneable {
         return new CellStyleBorder(getBorderColor(), isLeft(), isRight(), isTop(), isBottom());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof CellStyleBorder)) {
+            return false;
+        }
+
+        final CellStyleBorder that = (CellStyleBorder) o;
+
+        if (left != that.left) {
+            return false;
+        }
+        if (right != that.right) {
+            return false;
+        }
+        if (top != that.top) {
+            return false;
+        }
+        if (bottom != that.bottom) {
+            return false;
+        }
+        if (size != that.size) {
+            return false;
+        }
+        return borderColor != null ? borderColor.equals(that.borderColor) : that.borderColor == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = borderColor != null ? borderColor.hashCode() : 0;
+        result = 31 * result + (left ? 1 : 0);
+        result = 31 * result + (right ? 1 : 0);
+        result = 31 * result + (top ? 1 : 0);
+        result = 31 * result + (bottom ? 1 : 0);
+        result = 31 * result + (int) size;
+        return result;
+    }
 }
