@@ -188,7 +188,7 @@ public class TableCellStyle implements Cloneable {
         font.setStrikeout(isStrikeout());
         font.setUnderline(isUnderline() ? Font.U_SINGLE : Font.U_NONE);
         if (getFontSize() != null) {
-            font.setFontHeight(fontSize.shortValue());
+            font.setFontHeightInPoints(fontSize.shortValue());
         }
         if (getFontColor() != null) {
             font.setColor(fontColor.getIndex());
