@@ -6,11 +6,12 @@
  */
 package br.com.tecsinapse.exporter.style;
 
-import static br.com.tecsinapse.datasources.HSSFColorDs.BLACK;
-import static br.com.tecsinapse.datasources.HSSFColorDs.BLUE;
-import static br.com.tecsinapse.datasources.HSSFColorDs.GREEN;
-import static br.com.tecsinapse.datasources.HSSFColorDs.RED;
-import static br.com.tecsinapse.datasources.HSSFColorDs.WHITE;
+import static br.com.tecsinapse.exporter.style.Colors.BLACK;
+import static br.com.tecsinapse.exporter.style.Colors.BLUE;
+import static br.com.tecsinapse.exporter.style.Colors.BRIGHT_GREEN;
+import static br.com.tecsinapse.exporter.style.Colors.RED;
+import static br.com.tecsinapse.exporter.style.Colors.WHITE;
+import static br.com.tecsinapse.exporter.style.Colors.AUTOMATIC;
 import static br.com.tecsinapse.exporter.style.CssStyle.BOLD;
 import static br.com.tecsinapse.exporter.style.CssStyle.ITALIC;
 import static br.com.tecsinapse.exporter.style.CssStyle.STRIKEOUT;
@@ -18,7 +19,6 @@ import static br.com.tecsinapse.exporter.style.CssStyle.UNDERLINE;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.HSSFColor.AUTOMATIC;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -43,9 +43,9 @@ public class TableCellStyleTest {
                         true, false, true, false},
                 {BLUE, null, null, null,
                         "background-color:#0000FF;" + BOLD.getCss() + UNDERLINE.getCss(),
-                        GREEN, "background-color:#00FF00;" + ITALIC.getCss() + STRIKEOUT.getCss(),
+                        BRIGHT_GREEN, "background-color:#00FF00;" + ITALIC.getCss() + STRIKEOUT.getCss(),
                         true, false, false, true},
-                {GREEN, null, null, null,
+                {BRIGHT_GREEN, null, null, null,
                         "background-color:#00FF00;" + BOLD.getCss() + ITALIC.getCss() + STRIKEOUT.getCss() + UNDERLINE.getCss(),
                         BLACK, "background-color:#000000;",
                         true, true, true, true},
@@ -61,7 +61,7 @@ public class TableCellStyleTest {
         return new Object[][] {
                 {BLACK, BLACK.getIndex(), RED, RED.getIndex()},
                 {WHITE, WHITE.getIndex(), RED, RED.getIndex()},
-                {null, AUTOMATIC.index, GREEN, GREEN.getIndex()}
+                {null, AUTOMATIC.getIndex(), BRIGHT_GREEN, BRIGHT_GREEN.getIndex()}
         };
     }
 

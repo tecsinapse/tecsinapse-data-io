@@ -13,13 +13,12 @@ import static br.com.tecsinapse.exporter.util.Constants.DATE_TIME_FILE_NAME;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.poi.ss.usermodel.Workbook;
 
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.txt.FileTxt;
@@ -29,14 +28,6 @@ import br.com.tecsinapse.exporter.util.ExporterUtil;
 public final class ExportServletUtil {
 
     private ExportServletUtil() {
-    }
-
-    public static FacesContext configureContentAndHeadersAndGetFacesContext(String filename, FileType fileType, Workbook wb) throws IOException {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-        configureContentAndHeaders(filename, fileType, response);
-        wb.write(response.getOutputStream());
-        return context;
     }
 
     public static void configureContentAndHeaders(String filename, FileType fileType, HttpServletResponse response) {
@@ -65,8 +56,10 @@ public final class ExportServletUtil {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
         configureContentAndHeaders(filename, fileType, response);
-        ExporterUtil.writeData(table, fileType, response.getOutputStream(), charset, separator);
-        context.getResponseComplete();
+        OutputStream outputStream = response.getOutputStream();
+        ExporterUtil.writeData(table, fileType, outputStream, charset, separator);
+        outputStream.close();
+        context.responseComplete();
     }
 
     public static void facesDownloadFileTxt(FileTxt file, String filename, String charset, boolean zipFile) throws IOException {
@@ -78,25 +71,29 @@ public final class ExportServletUtil {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
         configureContentAndHeaders(filename, TXT, response);
-        ExporterUtil.writeFileTxtToOutput(file, charset, response.getOutputStream());
-        context.getResponseComplete();
+        OutputStream outputStream = response.getOutputStream();
+        ExporterUtil.writeFileTxtToOutput(file, charset, outputStream);
+        outputStream.close();
+        context.responseComplete();
     }
 
     public static void facesDownloadZip(ByteArrayOutputStream baos, String filename) throws IOException {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
         facesDownloadZip(baos, filename, response);
-        context.getResponseComplete();
+        context.responseComplete();
     }
 
     private static void facesDownloadZip(ByteArrayOutputStream baos, String filename, HttpServletResponse response) throws IOException {
         String zipFilename = FileType.ZIP.toFilenameWithExtension(filename);
         configureContentAndHeaders(zipFilename, FileType.ZIP, response);
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream())) {
+        OutputStream outputStream = response.getOutputStream();
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
             zipOutputStream.putNextEntry(new ZipEntry(filename));
             zipOutputStream.write(baos.toByteArray());
             zipOutputStream.closeEntry();
         }
+        outputStream.close();
     }
 
     public static void facesDownloadXls(String name, Table t) throws IOException {

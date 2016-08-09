@@ -20,16 +20,17 @@ public class TableCellStyle implements Cloneable {
     public static final TableCellStyle FOOTER;
 
     static {
-        BODY = new TableCellStyle(new HSSFColor.WHITE());
+        BODY = new TableCellStyle(Colors.WHITE);
         BODY.sethAlign(CellHAlign.CENTER);
         BODY.setvAlign(CellVAlign.CENTER);
         BODY.setBorder(CellStyleBorder.DEFAULT);
+        BODY.setFontSize(10);
 
-        HEADER = new TableCellStyle(new HSSFColor.GREY_25_PERCENT());
-        FOOTER = new TableCellStyle(new HSSFColor.GREY_25_PERCENT());
+        HEADER = new TableCellStyle(Colors.GREY_25_PERCENT);
+        FOOTER = new TableCellStyle(Colors.GREY_25_PERCENT);
         for (TableCellStyle tcs : Arrays.asList(HEADER, FOOTER)) {
             tcs.setBold(true);
-            tcs.setFontSize(14);
+            tcs.setFontSize(10);
             tcs.sethAlign(CellHAlign.CENTER);
             tcs.setvAlign(CellVAlign.CENTER);
             tcs.setBorder(CellStyleBorder.DEFAULT);
@@ -188,7 +189,7 @@ public class TableCellStyle implements Cloneable {
         font.setStrikeout(isStrikeout());
         font.setUnderline(isUnderline() ? Font.U_SINGLE : Font.U_NONE);
         if (getFontSize() != null) {
-            font.setFontHeight(fontSize.shortValue());
+            font.setFontHeightInPoints(fontSize.shortValue());
         }
         if (getFontColor() != null) {
             font.setColor(fontColor.getIndex());

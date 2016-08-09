@@ -7,9 +7,9 @@
 
 package br.com.tecsinapse.exporter.style;
 
-import static br.com.tecsinapse.datasources.HSSFColorDs.BLACK;
-import static br.com.tecsinapse.datasources.HSSFColorDs.RED;
-import static br.com.tecsinapse.datasources.HSSFColorDs.WHITE;
+import static br.com.tecsinapse.exporter.style.Colors.BLACK;
+import static br.com.tecsinapse.exporter.style.Colors.RED;
+import static br.com.tecsinapse.exporter.style.Colors.WHITE;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.testng.Assert;
