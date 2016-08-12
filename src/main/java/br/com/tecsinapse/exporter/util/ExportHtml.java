@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,7 +27,7 @@ public class ExportHtml {
 
     private final Charset charset;
 
-    private final Map<String, String> tableHtmlProperties = new HashMap<>();
+    private final Map<String, String> tableHtmlProperties = new LinkedHashMap<>();
 
     public static ExportHtml newInstance(Charset charset) {
         return new ExportHtml(charset);

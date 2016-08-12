@@ -19,7 +19,7 @@ import java.io.File;
 import br.com.tecsinapse.datasources.DataParser;
 import br.com.tecsinapse.datasources.FileDataParser;
 import br.com.tecsinapse.exporter.type.FileType;
-
+@SuppressWarnings("unchecked")
 public enum ResourceFiles {
     MOCK_PLANILHA_CSV("/files/mock/planilha.csv", CSV),
     MOCK_PLANILHA_XLS("/files/mock/planilha.xls", XLS),
