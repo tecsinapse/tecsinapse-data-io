@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +26,7 @@ public class ExportHtmlTest {
 
     @DataProvider(name = "toHtmlDs")
     private Object[][] toHtmlDs() {
-        Map<String, String> tableMap = new HashMap<>();
+        Map<String, String> tableMap = new LinkedHashMap<>();
         tableMap.put("border", "1");
         tableMap.put("style", "background-color: #DFDFDF");
         return new Object[][] {
@@ -43,7 +43,7 @@ public class ExportHtmlTest {
                         "</tr>\n" +
                         "</table>\n"},
                 {tableMap, 1, 1, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")),
-                        "<table style=\"background-color: #DFDFDF\" border=\"1\">\n" +
+                        "<table border=\"1\" style=\"background-color: #DFDFDF\">\n" +
                         "<tr>\n" +
                         "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c1</td>\n" +
                         "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c2</td>\n" +
@@ -56,7 +56,7 @@ public class ExportHtmlTest {
                         "</tr>\n" +
                         "</table>\n"},
                 {tableMap, 2, 2, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")),
-                        "<table style=\"background-color: #DFDFDF\" border=\"1\">\n" +
+                        "<table border=\"1\" style=\"background-color: #DFDFDF\">\n" +
                                 "<tr>\n" +
                                 "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c1</td>\n" +
                                 "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c2</td>\n" +
