@@ -55,6 +55,7 @@ import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.util.Constants;
 
 public class ImporterUtils {
 
@@ -210,23 +211,30 @@ public class ImporterUtils {
                 return;
             }
             Class<?> targetType = getReturnType(tcc);
-            if (isInstanceOf(value, targetType)) {
-                method.invoke(instance, value);
-                return;
-            }
-            if (isInstanceOf(value, BigDecimal.class)) {
+            Class<?> methodInputType = getMethodParamType(method);
+            if (isInstanceOf(value, BigDecimal.class) && isSameClassOrExtendedNullSafe(methodInputType, Number.class)) {
                 Object numericValue = toNumericValue((BigDecimal) value, targetType);
                 if (numericValue != null) {
                     method.invoke(instance, numericValue);
                     return;
                 }
             }
-            if (isInstanceOf(value, LocalDateTime.class) || isInstanceOf(targetType, LocalDateTime.class)) {
-                Object dateTimeValue = toDateTimeValue((LocalDateTime) value, targetType, exporterFormatter);
+            if (isInstanceOf(value, LocalDateTime.class) && isJodaType(methodInputType)) {
+                LocalDateTime localDateTime = (LocalDateTime) value;
+                Object dateTimeValue = toDateTimeValue(localDateTime, targetType);
                 if (dateTimeValue != null) {
                     method.invoke(instance, dateTimeValue);
                     return;
                 }
+            }
+            if (isInstanceOf(value, LocalDateTime.class)) {
+                LocalDateTime localDateTime = (LocalDateTime) value;
+                value = formatLocalDateTimeAsIsoString(localDateTime);
+            }
+
+            if (isInstanceOf(value, methodInputType)) {
+                method.invoke(instance, value);
+                return;
             }
             TableCellConverter<?> converter = tcc.newInstance();
             method.invoke(instance, converter.apply(value.toString()));
@@ -281,7 +289,7 @@ public class ImporterUtils {
         return null;
     }
 
-    private static Object toDateTimeValue(LocalDateTime localDateTime, Class<?> targetType, ExporterFormatter exporterFormatter) {
+    private static Object toDateTimeValue(LocalDateTime localDateTime, Class<?> targetType) {
         if (LocalDateTime.class.equals(targetType)) {
             return localDateTime;
         }
@@ -291,24 +299,33 @@ public class ImporterUtils {
         if (LocalTime.class.equals(targetType)) {
             return localDateTime.toLocalTime();
         }
-        if (String.class.equals(targetType)) {
-            return formatLocalDateTimeAsString(localDateTime, exporterFormatter);
-        }
         return null;
     }
 
     private static String formatLocalDateTimeAsString(LocalDateTime localDateTime, ExporterFormatter exporterFormatter) {
         LocalTime localTime = localDateTime.toLocalTime();
         LocalDate localDate = localDateTime.toLocalDate();
+        if (LOCAL_DATE_BIGBANG.equals(localDate)) {
+            return exporterFormatter.formatLocalTime(localTime);
+        }
+
         if (LocalTime.MIDNIGHT.equals(localTime)) {
             return exporterFormatter.formatLocalDate(localDate);
         }
 
-        if (LOCAL_DATE_BIGBANG.equals(localDate)) {
-            return exporterFormatter.formatLocalTime(localTime);
-        }
         return exporterFormatter.formatLocalDateTime(localDateTime);
     }
+
+    private static String formatLocalDateTimeAsIsoString(LocalDateTime localDateTime) {
+        LocalTime localTime = localDateTime.toLocalTime();
+        LocalDate localDate = localDateTime.toLocalDate();
+        if (LOCAL_DATE_BIGBANG.compareTo(localDate) == 0) {
+            return localTime.toString(Constants.LOCAL_TIME_ISO_FORMAT);
+        }
+
+        return localDateTime.toString(Constants.LOCAL_DATE_TIME_ISO_FORMAT);
+    }
+
 
     private static String formatNumericAsString(Number number, ExporterFormatter exporterFormatter) {
         if (number == null) {
@@ -318,11 +335,37 @@ public class ImporterUtils {
     }
 
     private static boolean isInstanceOf(Object value, Class<?> targetType) throws NoSuchMethodException {
-        return value != null && targetType.isInstance(value);
+        return value != null && targetType != null && targetType.isInstance(value);
     }
 
     private static Class<?> getReturnType(Class<?> converter) throws NoSuchMethodException {
         Method converterMethod = converter.getMethod("apply", String.class);
         return converterMethod.getReturnType();
     }
+
+    private static Class<?> getMethodParamType(Method method) throws NoSuchMethodException {
+        Class<?>[] inputParamsType = method.getParameterTypes();
+        if (inputParamsType.length > 0) {
+            return inputParamsType[0];
+        }
+        return null;
+    }
+
+    private static boolean isJodaType(Class<?> o) throws NoSuchMethodException {
+        if (o.equals(LocalDateTime.class)) {
+            return true;
+        }
+        if (o.equals(LocalDate.class)) {
+            return true;
+        }
+        return o.equals(LocalTime.class);
+    }
+
+    private static boolean isSameClassOrExtendedNullSafe(Class<?> c1, Class<?> c2) throws NoSuchMethodException {
+        if (c1 == null || c2 == null) {
+            return false;
+        }
+        return c1.equals(c2) || c2.isAssignableFrom(c1);
+    }
+
 }
