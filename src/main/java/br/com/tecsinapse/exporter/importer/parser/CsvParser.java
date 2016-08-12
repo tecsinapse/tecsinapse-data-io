@@ -140,11 +140,15 @@ public class CsvParser<T> implements Parser<T> {
     }
 
     /**
-     * Não lê a primeira linha
-     * <p/>
+     * Parser file to list of T objects
      *
-     * @return
-     * @throws Exception
+     * Obs.: No read de first line.
+     *
+     * @return List of T object
+     * @throws IllegalAccessException IllegalAccessException
+     * @throws InstantiationException InstantiationException
+     * @throws InvocationTargetException InvocationTargetException
+     * @throws NoSuchMethodException NoSuchMethodException
      */
     @Override
     public List<T> parse() throws IllegalAccessException, InstantiationException,

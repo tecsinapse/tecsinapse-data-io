@@ -54,7 +54,11 @@ public final class ZIPUtil {
     /**
      * This method is moved. It will be removed in version 2.0.0
      *
+     * @param fileName fileName
+     * @param fileExtension fileExtension
+     * @param baos baos
      * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil}
+     * @throws IOException IOException
      */
     @Deprecated
     public static void exportZip(String fileName, String fileExtension, ByteArrayOutputStream baos) throws IOException {
