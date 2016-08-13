@@ -18,7 +18,7 @@ if [[ -n $TRAVIS_TAG ]]; then
     exit $?
 fi
 
-if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "milestone-v1.6.0" ]]; then
+if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "milestone-v1.6" ]]; then
     mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=false --settings $GPG_DIR/settings.xml
     exit $?
 fi
