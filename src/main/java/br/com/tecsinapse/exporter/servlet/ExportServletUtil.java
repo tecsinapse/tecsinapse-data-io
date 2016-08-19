@@ -14,6 +14,8 @@ import static br.com.tecsinapse.exporter.util.Constants.DATE_TIME_FILE_NAME;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -38,18 +40,18 @@ public final class ExportServletUtil {
         response.setHeader("Content-disposition", "attachment;filename=" + filename);
     }
 
-    public static void facesDownloadResponse(Table table, String filename, FileType fileType, boolean zipFile) throws IOException {
-        facesDownloadResponse(table, filename, fileType, "UTF-8", zipFile);
+    public static void facesDownloadResponse(List<Table> tables, String filename, FileType fileType, boolean zipFile) throws IOException {
+        facesDownloadResponse(tables, filename, fileType, "UTF-8", zipFile);
     }
 
-    public static void facesDownloadResponse(Table table, String filename, FileType fileType, String charset, boolean zipFile) throws IOException {
-        facesDownloadResponse(table, filename, fileType, charset, SEMICOLON.getSeparator(), zipFile);
+    public static void facesDownloadResponse(List<Table> tables, String filename, FileType fileType, String charset, boolean zipFile) throws IOException {
+        facesDownloadResponse(tables, filename, fileType, charset, SEMICOLON.getSeparator(), zipFile);
     }
 
-    public static void facesDownloadResponse(Table table, String filename, FileType fileType, String charset, char separator, boolean zipFile) throws IOException {
+    public static void facesDownloadResponse(List<Table> tables, String filename, FileType fileType, String charset, char separator, boolean zipFile) throws IOException {
         if (zipFile) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ExporterUtil.writeData(table, fileType, baos, charset, separator);
+            ExporterUtil.writeData(tables, fileType, baos, charset, separator);
             facesDownloadZip(baos, filename);
             return;
         }
@@ -57,7 +59,7 @@ public final class ExportServletUtil {
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
         configureContentAndHeaders(filename, fileType, response);
         OutputStream outputStream = response.getOutputStream();
-        ExporterUtil.writeData(table, fileType, outputStream, charset, separator);
+        ExporterUtil.writeData(tables, fileType, outputStream, charset, separator);
         outputStream.close();
         context.responseComplete();
     }
@@ -97,26 +99,34 @@ public final class ExportServletUtil {
     }
 
     public static void facesDownloadXls(String name, Table t) throws IOException {
-        ExportServletUtil.facesDownloadResponse(t, name + ".xls", FileType.XLS, false);
+        facesDownloadMoreThanOneSheetXls(name, Arrays.asList(t));
+    }
+
+    public static void facesDownloadMoreThanOneSheetXls(String name, List<Table> t) throws IOException {
+        facesDownloadResponse(t, name + ".xls", FileType.XLS, false);
     }
 
     public static void facesDownloadXlsx(String name, Table t) throws IOException {
-        ExportServletUtil.facesDownloadResponse(t, name + ".xlsx", FileType.XLSX, false);
+        facesDownloadMoreThanOneSheetXlsx(name, Arrays.asList(t));
+    }
+
+    public static void facesDownloadMoreThanOneSheetXlsx(String name, List<Table> t) throws IOException {
+        facesDownloadResponse(t, name + ".xlsx", FileType.XLSX, false);
     }
 
     public static void facesDownloadCsv(String name, Table t, String chartsetName) throws IOException {
         String filename = FileType.CSV.toFilenameWithExtensionAndLocalTimeNow(name, DATE_TIME_FILE_NAME);
-        ExportServletUtil.facesDownloadResponse(t, filename, FileType.CSV, chartsetName, false);
+        facesDownloadResponse(Arrays.asList(t), filename, FileType.CSV, chartsetName, false);
     }
 
     public static void facesDownloadTxt(String name, Table t, String chartsetName) throws IOException {
         String filename = TXT.toFilenameWithExtensionAndLocalTimeNow(name, DATE_TIME_FILE_NAME);
-        ExportServletUtil.facesDownloadResponse(t, filename, TXT, chartsetName, false);
+        facesDownloadResponse(Arrays.asList(t), filename, TXT, chartsetName, false);
     }
 
     public static void facesDownloadCsvZip(String name, Table t, String charsetName) throws IOException {
         String filename = FileType.CSV.toFilenameWithExtensionAndLocalTimeNow(name, DATE_TIME_FILE_NAME);
-        ExportServletUtil.facesDownloadResponse(t, filename, FileType.CSV, charsetName, true);
+        facesDownloadResponse(Arrays.asList(t), filename, FileType.CSV, charsetName, true);
     }
 
 }
