@@ -41,11 +41,19 @@ public class WorkbookUtil {
         return new WorkbookUtil();
     }
 
+    public Workbook toWorkBook(Workbook wb, List<Table> tables) {
+        for (Table table : tables) {
+            wb = toWorkBook(wb, table);
+        }
+        return wb;
+    }
+
     public Workbook toWorkBook(Workbook wb, Table table) {
         List<List<TableCell>> matrix = table.getCells();
         List<List<TableCell>> matrixFull = table.toTableCellMatrix();
 
-        Sheet sheet = wb.createSheet();
+        String sheetName = table.getTitle();
+        Sheet sheet = sheetName == null ? wb.createSheet() : wb.createSheet(sheetName);
         int titleRows = 0;
         int r = titleRows;
         int c = 0;

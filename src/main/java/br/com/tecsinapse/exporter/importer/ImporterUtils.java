@@ -212,6 +212,12 @@ public class ImporterUtils {
             }
             Class<?> targetType = getReturnType(tcc);
             Class<?> methodInputType = getMethodParamType(method);
+
+            if (isInstanceOf(value, methodInputType)) {
+                method.invoke(instance, value);
+                return;
+            }
+
             if (isInstanceOf(value, BigDecimal.class) && isSameClassOrExtendedNullSafe(methodInputType, Number.class)) {
                 Object numericValue = toNumericValue((BigDecimal) value, targetType);
                 if (numericValue != null) {
@@ -232,10 +238,6 @@ public class ImporterUtils {
                 value = formatLocalDateTimeAsIsoString(localDateTime);
             }
 
-            if (isInstanceOf(value, methodInputType)) {
-                method.invoke(instance, value);
-                return;
-            }
             TableCellConverter<?> converter = tcc.newInstance();
             method.invoke(instance, converter.apply(value.toString()));
         } catch (NoSuchMethodException e) {
