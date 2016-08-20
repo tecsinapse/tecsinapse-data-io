@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.testng.Assert;
@@ -28,10 +29,10 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 
-import br.com.tecsinapse.exporter.type.FileType;
-import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.converter.FromDateConverter;
 import br.com.tecsinapse.exporter.importer.ExcelParser;
 import br.com.tecsinapse.exporter.importer.Importer;
+import br.com.tecsinapse.exporter.type.FileType;
 
 public class ImporterFileTest {
 
@@ -200,9 +201,14 @@ public class ImporterFileTest {
         }
     }
 
-    public static final class LocalDateConverter implements TableCellConverter<LocalDate> {
+    public static final class LocalDateConverter implements FromDateConverter<LocalDate> {
 
         private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern(DD_MM_YYYY);
+
+        @Override
+        public LocalDate apply(LocalDateTime input) {
+            return input.toLocalDate();
+        }
 
         @Override
         public LocalDate apply(String input) {

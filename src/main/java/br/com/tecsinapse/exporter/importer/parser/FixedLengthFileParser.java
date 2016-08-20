@@ -25,7 +25,7 @@ import com.google.common.primitives.Ints;
 
 import br.com.tecsinapse.exporter.annotation.FixedLengthColumn;
 import br.com.tecsinapse.exporter.annotation.LineFixedLengthFile;
-import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.converter.Converter;
 import br.com.tecsinapse.exporter.util.FixedLengthFileUtil;
 
 public class FixedLengthFileParser<T> {
@@ -132,7 +132,7 @@ public class FixedLengthFileParser<T> {
                 if (removeDuplicatedSpaces) {
                     value = value.replaceAll("\\s+", " ");
                 }
-                TableCellConverter<?> converter = flc.converter().newInstance();
+                Converter<?, ?> converter = flc.converter().newInstance();
                 Object obj;
                 try {
                     obj = converter.apply(value);

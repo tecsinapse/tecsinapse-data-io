@@ -9,14 +9,18 @@ package br.com.tecsinapse.exporter.converter;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-public class LocalDateTableCellConverter implements TableCellConverter<LocalDate> {
+import com.google.common.base.Strings;
 
-    private static final LocalDateTimeTableCellConverter converter = new LocalDateTimeTableCellConverter();
+public class LocalDateTableCellConverter implements FromDateConverter<LocalDate> {
+
+    @Override
+    public LocalDate apply(LocalDateTime input) {
+        return input.toLocalDate();
+    }
 
     @Override
     public LocalDate apply(String input) {
-        LocalDateTime value = converter.apply(input);
-        return value != null ? value.toLocalDate() : null;
+        return Strings.isNullOrEmpty(input) ? null : LocalDateTime.parse(input).toLocalDate();
     }
 
 }

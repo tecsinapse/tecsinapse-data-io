@@ -10,7 +10,12 @@ import org.joda.time.LocalDateTime;
 
 import com.google.common.base.Strings;
 
-public class LocalDateTimeTableCellConverter implements TableCellConverter<LocalDateTime> {
+public class LocalDateTimeTableCellConverter implements FromDateConverter<LocalDateTime> {
+
+    @Override
+    public LocalDateTime apply(LocalDateTime input) {
+        return input;
+    }
 
     @Override
     public LocalDateTime apply(String input) {

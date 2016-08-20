@@ -12,8 +12,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import br.com.tecsinapse.exporter.converter.Converter;
 import br.com.tecsinapse.exporter.converter.StringTableCellConverter;
-import br.com.tecsinapse.exporter.converter.TableCellConverter;
 
 @Retention(RUNTIME)
 @Target({METHOD})
@@ -25,6 +25,6 @@ public @interface FixedLengthColumn {
 
     boolean useLineLength() default false;
 
-    Class<? extends TableCellConverter<?>> converter() default StringTableCellConverter.class;
+    Class<? extends Converter<?, ?>> converter() default StringTableCellConverter.class;
 
 }

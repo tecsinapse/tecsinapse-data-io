@@ -10,7 +10,12 @@ import java.math.BigDecimal;
 
 import com.google.common.base.Strings;
 
-public class BigDecimalTableCellConverter implements TableCellConverter<BigDecimal> {
+public class BigDecimalTableCellConverter implements Converter<BigDecimal, BigDecimal> {
+
+    @Override
+    public BigDecimal apply(BigDecimal input) {
+        return input;
+    }
 
     @Override
     public BigDecimal apply(String input) {
