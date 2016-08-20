@@ -45,6 +45,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
     private boolean useFormatterToParseValueAsString = false;
     private int headersRows;
     private int sheetNumber;
+    private boolean lastsheet = false;
     private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
     private Workbook workbook;
     private final FileType fileType;
@@ -107,6 +108,16 @@ public class SpreadsheetParser<T> implements Parser<T> {
     }
 
     @Override
+    public void setLastsheet(boolean lastsheet) {
+        this.lastsheet = lastsheet;
+    }
+
+    @Override
+    public void setFirstVisibleSheet() {
+        setSheetNumber(getWorkbook().getFirstVisibleTab());
+    }
+
+    @Override
     public void setGroup(Class<?> group) {
         this.group = group;
     }
@@ -123,6 +134,9 @@ public class SpreadsheetParser<T> implements Parser<T> {
 
     @Override
     public List<T> parse() throws Exception {
+        if (lastsheet) {
+            setSheetNumber(getNumberOfSheets() - 1);
+        }
         List<T> resultList = parseCurrentSheet();
         if (isIgnoreBlankLinesAtEnd()) {
             ImporterUtils.removeBlankLinesOfEnd(resultList, clazz);

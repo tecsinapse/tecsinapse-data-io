@@ -92,6 +92,16 @@ public class CsvParser<T> implements Parser<T> {
     }
 
     @Override
+    public void setLastsheet(boolean lastsheet) {
+
+    }
+
+    @Override
+    public void setFirstVisibleSheet() {
+
+    }
+
+    @Override
     public int getSheetNumber() {
         return 0;
     }
