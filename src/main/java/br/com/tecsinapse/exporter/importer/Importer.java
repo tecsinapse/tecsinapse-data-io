@@ -30,8 +30,8 @@ public class Importer<T> implements Closeable {
     private String filename;
     private Charset charset;
     private Parser<T> parser;
-    private FileType fileType;
     private int headersRows = DEFAULT_START_ROW;
+    private boolean isLastSheet;
 
     public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
         this(clazz, charset, Default.class);
@@ -82,7 +82,7 @@ public class Importer<T> implements Closeable {
         this.inputStream = inputStream;
         this.filename = filename;
         this.headersRows = afterLine;
-        //this.isLastSheet = isLastSheet;
+        this.isLastSheet = isLastSheet;
     }
 
     private Importer(Class<T> clazz, Class<?> group) {
@@ -105,15 +105,15 @@ public class Importer<T> implements Closeable {
             if (file != null) {
                 parser = new SpreadsheetParser<T>(clazz, file);
                 parser.setGroup(group);
-                // TODO Last Row?
                 parser.setHeadersRows(headersRows);
+                parser.setLastsheet(isLastSheet);
                 return;
             }
             if (inputStream != null) {
                 parser = new SpreadsheetParser<T>(clazz, inputStream, fileType);
                 parser.setGroup(group);
-                // TODO Last Row?
                 parser.setHeadersRows(headersRows);
+                parser.setLastsheet(isLastSheet);
                 return;
             }
         }
