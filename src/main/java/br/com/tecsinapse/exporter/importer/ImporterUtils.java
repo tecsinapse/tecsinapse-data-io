@@ -54,7 +54,7 @@ import com.google.common.collect.Multimap;
 import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.annotation.TableCellMappings;
-import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.converter.Converter;
 import br.com.tecsinapse.exporter.util.Constants;
 
 public class ImporterUtils {
@@ -203,45 +203,36 @@ public class ImporterUtils {
         };
     }
 
-    public static <T> void parseSpreadsheetCell(Class<? extends TableCellConverter<?>> tcc, FormulaEvaluator evaluator, Cell cell, Method method, T instance, ExporterFormatter exporterFormatter) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static <T> void parseSpreadsheetCell(Class<? extends Converter> tcc, FormulaEvaluator evaluator, Cell cell, Method method, T instance, ExporterFormatter exporterFormatter, boolean useFormatterToParseValueAsString) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         checkNotNull(method);
         Object value = getValueOrEmptyAsObject(evaluator, cell);
         try {
             if (value == null) {
                 return;
             }
-            Class<?> targetType = getReturnType(tcc);
+            Class<?> converterReturnType = getReturnTypeApply(tcc);
+            Class<?> converterInputType = getInputTypeApply(tcc);
+
             Class<?> methodInputType = getMethodParamType(method);
 
-            if (isInstanceOf(value, methodInputType)) {
-                method.invoke(instance, value);
+            if (isInstanceOf(value, converterInputType) && isSameClassOrExtendedNullSafe(converterReturnType, methodInputType)) {
+                Converter converter = tcc.newInstance();
+                method.invoke(instance, converter.apply(value));
                 return;
             }
-
-            if (isInstanceOf(value, BigDecimal.class) && isSameClassOrExtendedNullSafe(methodInputType, Number.class)) {
-                Object numericValue = toNumericValue((BigDecimal) value, targetType);
-                if (numericValue != null) {
-                    method.invoke(instance, numericValue);
-                    return;
+            if (isInstanceOf(value, LocalDateTime.class) || isInstanceOf(value, BigDecimal.class)) {
+                if (useFormatterToParseValueAsString) {
+                    value = exporterFormatter.formatByType(value, false);
+                } else if (isInstanceOf(value, LocalDateTime.class)) {
+                    LocalDateTime localDateTime = (LocalDateTime) value;
+                    value = formatLocalDateTimeAsIsoString(localDateTime);
                 }
             }
-            if (isInstanceOf(value, LocalDateTime.class) && isJodaType(methodInputType)) {
-                LocalDateTime localDateTime = (LocalDateTime) value;
-                Object dateTimeValue = toDateTimeValue(localDateTime, targetType);
-                if (dateTimeValue != null) {
-                    method.invoke(instance, dateTimeValue);
-                    return;
-                }
-            }
-            if (isInstanceOf(value, LocalDateTime.class)) {
-                LocalDateTime localDateTime = (LocalDateTime) value;
-                value = formatLocalDateTimeAsIsoString(localDateTime);
-            }
 
-            TableCellConverter<?> converter = tcc.newInstance();
+            Converter<?, ?> converter = tcc.newInstance();
             method.invoke(instance, converter.apply(value.toString()));
         } catch (NoSuchMethodException e) {
-            TableCellConverter<?> converter = tcc.newInstance();
+            Converter<?, ?> converter = tcc.newInstance();
             method.invoke(instance, converter.apply(value.toString()));
         }
     }
@@ -340,9 +331,29 @@ public class ImporterUtils {
         return value != null && targetType != null && targetType.isInstance(value);
     }
 
-    private static Class<?> getReturnType(Class<?> converter) throws NoSuchMethodException {
-        Method converterMethod = converter.getMethod("apply", String.class);
-        return converterMethod.getReturnType();
+    private static Method getTypedMethodConverter(Class<?> converter) throws NoSuchMethodException {
+        Method converterMethod[] = converter.getMethods();
+        for (Method method : converterMethod) {
+            Class<?>[] paramTypes = method.getParameterTypes();
+            if (method.getName().equals("apply") && paramTypes.length >0 && !isStringOrObject(paramTypes[0])) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isStringOrObject(Class<?> type) {
+        return String.class.equals(type) || Object.class.equals(type);
+    }
+
+    private static Class<?> getReturnTypeApply(Class<?> converter) throws NoSuchMethodException {
+        Method converterMethod = getTypedMethodConverter(converter);
+        return converterMethod == null ? null : converterMethod.getReturnType();
+    }
+
+    private static Class<?> getInputTypeApply(Class<?> converter) throws NoSuchMethodException {
+        Method converterMethod = getTypedMethodConverter(converter);
+        return converterMethod == null ? null : converterMethod.getParameterTypes()[0];
     }
 
     private static Class<?> getMethodParamType(Method method) throws NoSuchMethodException {

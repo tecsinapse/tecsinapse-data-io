@@ -10,7 +10,12 @@ import java.math.BigDecimal;
 
 import com.google.common.base.Strings;
 
-public class LongFromDecimalTableCellConverter implements TableCellConverter<Long> {
+public class LongFromDecimalTableCellConverter implements FromNumberConverter<Long> {
+
+    @Override
+    public Long apply(BigDecimal input) {
+        return input.longValue();
+    }
 
     @Override
     public Long apply(String input) {

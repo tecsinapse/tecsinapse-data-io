@@ -6,11 +6,17 @@
  */
 package br.com.tecsinapse.exporter.converter;
 
+import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
 import com.google.common.base.Strings;
 
-public class LocalTimeTableCellConverter implements TableCellConverter<LocalTime> {
+public class LocalTimeTableCellConverter implements FromDateConverter<LocalTime> {
+
+    @Override
+    public LocalTime apply(LocalDateTime input) {
+        return input.toLocalTime();
+    }
 
     @Override
     public LocalTime apply(String input) {
