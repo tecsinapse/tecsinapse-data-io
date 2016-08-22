@@ -9,7 +9,6 @@ package br.com.tecsinapse.exporter.servlet;
 
 import static br.com.tecsinapse.exporter.type.FileType.TXT;
 import static br.com.tecsinapse.exporter.type.SeparatorType.SEMICOLON;
-import static br.com.tecsinapse.exporter.util.Constants.DATE_TIME_FILE_NAME;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -115,17 +114,17 @@ public final class ExportServletUtil {
     }
 
     public static void facesDownloadCsv(String name, Table t, String chartsetName) throws IOException {
-        String filename = FileType.CSV.toFilenameWithExtensionAndLocalTimeNow(name, DATE_TIME_FILE_NAME);
+        String filename = FileType.CSV.toFilenameWithExtensionAndLocalTimeNow(name);
         facesDownloadResponse(Arrays.asList(t), filename, FileType.CSV, chartsetName, false);
     }
 
     public static void facesDownloadTxt(String name, Table t, String chartsetName) throws IOException {
-        String filename = TXT.toFilenameWithExtensionAndLocalTimeNow(name, DATE_TIME_FILE_NAME);
+        String filename = TXT.toFilenameWithExtensionAndLocalTimeNow(name);
         facesDownloadResponse(Arrays.asList(t), filename, TXT, chartsetName, false);
     }
 
     public static void facesDownloadCsvZip(String name, Table t, String charsetName) throws IOException {
-        String filename = FileType.CSV.toFilenameWithExtensionAndLocalTimeNow(name, DATE_TIME_FILE_NAME);
+        String filename = FileType.CSV.toFilenameWithExtensionAndLocalTimeNow(name);
         facesDownloadResponse(Arrays.asList(t), filename, FileType.CSV, charsetName, true);
     }
 

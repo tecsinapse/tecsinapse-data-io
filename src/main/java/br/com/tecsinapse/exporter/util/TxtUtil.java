@@ -7,8 +7,7 @@
 package br.com.tecsinapse.exporter.util;
 
 import java.io.IOException;
-
-import org.joda.time.LocalDateTime;
+import java.util.Date;
 
 import br.com.tecsinapse.exporter.servlet.ExportServletUtil;
 import br.com.tecsinapse.exporter.txt.FileTxt;
@@ -22,7 +21,7 @@ import br.com.tecsinapse.exporter.txt.FileTxt;
 public class TxtUtil {
 
     public static void exportFile(FileTxt file, String fileName, String chartsetName) throws IOException {
-        String filename = String.format("%s_%s", fileName, LocalDateTime.now().toString(Constants.DATE_TIME_FILE_NAME));
+        String filename = String.format("%s_%s", fileName, ExporterDateUtils.formatAsFileDateTime(new Date()));
         ExportServletUtil.facesDownloadFileTxt(file, filename, chartsetName, false);
     }
 

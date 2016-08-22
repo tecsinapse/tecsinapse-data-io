@@ -6,8 +6,6 @@
  */
 package br.com.tecsinapse.exporter.util;
 
-import static br.com.tecsinapse.exporter.util.Constants.LOCAL_DATE_BIGBANG;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +20,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
 
 import br.com.tecsinapse.exporter.EmptyTableCell;
 import br.com.tecsinapse.exporter.ExporterFormatter;
@@ -165,7 +160,7 @@ public class WorkbookUtil {
             ExporterFormatter cellExporterFormatter = tableCell.getExporterFormatter();
             ExporterFormatter exporterFormatter = cellExporterFormatter == null ? tableExporterFormatter : tableCell.getExporterFormatter();
             boolean isCurrency = tableCell.getCellType() == CellType.CURRENCY_TYPE;
-            String dataFormat = exporterFormatter != null ? exporterFormatter.getStringFormatByType(cellValue, isCurrency) : null;
+            String dataFormat = exporterFormatter != null ? exporterFormatter.getCellStringFormatByType(cellValue, isCurrency) : null;
             if (dataFormat != null && setCellValueByType(cell, cellValue)) {
                 return dataFormat;
             }
@@ -175,16 +170,8 @@ public class WorkbookUtil {
     }
 
     private boolean setCellValueByType(Cell cell, Object o) {
-        if (o instanceof LocalDateTime) {
-            cell.setCellValue(toExcelDate(toDate((LocalDateTime) o)));
-            return true;
-        }
-        if (o instanceof LocalDate) {
-            cell.setCellValue(toExcelDate(toDate((LocalDate) o)));
-            return true;
-        }
-        if (o instanceof LocalTime) {
-            cell.setCellValue(toExcelDate(toDate((LocalTime) o)));
+        if (o instanceof Date) {
+            cell.setCellValue(toExcelDate((Date) o));
             return true;
         }
         if (o instanceof Number) {
@@ -197,18 +184,6 @@ public class WorkbookUtil {
 
     private double toExcelDate(Date date) {
         return DateUtil.getExcelDate(date);
-    }
-
-    private Date toDate(LocalDateTime localDateTime) {
-        return localDateTime.toDate();
-    }
-
-    private Date toDate(LocalDate localDate) {
-        return localDate.toDate();
-    }
-
-    private Date toDate(LocalTime localTime) {
-        return LOCAL_DATE_BIGBANG.toDateTime(localTime).toDate();
     }
 
 }
