@@ -7,7 +7,7 @@
 
 package br.com.tecsinapse.exporter.converter;
 
-import org.joda.time.LocalDateTime;
+import java.util.Date;
 
-public interface FromDateConverter<T> extends Converter<LocalDateTime, T> {
+public interface FromDateConverter<T> extends Converter<Date, T> {
 }

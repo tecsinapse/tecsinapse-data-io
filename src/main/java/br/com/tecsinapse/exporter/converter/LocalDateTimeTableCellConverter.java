@@ -6,6 +6,8 @@
  */
 package br.com.tecsinapse.exporter.converter;
 
+import java.util.Date;
+
 import org.joda.time.LocalDateTime;
 
 import com.google.common.base.Strings;
@@ -13,8 +15,8 @@ import com.google.common.base.Strings;
 public class LocalDateTimeTableCellConverter implements FromDateConverter<LocalDateTime> {
 
     @Override
-    public LocalDateTime apply(LocalDateTime input) {
-        return input;
+    public LocalDateTime apply(Date input) {
+        return LocalDateTime.fromDateFields(input);
     }
 
     @Override

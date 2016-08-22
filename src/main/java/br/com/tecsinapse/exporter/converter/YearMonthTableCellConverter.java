@@ -6,19 +6,20 @@
  */
 package br.com.tecsinapse.exporter.converter;
 
-import org.joda.time.LocalDateTime;
+import java.util.Date;
+
 import org.joda.time.YearMonth;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.base.Strings;
 
-public class YearMonthTableCellConverter implements Converter<LocalDateTime, YearMonth> {
+public class YearMonthTableCellConverter implements FromDateConverter<YearMonth> {
 
     private static final DateTimeFormatter YYYY_MM = DateTimeFormat.forPattern("yyyyMM");
 
     @Override
-    public YearMonth apply(LocalDateTime input) {
+    public YearMonth apply(Date input) {
         return new YearMonth(input);
     }
 

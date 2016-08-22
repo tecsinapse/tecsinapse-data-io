@@ -16,11 +16,11 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.testng.Assert;
@@ -206,8 +206,8 @@ public class ImporterFileTest {
         private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern(DD_MM_YYYY);
 
         @Override
-        public LocalDate apply(LocalDateTime input) {
-            return input.toLocalDate();
+        public LocalDate apply(Date input) {
+            return LocalDate.fromDateFields(input);
         }
 
         @Override
