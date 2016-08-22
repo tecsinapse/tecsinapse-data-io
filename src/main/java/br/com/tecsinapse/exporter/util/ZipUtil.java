@@ -19,9 +19,9 @@ import com.google.common.io.ByteStreams;
 
 import br.com.tecsinapse.exporter.servlet.ExportServletUtil;
 
-public final class ZIPUtil {
+public final class ZipUtil {
 
-    private ZIPUtil() {
+    private ZipUtil() {
     }
 
     public static void zip(File newZip, File... filesToAdd) throws IOException {
