@@ -34,6 +34,9 @@ public enum CellType {
         }
         if (o instanceof Date) {
             final DateType dateType = ExporterDateUtils.getDateType((Date) o);
+            if (dateType == DateType.NO_DATE) {
+                return STRING_TYPE;
+            }
             if (dateType == DateType.DATE) {
                 return DATE_TYPE;
             }

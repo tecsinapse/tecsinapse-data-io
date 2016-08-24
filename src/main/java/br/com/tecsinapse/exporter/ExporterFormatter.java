@@ -48,9 +48,9 @@ public class ExporterFormatter {
         this.decimalFormat = (DecimalFormat) DecimalFormat.getInstance(locale);
         this.integerFormat = (DecimalFormat) DecimalFormat.getIntegerInstance(locale);
         this.currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(locale);
-        this.cellDateTimeFormat = DateFormatConverter.getJavaDateTimePattern(DateFormat.MEDIUM, locale);
-        this.cellDateFormat = DateFormatConverter.getJavaDateTimePattern(DateFormat.MEDIUM, locale);
-        this.cellTimeFormat = DateFormatConverter.getJavaDateTimePattern(DateFormat.SHORT, locale);
+        this.cellDateTimeFormat = DateFormatConverter.convert(locale, dateTimeFormat.toPattern());
+        this.cellDateFormat = DateFormatConverter.convert(locale, dateFormat.toPattern());
+        this.cellTimeFormat = DateFormatConverter.convert(locale, timeFormat.toPattern());
         this.cellCurrencyFormat = DateFormatConverter.getPrefixForLocale(locale) + currencyFormat.toLocalizedPattern() + CELL_SUFIX_FORMAT;
         this.cellDecimalFormat = DateFormatConverter.getPrefixForLocale(locale) + decimalFormat.toLocalizedPattern() + CELL_SUFIX_FORMAT;
         this.cellIntegerFormat = DateFormatConverter.getPrefixForLocale(locale) + integerFormat.toLocalizedPattern() + CELL_SUFIX_FORMAT;
@@ -142,6 +142,9 @@ public class ExporterFormatter {
 
     public String formatByDateType(Date date) {
         DateType dateType = ExporterDateUtils.getDateType(date);
+        if (dateType == DateType.NO_DATE) {
+            return null;
+        }
         if (dateType == DateType.DATE) {
             return dateFormat.format(date);
         }
@@ -155,6 +158,9 @@ public class ExporterFormatter {
         if (o instanceof Date) {
             Date date = (Date) o;
             DateType dateType = ExporterDateUtils.getDateType(date);
+            if (dateType == DateType.NO_DATE) {
+                return null;
+            }
             if (dateType == DateType.DATE) {
                 return cellDateFormat;
             }

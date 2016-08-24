@@ -31,6 +31,12 @@ public final class ExporterDateUtils {
     }
 
     public static DateType getDateType(Date date) {
+        if (date == null) {
+            return DateType.NO_DATE;
+        }
+        if (date instanceof java.sql.Date) {
+            date = new Date(date.getTime());
+        }
         if (DATETIME_BIGBANG_PLUS_24H.after(date)) {
             return DateType.TIME;
         }
@@ -41,10 +47,14 @@ public final class ExporterDateUtils {
     }
 
     public static String formatWithIsoByDateType(Date date) {
-        if (DATETIME_BIGBANG_PLUS_24H.after(date)) {
+        DateType dateType = getDateType(date);
+        if (dateType == DateType.NO_DATE) {
+            return null;
+        }
+        if (dateType == DateType.TIME) {
             return TIME_ISO_FORMAT.format(date);
         }
-        if (date.getSeconds() == 0 && date.getMinutes() == 0 && date.getHours() == 0) {
+        if (dateType == DateType.DATE) {
             return DATE_ISO_FORMAT.format(date);
         }
         return DATETIME_ISO_FORMAT.format(date);
@@ -55,7 +65,7 @@ public final class ExporterDateUtils {
     }
 
     public enum DateType {
-        TIME, DATE, DATETIME
+        TIME, DATE, DATETIME, NO_DATE
     }
 
 }
