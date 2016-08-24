@@ -217,18 +217,27 @@ public class ImporterUtils {
                 method.invoke(instance, converter.apply(value));
                 return;
             }
-            if (isInstanceOf(value, Date.class) || isInstanceOf(value, BigDecimal.class)) {
+            if (isInstanceOf(value, Date.class)) {
                 if (useFormatterToParseValueAsString) {
                     value = exporterFormatter.formatByType(value, false);
-                } else if (isInstanceOf(value, Date.class)) {
+                } else {
                     Date date = (Date) value;
                     value = ExporterDateUtils.formatWithIsoByDateType(date);
                 }
             }
 
+            if (isInstanceOf(value, BigDecimal.class)) {
+                if (useFormatterToParseValueAsString) {
+                    value = exporterFormatter.formatByType(value, false);
+                } else {
+                    BigDecimal bigDecimal = (BigDecimal) value;
+                    value = bigDecimal.toPlainString();
+                }
+            }
+
             Converter<?, ?> converter = tcc.newInstance();
             method.invoke(instance, converter.apply(value.toString()));
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException e) {
             Converter<?, ?> converter = tcc.newInstance();
             method.invoke(instance, converter.apply(value.toString()));
         }
@@ -291,6 +300,11 @@ public class ImporterUtils {
         return null;
     }
 
+    private static Class<?> getTypedToComparePrimitive(Class<?> c) throws NoSuchFieldException, IllegalAccessException {
+        Class<?> classz = (Class<?>) c.getField("TYPE").get(null);
+        return classz;
+    }
+
     private static boolean isStringOrObject(Class<?> type) {
         return String.class.equals(type) || Object.class.equals(type);
     }
@@ -313,11 +327,22 @@ public class ImporterUtils {
         return null;
     }
 
-    private static boolean isSameClassOrExtendedNullSafe(Class<?> c1, Class<?> c2) throws NoSuchMethodException {
+    private static boolean isSameClassOrExtendedNullSafe(Class<?> c1, Class<?> c2) throws NoSuchMethodException, NoSuchFieldException, IllegalAccessException {
         if (c1 == null || c2 == null) {
             return false;
         }
+        if (c1.isPrimitive()) {
+            return comparePrimitive(c2, c1);
+        }
+        if (c2.isPrimitive()) {
+            return comparePrimitive(c1, c2);
+        }
         return c1.equals(c2) || c2.isAssignableFrom(c1);
+    }
+
+    private static boolean comparePrimitive(Class<?> c1, Class<?> primitive) throws NoSuchFieldException, IllegalAccessException {
+        Class<?> classz = getTypedToComparePrimitive(c1);
+        return classz != null && classz.equals(primitive);
     }
 
 }

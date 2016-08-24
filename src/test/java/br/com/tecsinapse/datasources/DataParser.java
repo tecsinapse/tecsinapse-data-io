@@ -27,6 +27,7 @@ public class DataParser implements ApplyTest<DataParser> {
     private LocalDateTime dateTime;
     private BigDecimal decimal;
     private Integer integer;
+    private int integerPrimitive;
     private String string;
     private String empty;
     private LocalTime time;
@@ -94,6 +95,12 @@ public class DataParser implements ApplyTest<DataParser> {
     public void setInteger(Integer integer) {
         this.integer = integer;
     }
+
+    @TableCellMapping(columnIndex = 3, converter = IntegerTableCellConverter.class)
+    public void setIntegerPrimitive(int integerPrimitive) {
+        this.integerPrimitive = integerPrimitive;
+    }
+
 
     @TableCellMapping(columnIndex = 4, converter = StringTableCellConverter.class)
     public void setString(String string) {
