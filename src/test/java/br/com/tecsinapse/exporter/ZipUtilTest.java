@@ -10,9 +10,9 @@ import java.io.File;
 
 import org.testng.annotations.Test;
 
-import br.com.tecsinapse.exporter.util.ZIPUtil;
+import br.com.tecsinapse.exporter.util.ZipUtil;
 
-public class ZIPUtilTest {
+public class ZipUtilTest {
 
     @Test
     public void testZip() throws Exception {
@@ -22,7 +22,7 @@ public class ZIPUtilTest {
         };
 
         File outZip1 = ResourceUtils.newFileTargetResource("zipOut-1.zip");
-        ZIPUtil.zip(outZip1, files);
+        ZipUtil.zip(outZip1, files);
     }
 
 }
