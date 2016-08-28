@@ -12,9 +12,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.converter.group.Default;
 import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
+import br.com.tecsinapse.exporter.type.FileType;
 
 /**
  * Does some thing in old style. It will be removed in version 2.0.0
@@ -25,50 +25,50 @@ import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
 public class ExcelParser<T> extends SpreadsheetParser<T> {
 
     public ExcelParser(Class<T> clazz, File file) throws IOException {
-        this(clazz, new FileInputStream(file), ExcelType.getExcelType(file.getName()));
+        super(clazz, new FileInputStream(file), file.getName());
     }
 
     public ExcelParser(Class<T> clazz, File file, int afterLine) throws IOException {
-        this(clazz, new FileInputStream(file), ExcelType.getExcelType(file.getName()), afterLine);
+        super(clazz, new FileInputStream(file), file.getName());
+        super.setHeadersRows(afterLine);
     }
 
     public ExcelParser(Class<T> clazz, File file, int afterLine, boolean lastSheet) throws IOException {
-        this(clazz, file, afterLine, lastSheet, Default.class);
+        super(clazz, new FileInputStream(file), file.getName());
+        super.setHeadersRows(afterLine);
+        super.setLastsheet(lastSheet);
     }
 
     public ExcelParser(Class<T> clazz, File file, int afterLine, boolean lastSheet, Class<?> group) throws IOException {
-        this(clazz, new FileInputStream(file), ExcelType.getExcelType(file.getName()), afterLine, lastSheet, group);
+        super(clazz, new FileInputStream(file), file.getName());
+        super.setHeadersRows(afterLine);
+        super.setLastsheet(lastSheet);
+        super.setGroup(group);
     }
 
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type) {
-        this(clazz, inputStream, type, Default.class);
+    public ExcelParser(Class<T> clazz, InputStream inputStream, FileType type) {
+        super(clazz, inputStream, type);
     }
 
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, Class<?> group) {
+    public ExcelParser(Class<T> clazz, InputStream inputStream, FileType type, Class<?> group) {
         this(clazz, inputStream, type, Importer.DEFAULT_START_ROW, false, group);
     }
 
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine) {
+    public ExcelParser(Class<T> clazz, InputStream inputStream, FileType type, int afterLine) {
         this(clazz, inputStream, type, afterLine, false, Default.class);
     }
 
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet) {
+    public ExcelParser(Class<T> clazz, InputStream inputStream, FileType type, int afterLine, boolean isLastSheet) {
         this(clazz, inputStream, type, afterLine, isLastSheet, Default.class);
     }
 
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet, ImporterXLSXType importerXLSXType) {
-        this(clazz, inputStream, type, afterLine, isLastSheet);
-    }
-
-    public ExcelParser(Class<T> clazz, InputStream inputStream, ExcelType type, int afterLine, boolean isLastSheet, Class<?> group) {
-        this(clazz, inputStream, group, type.getFileType());
-        if (isLastSheet) {
-            setSheetNumber(getNumberOfSheets() - 1);
-        }
+    public ExcelParser(Class<T> clazz, InputStream inputStream, FileType type, int afterLine, boolean isLastSheet, Class<?> group) {
+        this(clazz, inputStream, group, type);
+        super.setLastsheet(isLastSheet);
         setHeadersRows(afterLine);
     }
 
-    private ExcelParser(Class<T> clazz, InputStream inputStream, Class<?> group, br.com.tecsinapse.exporter.type.FileType fileType) {
+    private ExcelParser(Class<T> clazz, InputStream inputStream, Class<?> group, FileType fileType) {
         super(clazz, inputStream, fileType);
         super.setGroup(group);
     }
