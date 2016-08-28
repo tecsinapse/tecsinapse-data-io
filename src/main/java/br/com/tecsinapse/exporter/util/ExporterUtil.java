@@ -44,13 +44,13 @@ public final class ExporterUtil {
         return writeDataToFile(table, fileType, filename, charset, SEMICOLON.getSeparator());
     }
 
-    public static File writeDataToFile(List<Table> table, FileType fileType, String filename, String charset, char separator) throws IOException, ExporterNotImplementedException {
+    public static File writeDataToFile(List<Table> table, FileType fileType, String filename, String charset, String separator) throws IOException, ExporterNotImplementedException {
         File file = createFile(filename);
         writeData(table, fileType, new FileOutputStream(file), charset, separator);
         return file;
     }
 
-    public static void writeData(List<Table> table, FileType fileType, OutputStream outputStream, String charset, char separator) throws IOException, ExporterNotImplementedException {
+    public static void writeData(List<Table> table, FileType fileType, OutputStream outputStream, String charset, String separator) throws IOException, ExporterNotImplementedException {
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
         if (fileType == FileType.XLSX || fileType == FileType.XLSM) {
             writeXlsx(table, bufferedOutputStream);
@@ -97,7 +97,7 @@ public final class ExporterUtil {
         WorkbookUtil.newWorkbookUtil().toWorkBook(workbook, tables).write(outputStream);
     }
 
-    private static void writeCsv(List<Table> tables, OutputStream outputStream, String charset, char separator) throws IOException {
+    private static void writeCsv(List<Table> tables, OutputStream outputStream, String charset, String separator) throws IOException {
         if (tables == null || tables.isEmpty()) {
             throw new ExporterException("Invalid Table.");
         }
@@ -110,11 +110,11 @@ public final class ExporterUtil {
         return Files.createTempFile(name, ext.isEmpty() ? "" : "." + ext).toFile();
     }
 
-    public static File getCsvFile(Table t, String fileName, String charsetName, char separator) throws IOException {
+    public static File getCsvFile(Table t, String fileName, String charsetName, String separator) throws IOException {
         return writeDataToFile(Arrays.asList(t), FileType.CSV, fileName, charsetName, separator);
     }
 
-    public static File getCsvFile(Table t, File f, String charsetName, char separator) throws IOException {
+    public static File getCsvFile(Table t, File f, String charsetName, String separator) throws IOException {
         try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
             writeData(Arrays.asList(t), FileType.CSV, fos, charsetName, separator);
         }

@@ -9,6 +9,8 @@ package br.com.tecsinapse.exporter.txt;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.tecsinapse.exporter.type.SeparatorType;
+
 public class FileTxt {
 
     private List<List<FieldTxt>> fields = new ArrayList<List<FieldTxt>>();
@@ -26,14 +28,14 @@ public class FileTxt {
 
     public void addTabbed(String content) {
         add(FieldTxt.newBuilder()
-                .withSeparator(SeparatorTxt.TAB)
+                .withSeparator(SeparatorType.TAB)
                 .withContent(content)
                 .build());
     }
 
     public void addTabbedFixedSize(String content, int fixedSize) {
         add(FieldTxt.newBuilder()
-                .withSeparator(SeparatorTxt.TAB)
+                .withSeparator(SeparatorType.TAB)
                 .withContent(content)
                 .withFixedSize(fixedSize)
                 .build());

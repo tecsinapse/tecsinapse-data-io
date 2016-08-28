@@ -6,6 +6,8 @@
  */
 package br.com.tecsinapse.exporter.txt;
 
+import br.com.tecsinapse.exporter.type.SeparatorType;
+
 /**
  * Representa cada coluna de uma linha no arquivo {@code .txt}
  * <br><br>
@@ -35,7 +37,7 @@ public class FieldTxt {
 
     private String content;
     private FieldTxtAlign align;
-    private SeparatorTxt separator;
+    private SeparatorType separator;
     private int fixedSize;
     private String filler;
 
@@ -79,7 +81,7 @@ public class FieldTxt {
 
         private String content;
         private FieldTxtAlign align = FieldTxtAlign.LEFT;
-        private SeparatorTxt separator = SeparatorTxt.NONE;
+        private SeparatorType separator = SeparatorType.NONE;
         private int fixedSize = 0;
         private String filler = " ";
 
@@ -100,7 +102,7 @@ public class FieldTxt {
             return this;
         }
 
-        public Builder withSeparator(SeparatorTxt separator) {
+        public Builder withSeparator(SeparatorType separator) {
             this.separator = separator;
             return this;
         }

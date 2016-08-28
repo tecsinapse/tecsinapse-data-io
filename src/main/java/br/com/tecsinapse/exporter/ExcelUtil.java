@@ -149,7 +149,7 @@ public class ExcelUtil {
      * @throws IOException IOException
      */
     @Deprecated
-    public static File getSvFile(Table t, String file, String charsetName, char separator) throws IOException {
+    public static File getSvFile(Table t, String file, String charsetName, String separator) throws IOException {
         return ExporterUtil.getCsvFile(t, file, charsetName, separator);
     }
 

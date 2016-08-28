@@ -25,7 +25,7 @@ import br.com.tecsinapse.exporter.type.SeparatorType;
 
 public class CsvUtil {
 
-    private static final char DEFAULT_SEPARATOR_CHAR = SeparatorType.SEMICOLON.getSeparator();
+    private static final String DEFAULT_SEPARATOR_CHAR = SeparatorType.SEMICOLON.getSeparator();
 
     private static final String SEPARATOR = String.valueOf(DEFAULT_SEPARATOR_CHAR);
 
@@ -86,7 +86,7 @@ public class CsvUtil {
         return file;
     }
 
-    public static <T> void write(List<List<T>> csv, OutputStream o, String chartsetName, char separator) throws IOException {
+    public static <T> void write(List<List<T>> csv, OutputStream o, String chartsetName, String separator) throws IOException {
         try (OutputStreamWriter writer = new OutputStreamWriter(o, chartsetName)) {
             for (List<T> row : csv) {
                 StringBuilder line = new StringBuilder();
