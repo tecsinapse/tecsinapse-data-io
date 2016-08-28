@@ -3,7 +3,7 @@ Tecsinapse Data Importer and Exporter
 [![License (LGPL version 3)](https://img.shields.io/badge/license-GNU%20LGPL%20version%203.0-blue.svg)](https://github.com/tecsinapse/ts-data-ie/blob/master/LICENCE)
 [![Build Status](https://travis-ci.org/tecsinapse/ts-data-ie.svg?branch=master)](https://travis-ci.org/tecsinapse/ts-data-ie)
 [![Coverage Status](https://img.shields.io/coveralls/tecsinapse/ts-data-ie.svg?branch=master)](https://coveralls.io/github/tecsinapse/ts-data-ie?branch=master)
-[![Dependency Status](https://www.versioneye.com/user/projects/576ff9fb671894004e1a90c3/badge.svg)](https://www.versioneye.com/user/projects/576ff9fb671894004e1a90c3)
+[![Dependency Status](https://www.versioneye.com/user/projects/57c283f5939fc600508e8c19/badge.svg)](https://www.versioneye.com/user/projects/57c283f5939fc600508e8c19)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/br.com.tecsinapse/ts-data-ie/badge.svg)](https://maven-badges.herokuapp.com/maven-central/br.com.tecsinapse/ts-data-ie/)
 [![Javadoc](http://www.javadoc.io/badge/br.com.tecsinapse/ts-data-ie.svg)](http://www.javadoc.io/doc/br.com.tecsinapse/ts-data-ie)
 
