@@ -60,11 +60,6 @@ public class Importer<T> implements Closeable {
         this(clazz, inputStream, filename, false, group);
     }
 
-    @Deprecated
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) throws IOException {
-        this(clazz, inputStream, filename, false, Default.class);
-    }
-
     public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet) throws IOException {
         this(clazz, inputStream, filename, isLastSheet, Default.class);
     }

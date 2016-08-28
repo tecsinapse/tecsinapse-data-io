@@ -9,19 +9,19 @@ package br.com.tecsinapse.exporter.type;
 
 public enum SeparatorType {
 
-    TAB('\t'),
-    NONE('\0'),
-    SPACE(' '),
-    SEMICOLON(';'),
-    COMMA(',');
+    TAB("\t"),
+    NONE(""),
+    SPACE(" "),
+    SEMICOLON(";"),
+    COMMA(",");
 
-    private final char separator;
+    private final String separator;
 
-    SeparatorType(char separator) {
+    SeparatorType(String separator) {
         this.separator = separator;
     }
 
-    public char getSeparator() {
+    public String getSeparator() {
         return separator;
     }
 
