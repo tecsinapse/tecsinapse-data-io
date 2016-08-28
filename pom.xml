@@ -63,6 +63,10 @@
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
+                <configuration>
+                    <serviceName>travis-ci</serviceName>
+                    <serviceJobId>${env.TRAVIS_JOB_ID} </serviceJobId>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -79,6 +83,13 @@
             <id>filipe.nevola</id>
             <name>Filipe Nevola</name>
             <email>filipe.nevola@tecsinapse.com.br</email>
+            <organization>${project.organization.name}</organization>
+            <organizationUrl>${project.organization.url}</organizationUrl>
+        </developer>
+        <developer>
+            <id>edimar.cardoso</id>
+            <name>Edimar Cardoso</name>
+            <email>edimar.cardoso@tecsinapse.com.br</email>
             <organization>${project.organization.name}</organization>
             <organizationUrl>${project.organization.url}</organizationUrl>
         </developer>

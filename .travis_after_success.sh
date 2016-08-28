@@ -11,7 +11,7 @@ if [[ $TRAVIS_JDK_VERSION != "oraclejdk7" ]]; then
     exit $?
 fi
 
-mvn -B jacoco:report coveralls:report
+mvn -B -DTRAVIS_JOB_ID=$TRAVIS_JOB_ID jacoco:report coveralls:report
 
 if [[ -n $TRAVIS_TAG ]]; then
     echo "Skipping deployment for tag \"${TRAVIS_TAG}\""
