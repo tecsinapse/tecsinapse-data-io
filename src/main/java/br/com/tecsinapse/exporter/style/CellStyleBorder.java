@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 
 public class CellStyleBorder implements Cloneable {
 
-    public static CellStyleBorder DEFAULT = new CellStyleBorder(true, true, true, true);
+    public static final CellStyleBorder DEFAULT = new CellStyleBorderDefault();
 
     private HSSFColor borderColor;
     private boolean left;
