@@ -12,10 +12,10 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.TableCellType;
-import br.com.tecsinapse.exporter.ExporterFormatter;
+import br.com.tecsinapse.exporter.style.TableCellStyle;
 
 public class TableTest {
 
@@ -78,11 +78,11 @@ public class TableTest {
     public void testColspanFirstLine() {
         Table t = new Table();
         t.addNewRow();
-        TableCell cellDados = new TableCell("Coluna 1", TableCellType.HEADER);
+        TableCell cellDados = new TableCell("Coluna 1", TableCellStyle.HEADER);
         cellDados.setColspan(6);
         t.add(cellDados);
 
-        TableCell cellComparacao = new TableCell("Coluna 2", TableCellType.HEADER);
+        TableCell cellComparacao = new TableCell("Coluna 2", TableCellStyle.HEADER);
         cellComparacao.setColspan(2);
         t.add(cellComparacao);
 
@@ -94,16 +94,16 @@ public class TableTest {
     public void testRowspanFirstLine() {
         Table t = new Table();
         t.addNewRow();
-        TableCell l1 = new TableCell("Linha 1", TableCellType.HEADER);
+        TableCell l1 = new TableCell("Linha 1", TableCellStyle.HEADER);
         l1.setColspan(6);
         t.add(l1);
 
-        TableCell l12 = new TableCell("Linha 1/2", TableCellType.HEADER);
+        TableCell l12 = new TableCell("Linha 1/2", TableCellStyle.HEADER);
         l12.setRowspan(2);
         t.add(l12);
 
         t.addNewRow();
-        TableCell l2 = new TableCell("Linha 2", TableCellType.HEADER);
+        TableCell l2 = new TableCell("Linha 2", TableCellStyle.HEADER);
         l2.setColspan(6);
         t.add(l2);
 
@@ -118,15 +118,15 @@ public class TableTest {
     public void testRowAndColspanFirstLine() {
         Table t = new Table();
         t.addNewRow();
-        TableCell l1 = new TableCell("Linha/Coluna 1", TableCellType.HEADER);
+        TableCell l1 = new TableCell("Linha/Coluna 1", TableCellStyle.HEADER);
         l1.setColspan(2);
         l1.setRowspan(2);
         t.add(l1);
 
-        t.add(new TableCell("Linha 1", TableCellType.HEADER));
+        t.add(new TableCell("Linha 1", TableCellStyle.HEADER));
 
         t.addNewRow();
-        t.add(new TableCell("Linha 2", TableCellType.HEADER));
+        t.add(new TableCell("Linha 2", TableCellStyle.HEADER));
 
 
         String text = t.getStringMatrixAsString(t.toStringMatrix());
@@ -139,13 +139,13 @@ public class TableTest {
     public void testNumber() {
         Table t = new Table();
         t.addNewRow();
-        t.add(new TableCell(1, TableCellType.HEADER));
-        t.add(new TableCell(2.2, TableCellType.HEADER));
+        t.add(new TableCell(1, TableCellStyle.HEADER));
+        t.add(new TableCell(2.2, TableCellStyle.HEADER));
 
         t.addNewRow();
         t.add(10);
         t.add(10.2);
-        t.setExporterFormatter(ExporterFormatter.DEFAULT);
+        t.setExporterFormatter(ExporterFormatter.ENGLISH);
         String text = t.getStringMatrixAsString(t.toStringMatrix());
         Assert.assertEquals(text,
                 "|1|2.2\n" +

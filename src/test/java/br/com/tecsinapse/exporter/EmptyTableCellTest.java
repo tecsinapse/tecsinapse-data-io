@@ -10,6 +10,8 @@ package br.com.tecsinapse.exporter;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import br.com.tecsinapse.exporter.style.TableCellStyle;
+
 public class EmptyTableCellTest {
 
     private EmptyTableCell emptyTableCell;
@@ -36,7 +38,7 @@ public class EmptyTableCellTest {
 
     @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testSetTableCellType() {
-        emptyTableCell.setTableCellType(TableCellType.BODY);
+        emptyTableCell.setTableCellStyle(TableCellStyle.BODY);
     }
 
 }

@@ -18,9 +18,7 @@ public enum CellType {
     DATETIME_TYPE(true),
     DATE_TYPE(true),
     TIME_TYPE(true),
-    CURRENCY_TYPE(true),
-    @Deprecated
-    BRL_TYPE(true);
+    CURRENCY_TYPE(true);
 
     private final boolean allowFormat;
 

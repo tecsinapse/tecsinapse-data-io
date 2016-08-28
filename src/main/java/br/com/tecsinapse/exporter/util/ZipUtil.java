@@ -7,7 +7,6 @@
 package br.com.tecsinapse.exporter.util;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -47,16 +46,6 @@ public final class ZipUtil {
             ByteStreams.copy(fis, zos);
             zos.closeEntry();
         }
-    }
-
-    /**
-     * This method is moved. It will be removed. Use dependency "ts-data-ie-jsf"
-     *
-     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil.facesDownloadZip(baos, fileName + "." + fileExtension)}
-     * @throws IOException IOException
-     */
-    @Deprecated
-    public static void exportZip() throws IOException {
     }
 
 }

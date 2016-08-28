@@ -9,13 +9,12 @@ package br.com.tecsinapse.exporter.converter;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 import org.testng.annotations.DataProvider;
 
 public class DateTableCellConverterTest extends AbstractTableCellConverter<Date, DateTableCellConverter> {
 
-    private static final String DATE = "Sat Apr 16 00:00:00 UTC 2016";
+    private static final String DATE = "2016-04-16T00:00:00";
 
     private final DateTableCellConverter converter = new DateTableCellConverter();
 
@@ -30,7 +29,6 @@ public class DateTableCellConverterTest extends AbstractTableCellConverter<Date,
         Calendar calendar = Calendar.getInstance();
         calendar.set(2016, Calendar.APRIL, 16, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
         return new Object[][]{
                 {null, null},
                 {EMPTY_STRING, null},

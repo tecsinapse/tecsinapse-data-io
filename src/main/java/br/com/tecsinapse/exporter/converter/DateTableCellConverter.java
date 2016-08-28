@@ -10,6 +10,8 @@ import java.util.Date;
 
 import com.google.common.base.Strings;
 
+import br.com.tecsinapse.exporter.util.ExporterDateUtils;
+
 public class DateTableCellConverter implements FromDateConverter<Date> {
 
     @Override
@@ -19,7 +21,7 @@ public class DateTableCellConverter implements FromDateConverter<Date> {
 
     @Override
     public Date apply(String input) {
-        return Strings.isNullOrEmpty(input) ? null : new Date(input);
+        return Strings.isNullOrEmpty(input) ? null : ExporterDateUtils.parseDate(input);
     }
 
 }

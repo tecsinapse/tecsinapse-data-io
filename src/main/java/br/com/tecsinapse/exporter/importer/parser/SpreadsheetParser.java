@@ -46,7 +46,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
     private int headersRows;
     private int sheetNumber;
     private boolean lastsheet = false;
-    private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
+    private ExporterFormatter exporterFormatter = ExporterFormatter.ENGLISH;
     private Workbook workbook;
     private final FileType fileType;
     public SpreadsheetParser(Class<T> clazz, File file) throws IOException {
