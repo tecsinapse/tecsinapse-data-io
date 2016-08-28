@@ -6,8 +6,6 @@
  */
 package br.com.tecsinapse.exporter.style;
 
-import java.util.Arrays;
-
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -15,33 +13,15 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 public class TableCellStyle implements Cloneable {
 
-    public static final TableCellStyle HEADER;
-    public static final TableCellStyle BODY;
-    public static final TableCellStyle FOOTER;
-
-    static {
-        BODY = new TableCellStyle(Colors.WHITE);
-        BODY.sethAlign(CellHAlign.CENTER);
-        BODY.setvAlign(CellVAlign.CENTER);
-        BODY.setBorder(CellStyleBorder.DEFAULT);
-        BODY.setFontSize(10);
-
-        HEADER = new TableCellStyle(Colors.GREY_25_PERCENT);
-        FOOTER = new TableCellStyle(Colors.GREY_25_PERCENT);
-        for (TableCellStyle tcs : Arrays.asList(HEADER, FOOTER)) {
-            tcs.setBold(true);
-            tcs.setFontSize(10);
-            tcs.sethAlign(CellHAlign.CENTER);
-            tcs.setvAlign(CellVAlign.CENTER);
-            tcs.setBorder(CellStyleBorder.DEFAULT);
-        }
-    }
+    public static final TableCellStyle HEADER = new TableCellStyleDefaultHeaderFooter();
+    public static final TableCellStyle BODY = new TableCellStyleDefaultBody();
+    public static final TableCellStyle FOOTER = new TableCellStyleDefaultHeaderFooter();
 
     private HSSFColor backgroundColor;
     private HSSFColor fontColor;
     private CellVAlign vAlign;
     private CellHAlign hAlign;
-    private CellStyleBorder border;
+    private CellStyleBorder border = CellStyleBorder.DEFAULT;
     private Integer fontSize;
     private boolean bold = false;
     private boolean italic = false;

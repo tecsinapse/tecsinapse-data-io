@@ -42,8 +42,10 @@ public class SpreadsheetParser<T> implements Parser<T> {
     private Class<?> group;
     private final InputStream inputStream;
     private boolean ignoreBlankLinesAtEnd = true;
+    private boolean useFormatterToParseValueAsString = false;
     private int headersRows;
     private int sheetNumber;
+    private boolean lastsheet = false;
     private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
     private Workbook workbook;
     private final FileType fileType;
@@ -97,6 +99,24 @@ public class SpreadsheetParser<T> implements Parser<T> {
         sheetNumber = getWorkbook().getFirstVisibleTab();
     }
 
+    public boolean isUseFormatterToParseValueAsString() {
+        return useFormatterToParseValueAsString;
+    }
+
+    public void setUseFormatterToParseValueAsString(boolean useFormatterToParseValueAsString) {
+        this.useFormatterToParseValueAsString = useFormatterToParseValueAsString;
+    }
+
+    @Override
+    public void setLastsheet(boolean lastsheet) {
+        this.lastsheet = lastsheet;
+    }
+
+    @Override
+    public void setFirstVisibleSheet() {
+        setSheetNumber(getWorkbook().getFirstVisibleTab());
+    }
+
     @Override
     public void setGroup(Class<?> group) {
         this.group = group;
@@ -114,6 +134,9 @@ public class SpreadsheetParser<T> implements Parser<T> {
 
     @Override
     public List<T> parse() throws Exception {
+        if (lastsheet) {
+            setSheetNumber(getNumberOfSheets() - 1);
+        }
         List<T> resultList = parseCurrentSheet();
         if (isIgnoreBlankLinesAtEnd()) {
             ImporterUtils.removeBlankLinesOfEnd(resultList, clazz);
@@ -141,7 +164,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
             T instance = constructor.newInstance();
             for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
                 TableCellMapping tcm = methodTcm.getValue();
-                ImporterUtils.parseSpreadsheetCell(tcm.converter(), evaluator, row.getCell(tcm.columnIndex()), methodTcm.getKey(), instance, exporterFormatter);
+                ImporterUtils.parseSpreadsheetCell(tcm.converter(), evaluator, row.getCell(tcm.columnIndex()), methodTcm.getKey(), instance, exporterFormatter, useFormatterToParseValueAsString);
             }
             list.add(instance);
         }

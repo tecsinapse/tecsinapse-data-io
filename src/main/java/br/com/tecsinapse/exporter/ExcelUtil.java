@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import br.com.tecsinapse.exporter.servlet.ExportServletUtil;
 import br.com.tecsinapse.exporter.util.ExporterUtil;
 import br.com.tecsinapse.exporter.util.SpreadsheetUtil;
 
@@ -30,84 +29,68 @@ public class ExcelUtil {
     }
 
     /**
-     * This method is moved. It will be removed in version 2.0.0
+     * This method is moved. It will be removed. Use dependency "tecsinapse-exporter-jsf"
      *
-     * @param name name 
-     * @param t table
-     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil}
+     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil.facesDownloadXls(name, t)}
      * @throws IOException IOException IOException
      */
     @Deprecated
-    public static void exportXls(String name, Table t) throws IOException {
-        ExportServletUtil.facesDownloadXls(name, t);
+    public static void exportXls() throws IOException {
     }
 
     /**
-     * This method is moved. It will be removed in version 2.0.0
+     * This method is moved. It will be removed. Use dependency "tecsinapse-exporter-jsf"
      *
-     * @param name name
-     * @param t table
-     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil}
+     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil.facesDownloadXlsx(name, t)}
      * @throws IOException IOException IOException
      */
     @Deprecated
-    public static void exportXlsx(String name, Table t) throws IOException {
-        ExportServletUtil.facesDownloadXlsx(name, t);
+    public static void exportXlsx() throws IOException {
+        ;
     }
 
     /**
-     * This method is moved. It will be removed in version 2.0.0
+     * This method is moved. It will be removed. Use dependency "tecsinapse-exporter-jsf"
      *
-     * @param name name
-     * @param t table
-     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil}
+     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil.facesDownloadXlsx(name, t)}
      * @throws IOException IOException IOException
      */
     @Deprecated
-    public static void exportSXlsx(String name, Table t) throws IOException {
-        ExportServletUtil.facesDownloadXlsx(name, t);
+    public static void exportSXlsx() throws IOException {
+        ;
     }
 
     /**
-     * This method is moved. It will be removed in version 2.0.0
+     * This method is moved. It will be removed. Use dependency "tecsinapse-exporter-jsf"
      *
-     * @param name name
-     * @param t table
-     * @param charsetName charset
-     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil}
+     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil.facesDownloadCsv(name, t, charsetName)}
      * @throws IOException IOException IOException
      */
     @Deprecated
-    public static void exportCsv(String name, Table t, String charsetName) throws IOException {
-        ExportServletUtil.facesDownloadCsv(name, t, charsetName);
+    public static void exportCsv() throws IOException {
+
     }
 
     /**
-     * This method is moved. It will be removed in version 2.0.0
+     * This method is moved. It will be removed. Use dependency "tecsinapse-exporter-jsf"
      *
-     * @param name name
-     * @param t table
-     * @param charsetName charset
-     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil}
+     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil.facesDownloadTxt(name, t, charsetName)}
      * @throws IOException IOException IOException
      */
     @Deprecated
-    public static void exportTxt(String name, Table t, String charsetName) throws IOException {
-        ExportServletUtil.facesDownloadTxt(name, t, charsetName);
+    public static void exportTxt() throws IOException {
+
     }
 
     /**
-     * This method is moved. It will be removed in version 2.0.0
+     * This method is moved. It will be removed. Use dependency "tecsinapse-exporter-jsf"
      *
-     * @param name name
-     * @param t table
-     * @param charsetName charset
-     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil}
+     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil.facesDownloadCsvZip(name, t, charsetName)}
      * @throws IOException IOException IOException
      */
     @Deprecated
-    public static void exportCsvZip(String name, Table t, String charsetName) throws IOException {
-        ExportServletUtil.facesDownloadCsvZip(name, t, charsetName);
+    public static void exportCsvZip() throws IOException {
+
     }
 
     /**

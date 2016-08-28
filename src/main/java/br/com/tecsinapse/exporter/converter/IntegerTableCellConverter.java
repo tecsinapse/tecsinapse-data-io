@@ -7,9 +7,16 @@
 package br.com.tecsinapse.exporter.converter;
 
 
+import java.math.BigDecimal;
+
 import com.google.common.base.Strings;
 
-public class IntegerTableCellConverter implements TableCellConverter<Integer> {
+public class IntegerTableCellConverter implements FromNumberConverter<Integer> {
+
+    @Override
+    public Integer apply(BigDecimal input) {
+        return input.intValue();
+    }
 
     @Override
     public Integer apply(String input) {

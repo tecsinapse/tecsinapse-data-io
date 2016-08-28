@@ -6,17 +6,18 @@
  */
 package br.com.tecsinapse.exporter.type;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
+import java.util.Date;
+
+import br.com.tecsinapse.exporter.util.ExporterDateUtils;
+import br.com.tecsinapse.exporter.util.ExporterDateUtils.DateType;
 
 public enum CellType {
 
     STRING_TYPE(false),
     NUMERIC_TYPE(true),
-    LOCAL_DATE_TIME_TYPE(true),
-    LOCAL_DATE_TYPE(true),
-    LOCAL_TIME_TYPE(true),
+    DATETIME_TYPE(true),
+    DATE_TYPE(true),
+    TIME_TYPE(true),
     CURRENCY_TYPE(true),
     @Deprecated
     BRL_TYPE(true);
@@ -31,14 +32,19 @@ public enum CellType {
         if (o instanceof Number) {
             return NUMERIC_TYPE;
         }
-        if (o instanceof LocalDateTime) {
-            return LOCAL_DATE_TIME_TYPE;
-        }
-        if (o instanceof LocalDate) {
-            return LOCAL_DATE_TYPE;
-        }
-        if (o instanceof LocalTime) {
-            return LOCAL_TIME_TYPE;
+        if (o instanceof Date) {
+            final DateType dateType = ExporterDateUtils.getDateType((Date) o);
+            if (dateType == DateType.NO_DATE) {
+                return STRING_TYPE;
+            }
+            if (dateType == DateType.DATE) {
+                return DATE_TYPE;
+            }
+            if (dateType == DateType.TIME) {
+                return TIME_TYPE;
+            }
+
+            return DATETIME_TYPE;
         }
         return STRING_TYPE;
     }

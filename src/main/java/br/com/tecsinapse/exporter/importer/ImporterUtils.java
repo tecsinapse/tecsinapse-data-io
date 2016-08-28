@@ -7,7 +7,6 @@
 package br.com.tecsinapse.exporter.importer;
 
 import static br.com.tecsinapse.exporter.util.Constants.DECIMAL_PRECISION;
-import static br.com.tecsinapse.exporter.util.Constants.LOCAL_DATE_BIGBANG;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -25,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +37,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
 import org.reflections.ReflectionUtils;
 
 import com.google.common.base.Function;
@@ -54,8 +51,8 @@ import com.google.common.collect.Multimap;
 import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.annotation.TableCellMappings;
-import br.com.tecsinapse.exporter.converter.TableCellConverter;
-import br.com.tecsinapse.exporter.util.Constants;
+import br.com.tecsinapse.exporter.converter.Converter;
+import br.com.tecsinapse.exporter.util.ExporterDateUtils;
 
 public class ImporterUtils {
 
@@ -203,43 +200,45 @@ public class ImporterUtils {
         };
     }
 
-    public static <T> void parseSpreadsheetCell(Class<? extends TableCellConverter<?>> tcc, FormulaEvaluator evaluator, Cell cell, Method method, T instance, ExporterFormatter exporterFormatter) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    public static <T> void parseSpreadsheetCell(Class<? extends Converter> tcc, FormulaEvaluator evaluator, Cell cell, Method method, T instance, ExporterFormatter exporterFormatter, boolean useFormatterToParseValueAsString) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         checkNotNull(method);
         Object value = getValueOrEmptyAsObject(evaluator, cell);
         try {
             if (value == null) {
                 return;
             }
-            Class<?> targetType = getReturnType(tcc);
-            Class<?> methodInputType = getMethodParamType(method);
-            if (isInstanceOf(value, BigDecimal.class) && isSameClassOrExtendedNullSafe(methodInputType, Number.class)) {
-                Object numericValue = toNumericValue((BigDecimal) value, targetType);
-                if (numericValue != null) {
-                    method.invoke(instance, numericValue);
-                    return;
-                }
-            }
-            if (isInstanceOf(value, LocalDateTime.class) && isJodaType(methodInputType)) {
-                LocalDateTime localDateTime = (LocalDateTime) value;
-                Object dateTimeValue = toDateTimeValue(localDateTime, targetType);
-                if (dateTimeValue != null) {
-                    method.invoke(instance, dateTimeValue);
-                    return;
-                }
-            }
-            if (isInstanceOf(value, LocalDateTime.class)) {
-                LocalDateTime localDateTime = (LocalDateTime) value;
-                value = formatLocalDateTimeAsIsoString(localDateTime);
-            }
+            Class<?> converterReturnType = getReturnTypeApply(tcc);
+            Class<?> converterInputType = getInputTypeApply(tcc);
 
-            if (isInstanceOf(value, methodInputType)) {
-                method.invoke(instance, value);
+            Class<?> methodInputType = getMethodParamType(method);
+
+            if (isInstanceOf(value, converterInputType) && isSameClassOrExtendedNullSafe(converterReturnType, methodInputType)) {
+                Converter converter = tcc.newInstance();
+                method.invoke(instance, converter.apply(value));
                 return;
             }
-            TableCellConverter<?> converter = tcc.newInstance();
+            if (isInstanceOf(value, Date.class)) {
+                if (useFormatterToParseValueAsString) {
+                    value = exporterFormatter.formatByType(value, false);
+                } else {
+                    Date date = (Date) value;
+                    value = ExporterDateUtils.formatWithIsoByDateType(date);
+                }
+            }
+
+            if (isInstanceOf(value, BigDecimal.class)) {
+                if (useFormatterToParseValueAsString) {
+                    value = exporterFormatter.formatByType(value, false);
+                } else {
+                    BigDecimal bigDecimal = (BigDecimal) value;
+                    value = bigDecimal.toPlainString();
+                }
+            }
+
+            Converter<?, ?> converter = tcc.newInstance();
             method.invoke(instance, converter.apply(value.toString()));
-        } catch (NoSuchMethodException e) {
-            TableCellConverter<?> converter = tcc.newInstance();
+        } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException e) {
+            Converter<?, ?> converter = tcc.newInstance();
             method.invoke(instance, converter.apply(value.toString()));
         }
     }
@@ -254,8 +253,8 @@ public class ImporterUtils {
                 return Boolean.valueOf(cellValue.getBooleanValue());
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    LocalDateTime localDateTime = LocalDateTime.fromDateFields(cell.getDateCellValue());
-                    return localDateTime;
+                    Date date = cell.getDateCellValue();
+                    return date;
                 }
                 BigDecimal bd = BigDecimal.valueOf(cell.getNumericCellValue()).setScale(DECIMAL_PRECISION, BigDecimal.ROUND_HALF_UP);
                 return bd.stripTrailingZeros();
@@ -270,62 +269,14 @@ public class ImporterUtils {
 
     public static String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell, ExporterFormatter exporterFormatter) {
         Object value = getValueOrEmptyAsObject(evaluator, cell);
-        if (value instanceof LocalDateTime) {
-            return formatLocalDateTimeAsString((LocalDateTime) value, exporterFormatter);
+        if (value instanceof Date) {
+            exporterFormatter.formatByDateType((Date) value);
         }
         if (value instanceof BigDecimal) {
             return formatNumericAsString((BigDecimal) value, exporterFormatter);
         }
         return value.toString();
     }
-
-    private static Object toNumericValue(BigDecimal bigDecimal, Class<?> targetType) {
-        if (Integer.class.equals(targetType)) {
-            return bigDecimal.intValue();
-        }
-        if (Long.class.equals(targetType)) {
-            return bigDecimal.longValue();
-        }
-        return null;
-    }
-
-    private static Object toDateTimeValue(LocalDateTime localDateTime, Class<?> targetType) {
-        if (LocalDateTime.class.equals(targetType)) {
-            return localDateTime;
-        }
-        if (LocalDate.class.equals(targetType)) {
-            return localDateTime.toLocalDate();
-        }
-        if (LocalTime.class.equals(targetType)) {
-            return localDateTime.toLocalTime();
-        }
-        return null;
-    }
-
-    private static String formatLocalDateTimeAsString(LocalDateTime localDateTime, ExporterFormatter exporterFormatter) {
-        LocalTime localTime = localDateTime.toLocalTime();
-        LocalDate localDate = localDateTime.toLocalDate();
-        if (LOCAL_DATE_BIGBANG.equals(localDate)) {
-            return exporterFormatter.formatLocalTime(localTime);
-        }
-
-        if (LocalTime.MIDNIGHT.equals(localTime)) {
-            return exporterFormatter.formatLocalDate(localDate);
-        }
-
-        return exporterFormatter.formatLocalDateTime(localDateTime);
-    }
-
-    private static String formatLocalDateTimeAsIsoString(LocalDateTime localDateTime) {
-        LocalTime localTime = localDateTime.toLocalTime();
-        LocalDate localDate = localDateTime.toLocalDate();
-        if (LOCAL_DATE_BIGBANG.compareTo(localDate) == 0) {
-            return localTime.toString(Constants.LOCAL_TIME_ISO_FORMAT);
-        }
-
-        return localDateTime.toString(Constants.LOCAL_DATE_TIME_ISO_FORMAT);
-    }
-
 
     private static String formatNumericAsString(Number number, ExporterFormatter exporterFormatter) {
         if (number == null) {
@@ -338,9 +289,34 @@ public class ImporterUtils {
         return value != null && targetType != null && targetType.isInstance(value);
     }
 
-    private static Class<?> getReturnType(Class<?> converter) throws NoSuchMethodException {
-        Method converterMethod = converter.getMethod("apply", String.class);
-        return converterMethod.getReturnType();
+    private static Method getTypedMethodConverter(Class<?> converter) throws NoSuchMethodException {
+        Method converterMethod[] = converter.getMethods();
+        for (Method method : converterMethod) {
+            Class<?>[] paramTypes = method.getParameterTypes();
+            if (method.getName().equals("apply") && paramTypes.length >0 && !isStringOrObject(paramTypes[0])) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    private static Class<?> getTypedToComparePrimitive(Class<?> c) throws NoSuchFieldException, IllegalAccessException {
+        Class<?> classz = (Class<?>) c.getField("TYPE").get(null);
+        return classz;
+    }
+
+    private static boolean isStringOrObject(Class<?> type) {
+        return String.class.equals(type) || Object.class.equals(type);
+    }
+
+    private static Class<?> getReturnTypeApply(Class<?> converter) throws NoSuchMethodException {
+        Method converterMethod = getTypedMethodConverter(converter);
+        return converterMethod == null ? null : converterMethod.getReturnType();
+    }
+
+    private static Class<?> getInputTypeApply(Class<?> converter) throws NoSuchMethodException {
+        Method converterMethod = getTypedMethodConverter(converter);
+        return converterMethod == null ? null : converterMethod.getParameterTypes()[0];
     }
 
     private static Class<?> getMethodParamType(Method method) throws NoSuchMethodException {
@@ -351,21 +327,22 @@ public class ImporterUtils {
         return null;
     }
 
-    private static boolean isJodaType(Class<?> o) throws NoSuchMethodException {
-        if (o.equals(LocalDateTime.class)) {
-            return true;
-        }
-        if (o.equals(LocalDate.class)) {
-            return true;
-        }
-        return o.equals(LocalTime.class);
-    }
-
-    private static boolean isSameClassOrExtendedNullSafe(Class<?> c1, Class<?> c2) throws NoSuchMethodException {
+    private static boolean isSameClassOrExtendedNullSafe(Class<?> c1, Class<?> c2) throws NoSuchMethodException, NoSuchFieldException, IllegalAccessException {
         if (c1 == null || c2 == null) {
             return false;
         }
+        if (c1.isPrimitive()) {
+            return comparePrimitive(c2, c1);
+        }
+        if (c2.isPrimitive()) {
+            return comparePrimitive(c1, c2);
+        }
         return c1.equals(c2) || c2.isAssignableFrom(c1);
+    }
+
+    private static boolean comparePrimitive(Class<?> c1, Class<?> primitive) throws NoSuchFieldException, IllegalAccessException {
+        Class<?> classz = getTypedToComparePrimitive(c1);
+        return classz != null && classz.equals(primitive);
     }
 
 }

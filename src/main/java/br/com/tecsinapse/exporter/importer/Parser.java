@@ -33,6 +33,10 @@ public interface Parser<T> extends Closeable {
 
     void setSheetNumber(int sheetNumber);
 
+    void setLastsheet(boolean lastsheet);
+
+    void setFirstVisibleSheet();
+
     int getSheetNumber();
 
     void setSheetNumberAsFirstNotHidden();

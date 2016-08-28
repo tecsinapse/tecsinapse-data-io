@@ -11,14 +11,14 @@ if [[ $TRAVIS_JDK_VERSION != "oraclejdk7" ]]; then
     exit $?
 fi
 
-mvn -B jacoco:report coveralls:report
+mvn -B -Denv.TRAVIS_JOB_ID=$TRAVIS_JOB_ID jacoco:report coveralls:report
 
 if [[ -n $TRAVIS_TAG ]]; then
     echo "Skipping deployment for tag \"${TRAVIS_TAG}\""
     exit $?
 fi
 
-if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "milestone-v1.6.0" ]]; then
+if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "milestone-v1.6" ]]; then
     mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=false --settings $GPG_DIR/settings.xml
     exit $?
 fi

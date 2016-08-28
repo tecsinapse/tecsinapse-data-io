@@ -17,11 +17,9 @@ import java.util.zip.ZipOutputStream;
 
 import com.google.common.io.ByteStreams;
 
-import br.com.tecsinapse.exporter.servlet.ExportServletUtil;
+public final class ZipUtil {
 
-public final class ZIPUtil {
-
-    private ZIPUtil() {
+    private ZipUtil() {
     }
 
     public static void zip(File newZip, File... filesToAdd) throws IOException {
@@ -52,17 +50,13 @@ public final class ZIPUtil {
     }
 
     /**
-     * This method is moved. It will be removed in version 2.0.0
+     * This method is moved. It will be removed. Use dependency "tecsinapse-exporter-jsf"
      *
-     * @param fileName fileName
-     * @param fileExtension fileExtension
-     * @param baos baos
-     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil}
+     * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil.facesDownloadZip(baos, fileName + "." + fileExtension)}
      * @throws IOException IOException
      */
     @Deprecated
-    public static void exportZip(String fileName, String fileExtension, ByteArrayOutputStream baos) throws IOException {
-        ExportServletUtil.facesDownloadZip(baos, fileName + "." + fileExtension);
+    public static void exportZip() throws IOException {
     }
 
 }

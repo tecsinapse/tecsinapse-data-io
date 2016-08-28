@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.testng.annotations.Test;
@@ -51,6 +53,39 @@ public class ExcelCellColorExampleTest {
 
         File htmlOutput = ResourceUtils.newFileTargetResource("HTML-cell-color.html");
         ExportHtml.newInstance(Charset.forName("UTF-8")).toHtml(table, htmlOutput);
+    }
+
+    @Test
+    public void generateManySheetsExample() throws IOException {
+        List<Table> tables = new ArrayList<>();
+        for (int s = 1; s <= 5; s++) {
+            Table table = new Table();
+            table.setTitle(String.format("Plan %d", s));
+            int line = 0;
+            for (HSSFColor color : HSSFColor.getIndexHash().values()) {
+                table.addNewRow();
+                line++;
+                TableCell tableCell = new TableCell(String.format("[Sheet %d] Line %d - Color: %s", s, line, color.getClass().getSimpleName()));
+                TableCellStyle style = new TableCellStyle(color);
+                tableCell.setTableCellStyle(style);
+                table.add(tableCell);
+                for (int i = 0; i < 10; i++) {
+                    tableCell = new TableCell(String.format("Col %d", i));
+                    tableCell.setTableCellStyle(style);
+                    style.setBold(true);
+                    table.add(tableCell);
+                }
+            }
+            tables.add(table);
+        }
+        String xlsx = "XLSX-cell-color-many-sheets.xlsx";
+        Files.move(ExporterUtil.getMoreThanOneSheetXlsFile(tables, xlsx).toPath(), ResourceUtils.newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        String xls = "XLS-cell-color-many-sheets.xls";
+        Files.move(ExporterUtil.getMoreThanOneSheetXlsxFile(tables, xls).toPath(), ResourceUtils.newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+/*        File htmlOutput = ResourceUtils.newFileTargetResource("HTML-cell-color.html");
+        ExportHtml.newInstance(Charset.forName("UTF-8")).toHtml(table, htmlOutput);*/
     }
 
 

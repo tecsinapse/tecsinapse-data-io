@@ -1,8 +1,8 @@
 tecsinapse-exporter
 ==========
 [![License (LGPL version 3)](https://img.shields.io/badge/license-GNU%20LGPL%20version%203.0-blue.svg)](https://github.com/tecsinapse/tecsinapse-exporter/blob/master/LICENCE)
-[![Build Status](https://travis-ci.org/tecsinapse/tecsinapse-exporter.svg?branch=milestone-v1.6.0)](https://travis-ci.org/tecsinapse/tecsinapse-exporter)
-[![Coverage Status](https://coveralls.io/repos/github/tecsinapse/tecsinapse-exporter/badge.svg?branch=milestone-v1.6.0)](https://coveralls.io/github/tecsinapse/tecsinapse-exporter?branch=milestone-v1.6.0)
+[![Build Status](https://travis-ci.org/tecsinapse/tecsinapse-exporter.svg?branch=master)](https://travis-ci.org/tecsinapse/tecsinapse-exporter)
+[![Coverage Status](https://img.shields.io/coveralls/tecsinapse/tecsinapse-exporter.svg?branch=master)](https://coveralls.io/github/tecsinapse/tecsinapse-exporter?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/576ff9fb671894004e1a90c3/badge.svg)](https://www.versioneye.com/user/projects/576ff9fb671894004e1a90c3)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/br.com.tecsinapse/tecsinapse-exporter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/br.com.tecsinapse/tecsinapse-exporter/)
 [![Javadoc](http://www.javadoc.io/badge/br.com.tecsinapse/tecsinapse-exporter.svg)](http://www.javadoc.io/doc/br.com.tecsinapse/tecsinapse-exporter)
@@ -20,14 +20,14 @@ Maven:
 <dependency>
   <groupId>br.com.tecsinapse</groupId>
   <artifactId>tecsinapse-exporter</artifactId>
-  <version>1.1.56</version>
+  <version>1.6.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-compile "br.com.tecsinapse:tecsinapse-exporter:1.1.56"
+compile "br.com.tecsinapse:tecsinapse-exporter:1.6.0"
 ```
 
 If you want to use snapshots first config OSS Sonatype Snapshots repository:
@@ -63,14 +63,14 @@ And then the dependency:
 <dependency>
   <groupId>br.com.tecsinapse</groupId>
   <artifactId>tecsinapse-exporter</artifactId>
-  <version>1.5.57-SNAPSHOT</version>
+  <version>1.6.1-SNAPSHOT</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-compile 'br.com.tecsinapse:tecsinapse-exporter:1.5.57-SNAPSHOT'
+compile 'br.com.tecsinapse:tecsinapse-exporter:1.6.1-SNAPSHOT'
 ```
 
 Documentation and samples

@@ -70,76 +70,6 @@ public class Table {
         getLastRow().add(cell);
     }
 
-    @Deprecated
-    public void add(String content, boolean bold) {
-        add(new TableCell(content, bold));
-    }
-
-    @Deprecated
-    public void add(String content, TableCellType tableCellType) {
-        add(new TableCell(content, tableCellType));
-    }
-
-    @Deprecated
-    public void add(String content, TableCellType tableCellType, boolean bold) {
-        add(new TableCell(content, tableCellType, bold));
-    }
-
-    @Deprecated
-    public void add(String content, TableCellType tableCellType, int colspan) {
-        add(new TableCell(content, tableCellType, colspan));
-    }
-
-    @Deprecated
-    public void add(String content, TableCellType tableCellType, int colspan, int rowspan) {
-        add(new TableCell(content, tableCellType, colspan, rowspan));
-    }
-
-    @Deprecated
-    public void add(String content, TableCellType tableCellType, String style, int colspan) {
-        add(new TableCell(content, tableCellType, style, colspan));
-    }
-
-    @Deprecated
-    public void add(String content, TableCellType tableCellType, String style, int colspan, int rowspan) {
-        add(new TableCell(content, tableCellType, style, colspan, rowspan));
-    }
-
-    @Deprecated
-    public void add(String content, String style) {
-        add(new TableCell(content, style));
-    }
-
-    @Deprecated
-    public void add(String content, String style, int colspan) {
-        add(new TableCell(content, style, colspan));
-    }
-
-    @Deprecated
-    public void add(String content, String style, int colspan, int rowspan) {
-        add(new TableCell(content, style, colspan, rowspan));
-    }
-
-    @Deprecated
-    public void add(String content, int colspan) {
-        add(new TableCell(content, colspan));
-    }
-
-    @Deprecated
-    public void add(String content, int colspan, int rowspan) {
-        add(new TableCell(content, colspan, rowspan));
-    }
-
-    @Deprecated
-    public void add(String content, CellType cellType) {
-        add(new TableCell(content, cellType));
-    }
-
-    @Deprecated
-    public void add(Number content, boolean bold) {
-        add(new TableCell(content, bold));
-    }
-
     public void add(Object content) {
         add(new TableCell(content));
     }
@@ -154,6 +84,31 @@ public class Table {
                 .tableCellStyle(tableCellStyle)
                 .colspan(colspan)
         );
+    }
+
+    public Table withNewRow() {
+        addNewRow();
+        return this;
+    }
+
+    public Table withCell(TableCell tableCell) {
+        add(tableCell);
+        return this;
+    }
+
+    public Table withCell(Object content) {
+        add(content);
+        return this;
+    }
+
+    public Table withCell(Object content, TableCellStyle tableCellStyle) {
+        add(content, tableCellStyle);
+        return this;
+    }
+
+    public Table withCell(Object content, TableCellStyle tableCellStyle, int colspan) {
+        add(content, tableCellStyle, colspan);
+        return this;
     }
 
     public void addOnNewRow(TableCell cell) {
@@ -449,5 +404,77 @@ public class Table {
 
     public void setExporterFormatter(ExporterFormatter exporterFormatter) {
         this.exporterFormatter = exporterFormatter;
+    }
+
+    // Deprecated methods
+
+    @Deprecated
+    public void add(String content, boolean bold) {
+        add(new TableCell(content, bold));
+    }
+
+    @Deprecated
+    public void add(String content, TableCellType tableCellType) {
+        add(new TableCell(content, tableCellType));
+    }
+
+    @Deprecated
+    public void add(String content, TableCellType tableCellType, boolean bold) {
+        add(new TableCell(content, tableCellType, bold));
+    }
+
+    @Deprecated
+    public void add(String content, TableCellType tableCellType, int colspan) {
+        add(new TableCell(content, tableCellType, colspan));
+    }
+
+    @Deprecated
+    public void add(String content, TableCellType tableCellType, int colspan, int rowspan) {
+        add(new TableCell(content, tableCellType, colspan, rowspan));
+    }
+
+    @Deprecated
+    public void add(String content, TableCellType tableCellType, String style, int colspan) {
+        add(new TableCell(content, tableCellType, style, colspan));
+    }
+
+    @Deprecated
+    public void add(String content, TableCellType tableCellType, String style, int colspan, int rowspan) {
+        add(new TableCell(content, tableCellType, style, colspan, rowspan));
+    }
+
+    @Deprecated
+    public void add(String content, String style) {
+        add(new TableCell(content, style));
+    }
+
+    @Deprecated
+    public void add(String content, String style, int colspan) {
+        add(new TableCell(content, style, colspan));
+    }
+
+    @Deprecated
+    public void add(String content, String style, int colspan, int rowspan) {
+        add(new TableCell(content, style, colspan, rowspan));
+    }
+
+    @Deprecated
+    public void add(String content, int colspan) {
+        add(new TableCell(content, colspan));
+    }
+
+    @Deprecated
+    public void add(String content, int colspan, int rowspan) {
+        add(new TableCell(content, colspan, rowspan));
+    }
+
+    @Deprecated
+    public void add(String content, CellType cellType) {
+        add(new TableCell(content, cellType));
+    }
+
+    @Deprecated
+    public void add(Number content, boolean bold) {
+        add(new TableCell(content, bold));
     }
 }

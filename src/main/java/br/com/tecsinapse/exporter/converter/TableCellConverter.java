@@ -6,8 +6,14 @@
  */
 package br.com.tecsinapse.exporter.converter;
 
-import com.google.common.base.Function;
-
-public interface TableCellConverter<T> extends Function<String, T> {
+/**
+ * Does some thing in old style. It will be removed in version 2.0.0
+ *
+ * @deprecated use {@link br.com.tecsinapse.exporter.converter.FromDateConverter} to load date cells from xls ou xlsx,
+ * {@link br.com.tecsinapse.exporter.converter.FromNumberConverter} to load numbers cells from xls ou xlsx
+ * {@link br.com.tecsinapse.exporter.converter.FromStringConverter} to load generic cells from xls ou xlsx
+ */
+@Deprecated
+public interface TableCellConverter<T> extends Converter<String, T> {
 
 }

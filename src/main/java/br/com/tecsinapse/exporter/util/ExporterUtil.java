@@ -16,10 +16,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import br.com.tecsinapse.exporter.Table;
+import br.com.tecsinapse.exporter.exceptions.ExporterException;
 import br.com.tecsinapse.exporter.exceptions.ExporterNotImplementedException;
 import br.com.tecsinapse.exporter.txt.FieldTxt;
 import br.com.tecsinapse.exporter.txt.FileTxt;
@@ -30,21 +36,21 @@ public final class ExporterUtil {
 
     }
 
-    public static File writeDataToFile(Table table, FileType fileType, String filename) throws IOException, ExporterNotImplementedException {
+    public static File writeDataToFile(List<Table> table, FileType fileType, String filename) throws IOException, ExporterNotImplementedException {
         return writeDataToFile(table, fileType, filename, "UTF-8");
     }
 
-    public static File writeDataToFile(Table table, FileType fileType, String filename, String charset) throws IOException, ExporterNotImplementedException {
+    public static File writeDataToFile(List<Table> table, FileType fileType, String filename, String charset) throws IOException, ExporterNotImplementedException {
         return writeDataToFile(table, fileType, filename, charset, SEMICOLON.getSeparator());
     }
 
-    public static File writeDataToFile(Table table, FileType fileType, String filename, String charset, char separator) throws IOException, ExporterNotImplementedException {
+    public static File writeDataToFile(List<Table> table, FileType fileType, String filename, String charset, char separator) throws IOException, ExporterNotImplementedException {
         File file = createFile(filename);
         writeData(table, fileType, new FileOutputStream(file), charset, separator);
         return file;
     }
 
-    public static void writeData(Table table, FileType fileType, OutputStream outputStream, String charset, char separator) throws IOException, ExporterNotImplementedException {
+    public static void writeData(List<Table> table, FileType fileType, OutputStream outputStream, String charset, char separator) throws IOException, ExporterNotImplementedException {
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
         if (fileType == FileType.XLSX || fileType == FileType.XLSM) {
             writeXlsx(table, bufferedOutputStream);
@@ -79,16 +85,23 @@ public final class ExporterUtil {
         }
     }
 
-    private static void writeXlsx(Table table, OutputStream outputStream) throws IOException {
-        table.toXSSFWorkBook().write(outputStream);
+    private static void writeXlsx(List<Table> tables, OutputStream outputStream) throws IOException {
+        writeSpreadsheet(new XSSFWorkbook(), tables, outputStream);
     }
 
-    private static void writeXls(Table table, OutputStream outputStream) throws IOException {
-        table.toHSSFWorkBook().write(outputStream);
+    private static void writeXls(List<Table> tables, OutputStream outputStream) throws IOException {
+        writeSpreadsheet(new HSSFWorkbook(), tables, outputStream);
     }
 
-    private static void writeCsv(Table table, OutputStream outputStream, String charset, char separator) throws IOException {
-        CsvUtil.write(table.toStringMatrix(), outputStream, charset, separator);
+    private static void writeSpreadsheet(Workbook workbook, List<Table> tables, OutputStream outputStream) throws IOException {
+        WorkbookUtil.newWorkbookUtil().toWorkBook(workbook, tables).write(outputStream);
+    }
+
+    private static void writeCsv(List<Table> tables, OutputStream outputStream, String charset, char separator) throws IOException {
+        if (tables == null || tables.isEmpty()) {
+            throw new ExporterException("Invalid Table.");
+        }
+        CsvUtil.write(tables.get(0).toStringMatrix(), outputStream, charset, separator);
     }
 
     private static File createFile(String fileName) throws IOException {
@@ -98,25 +111,33 @@ public final class ExporterUtil {
     }
 
     public static File getCsvFile(Table t, String fileName, String charsetName, char separator) throws IOException {
-        return writeDataToFile(t, FileType.CSV, fileName, charsetName, separator);
+        return writeDataToFile(Arrays.asList(t), FileType.CSV, fileName, charsetName, separator);
     }
 
     public static File getCsvFile(Table t, File f, String charsetName, char separator) throws IOException {
         try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
-            writeData(t, FileType.CSV, fos, charsetName, separator);
+            writeData(Arrays.asList(t), FileType.CSV, fos, charsetName, separator);
         }
         return f;
     }
 
     public static File getXlsFile(Table t, String file) throws IOException {
+        return getMoreThanOneSheetXlsFile(Arrays.asList(t), file);
+    }
+
+    public static File getMoreThanOneSheetXlsFile(List<Table> t, String file) throws IOException {
         return writeDataToFile(t, FileType.XLS, file);
     }
 
     public static File getXlsxFile(Table t, String file) throws IOException {
+        return getMoreThanOneSheetXlsxFile(Arrays.asList(t), file);
+    }
+
+    public static File getMoreThanOneSheetXlsxFile(List<Table> t, String file) throws IOException {
         return writeDataToFile(t, FileType.XLSX, file);
     }
 
     public static void writeCsvToOutput(Table t, String chartsetName, OutputStream out) throws IOException {
-        writeData(t, FileType.CSV, out, chartsetName, SEMICOLON.getSeparator());
+        writeData(Arrays.asList(t), FileType.CSV, out, chartsetName, SEMICOLON.getSeparator());
     }
 }

@@ -24,15 +24,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.xml.sax.SAXException;
 
-import br.com.tecsinapse.exporter.util.CsvUtil;
-import br.com.tecsinapse.exporter.type.FileType;
+import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
-import br.com.tecsinapse.exporter.converter.TableCellConverter;
+import br.com.tecsinapse.exporter.converter.Converter;
 import br.com.tecsinapse.exporter.converter.group.Default;
 import br.com.tecsinapse.exporter.importer.Importer;
 import br.com.tecsinapse.exporter.importer.ImporterUtils;
 import br.com.tecsinapse.exporter.importer.Parser;
-import br.com.tecsinapse.exporter.ExporterFormatter;
+import br.com.tecsinapse.exporter.type.FileType;
+import br.com.tecsinapse.exporter.util.CsvUtil;
 
 public class CsvParser<T> implements Parser<T> {
 
@@ -88,6 +88,16 @@ public class CsvParser<T> implements Parser<T> {
 
     @Override
     public void setSheetNumber(int sheetNumber) {
+
+    }
+
+    @Override
+    public void setLastsheet(boolean lastsheet) {
+
+    }
+
+    @Override
+    public void setFirstVisibleSheet() {
 
     }
 
@@ -174,7 +184,7 @@ public class CsvParser<T> implements Parser<T> {
 
                 TableCellMapping tcm = methodTcm.getValue();
                 String value = getValueOrEmpty(fields, tcm.columnIndex());
-                TableCellConverter<?> converter = tcm.converter().newInstance();
+                Converter<?, ?> converter = tcm.converter().newInstance();
                 Object obj = converter.apply(value);
                 method.invoke(instance, obj);
             }
