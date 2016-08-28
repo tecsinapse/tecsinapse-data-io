@@ -9,6 +9,8 @@ package br.com.tecsinapse.exporter.exceptions;
 
 public class ExporterNotImplementedException extends RuntimeException {
 
+    private static final long serialVersionUID = -34323506834857603L;
+
     public ExporterNotImplementedException(String message) {
         super(message);
     }

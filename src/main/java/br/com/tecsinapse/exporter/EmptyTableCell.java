@@ -6,6 +6,8 @@
  */
 package br.com.tecsinapse.exporter;
 
+import br.com.tecsinapse.exporter.style.TableCellStyle;
+
 public final class EmptyTableCell extends TableCell {
 
     public static final EmptyTableCell EMPTY_CELL = new EmptyTableCell();
@@ -13,27 +15,28 @@ public final class EmptyTableCell extends TableCell {
     private EmptyTableCell() {
     }
 
+    private void throwUnsupportedOperationException() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("EmptyTableCell: Unsupported operation for default objects.");
+    }
+
     @Override
     public void setColspan(Integer colspan) {
-        throw new UnsupportedOperationException(
-                "EmptyTableCell: não é possível alterar o conteúdo");
+        throwUnsupportedOperationException();
     }
 
     @Override
     public void setContent(Object content) {
-        throw new UnsupportedOperationException(
-                "EmptyTableCell: não é possível alterar o conteúdo");
+        throwUnsupportedOperationException();
     }
 
     @Override
     public void setRowspan(Integer rowspan) {
-        throw new UnsupportedOperationException(
-                "EmptyTableCell: não é possível alterar o conteúdo");
+        throwUnsupportedOperationException();
     }
 
     @Override
-    public void setTableCellType(TableCellType tableCellType) {
-        throw new UnsupportedOperationException(
-                "EmptyTableCell: não é possível alterar o conteúdo");
+    public void setTableCellStyle(TableCellStyle tableCellStyle) {
+        throwUnsupportedOperationException();
     }
+
 }

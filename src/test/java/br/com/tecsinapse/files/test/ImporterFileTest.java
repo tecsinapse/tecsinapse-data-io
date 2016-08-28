@@ -30,8 +30,8 @@ import org.testng.annotations.Test;
 import com.google.common.base.Charsets;
 
 import br.com.tecsinapse.exporter.converter.FromDateConverter;
-import br.com.tecsinapse.exporter.importer.ExcelParser;
 import br.com.tecsinapse.exporter.importer.Importer;
+import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
 import br.com.tecsinapse.exporter.type.FileType;
 
 public class ImporterFileTest {
@@ -103,10 +103,10 @@ public class ImporterFileTest {
     public void validaLastSheet(File arquivo, boolean lastSheet, int afterLine, List<FileBean> esperados) throws Exception {
         for (Locale locale : LOCALES) {
             Locale.setDefault(locale);
-            try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine, lastSheet)) {
-                //excelParser.setDateStringPattern(DD_MM_YYYY);
-
-                final List<FileBean> beans = excelParser.parse();
+            try (final SpreadsheetParser<FileBean> parser = new SpreadsheetParser<>(FileBean.class, arquivo)) {
+                parser.setHeadersRows(afterLine);
+                parser.setLastsheet(lastSheet);
+                final List<FileBean> beans = parser.parse();
                 for (int i = 0; i < beans.size(); i++) {
                     assertFileBeanEquals(beans.get(i), esperados.get(i), arquivo);
                 }
@@ -136,8 +136,9 @@ public class ImporterFileTest {
     public void validaSheet(File arquivo, int afterLine, List<List<FileBean>> sheets) throws Exception {
         for (Locale locale : LOCALES) {
             Locale.setDefault(locale);
-            try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
-                assertFileBeanEquals(excelParser, sheets, arquivo);
+            try (final SpreadsheetParser<FileBean> parser = new SpreadsheetParser<>(FileBean.class, arquivo)) {
+                parser.setHeadersRows(afterLine);
+                assertFileBeanEquals(parser, sheets, arquivo);
             }
         }
     }
@@ -146,19 +147,20 @@ public class ImporterFileTest {
     public void validaSheetWithDate(File arquivo, int afterLine, List<List<FileBean>> sheets) throws Exception {
         for (Locale locale : LOCALES) {
             Locale.setDefault(locale);
-            try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, arquivo, afterLine)) {
-                assertFileBeanEquals(excelParser, sheets, arquivo);
+            try (final SpreadsheetParser<FileBean> parser = new SpreadsheetParser<>(FileBean.class, arquivo)) {
+                parser.setHeadersRows(afterLine);
+                assertFileBeanEquals(parser, sheets, arquivo);
             }
         }
     }
 
-    private void assertFileBeanEquals(final ExcelParser<FileBean> excelParser, final List<List<FileBean>> sheets,
+    private void assertFileBeanEquals(final SpreadsheetParser<FileBean> parser, final List<List<FileBean>> sheets,
                                       final File arquivo) throws Exception {
         for (int sheetNumber = 0; sheetNumber < sheets.size(); sheetNumber++) {
-            excelParser.setSheetNumber(sheetNumber);
+            parser.setSheetNumber(sheetNumber);
             final List<FileBean> esperados = sheets.get(sheetNumber);
 
-            final List<FileBean> beans = excelParser.parse();
+            final List<FileBean> beans = parser.parse();
             for (int i = 0; i < beans.size(); i++) {
                 final FileBean atual = beans.get(i);
                 final FileBean esperado = esperados.get(i);
@@ -187,14 +189,15 @@ public class ImporterFileTest {
 
     @Test(dataProvider = "filesWithHiddenSheet")
     public void validateFilesWithHiddenSheet(File file, int expectedSheetNumber) throws IOException {
-        try (final ExcelParser<FileBean> excelParser = new ExcelParser<>(FileBean.class, file, 1)) {
-            assertEquals(excelParser.getSheetNumber(), 0);
+        try (final SpreadsheetParser<FileBean> parser = new SpreadsheetParser<>(FileBean.class, file)) {
+            parser.setHeadersRows(1);
+            assertEquals(parser.getSheetNumber(), 0);
 
-            excelParser.setSheetNumberAsFirstNotHidden();
-            assertEquals(excelParser.getSheetNumber(), expectedSheetNumber);
+            parser.setSheetNumberAsFirstNotHidden();
+            assertEquals(parser.getSheetNumber(), expectedSheetNumber);
 
             try {
-                excelParser.parse();
+                parser.parse();
             } catch (Exception e) {
                 Assert.fail("Fail while reading first not hidden sheet.", e);
             }

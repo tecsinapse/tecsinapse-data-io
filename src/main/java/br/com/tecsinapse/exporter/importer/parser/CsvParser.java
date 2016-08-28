@@ -40,7 +40,7 @@ public class CsvParser<T> implements Parser<T> {
     private Class<?> group;
     private List<String> csvLines;
     private int headersRows = Importer.DEFAULT_START_ROW;
-    private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
+    private ExporterFormatter exporterFormatter = ExporterFormatter.ENGLISH;
 
     private boolean ignoreBlankLinesAtEnd = false;
 

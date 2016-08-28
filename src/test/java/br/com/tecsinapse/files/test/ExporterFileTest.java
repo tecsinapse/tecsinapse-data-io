@@ -36,8 +36,8 @@ import com.google.common.collect.FluentIterable;
 import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.TableCellType;
-import br.com.tecsinapse.exporter.importer.ExcelParser;
+import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
+import br.com.tecsinapse.exporter.style.TableCellStyle;
 import br.com.tecsinapse.exporter.util.CsvUtil;
 import br.com.tecsinapse.exporter.util.ExporterUtil;
 
@@ -45,7 +45,7 @@ public class ExporterFileTest {
 
     private static final List<Locale> LOCALES = Arrays.asList(new Locale("pt", "BR"), ENGLISH, FRENCH, Locale.getDefault());
 
-    private static ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
+    private static ExporterFormatter exporterFormatter = ExporterFormatter.ENGLISH;
 
     @DataProvider(name = "beans")
     public Object[][] beans() {
@@ -88,9 +88,9 @@ public class ExporterFileTest {
         final Function<File, List<List<String>>> excelLines = new Function<File, List<List<String>>>() {
             @Override
             public List<List<String>> apply(File file) {
-                try (final ExcelParser<?> parser = new ExcelParser<>(null, file)) {
+                try (final SpreadsheetParser<?> parser = new SpreadsheetParser<>(null, file)) {
                     parser.setExporterFormatter(exporterFormatter);
-                    parser.setAfterLine(0);
+                    parser.setHeadersRows(0);
                     return parser.getLines();
                 } catch (Exception e) {
                     throw Throwables.propagate(e);
@@ -161,12 +161,12 @@ public class ExporterFileTest {
 
             //header
             table.addNewRow();
-            table.add("Cidade", TableCellType.HEADER);
-            table.add("Estado", TableCellType.HEADER);
-            table.add("Data", TableCellType.HEADER);
-            table.add("", TableCellType.HEADER);
-            table.add("Inteiro", TableCellType.HEADER);
-            table.add("Decimal", TableCellType.HEADER);
+            table.add("Cidade", TableCellStyle.HEADER);
+            table.add("Estado", TableCellStyle.HEADER);
+            table.add("Data", TableCellStyle.HEADER);
+            table.add("", TableCellStyle.HEADER);
+            table.add("Inteiro", TableCellStyle.HEADER);
+            table.add("Decimal", TableCellStyle.HEADER);
 
             for (FileBean bean : beans) {
                 //body
@@ -185,8 +185,8 @@ public class ExporterFileTest {
             table.add(" ");
             table.add((String) null);
             table.add((Number) null);
-            table.add("last", TableCellType.FOOTER);
-            table.add(new TableCell("last tc", TableCellType.FOOTER));
+            table.add("last", TableCellStyle.FOOTER);
+            table.add(new TableCell("last tc", TableCellStyle.FOOTER));
 
             table.setExporterFormatter(exporterFormatter);
             final File file = toFile.apply(table);

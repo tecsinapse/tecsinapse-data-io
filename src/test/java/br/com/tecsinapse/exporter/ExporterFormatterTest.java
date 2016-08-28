@@ -27,10 +27,10 @@ public class ExporterFormatterTest {
     @DataProvider(name = "exporterFormatterDs")
     private Object[][] exporterFormatterDs() throws ParseException {
         return new Object[][]{
-                { Locale.ENGLISH, ExporterFormatter.DEFAULT, DATETIME_FORMAT.parse("2016-02-28T15:45:46"), "Feb 28, 2016 3:45:46 PM", DATE_FORMAT.parse("2016-02-28"), "Feb 28, 2016", TIME_FORMAT.parse("15:45:46"), "3:45 PM", 12025.5, "12,025.5"},
-                { Constants.LOCALE_PT_BR, ExporterFormatter.PT_BR, DATETIME_FORMAT.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", DATE_FORMAT.parse("2016-02-28"), "28/02/2016", TIME_FORMAT.parse("15:45:46"), "15:45", 12025.5, "12.025,5"},
-                { Locale.ENGLISH, ExporterFormatter.DEFAULT, DATETIME_FORMAT.parse("2016-02-28T15:45:46"), "Feb 28, 2016 3:45:46 PM", DATE_FORMAT.parse("2016-02-28"), "Feb 28, 2016", TIME_FORMAT.parse("15:45:46"), "3:45 PM", 12025, "12,025"},
-                { Constants.LOCALE_PT_BR, ExporterFormatter.PT_BR, DATETIME_FORMAT.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", DATE_FORMAT.parse("2016-02-28"), "28/02/2016", TIME_FORMAT.parse("15:45:46"), "15:45", 12025, "12.025"},
+                { Locale.ENGLISH, ExporterFormatter.ENGLISH, DATETIME_FORMAT.parse("2016-02-28T15:45:46"), "Feb 28, 2016 3:45:46 PM", DATE_FORMAT.parse("2016-02-28"), "Feb 28, 2016", TIME_FORMAT.parse("15:45:46"), "3:45 PM", 12025.5, "12,025.5"},
+                { Constants.LOCALE_PT_BR, ExporterFormatter.BRAZILIAN, DATETIME_FORMAT.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", DATE_FORMAT.parse("2016-02-28"), "28/02/2016", TIME_FORMAT.parse("15:45:46"), "15:45", 12025.5, "12.025,5"},
+                { Locale.ENGLISH, ExporterFormatter.ENGLISH, DATETIME_FORMAT.parse("2016-02-28T15:45:46"), "Feb 28, 2016 3:45:46 PM", DATE_FORMAT.parse("2016-02-28"), "Feb 28, 2016", TIME_FORMAT.parse("15:45:46"), "3:45 PM", 12025, "12,025"},
+                { Constants.LOCALE_PT_BR, ExporterFormatter.BRAZILIAN, DATETIME_FORMAT.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", DATE_FORMAT.parse("2016-02-28"), "28/02/2016", TIME_FORMAT.parse("15:45:46"), "15:45", 12025, "12.025"},
                 { Locale.ENGLISH, new ExporterFormatter("yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "HH:mm:ss", "#,##0.00", "#,###", "R$ #,##0.00", Locale.ENGLISH), DATETIME_FORMAT.parse("2016-02-28T15:45:46"), "2016-02-28 15:45:46", DATE_FORMAT.parse("2016-02-28"), "2016-02-28", TIME_FORMAT.parse("15:45:46"), "15:45:46", 12025.5, "12,025.50"},
                 { Constants.LOCALE_PT_BR, new ExporterFormatter("dd/MM/yyyy HH:mm:ss", "dd/MM/yyyy", "HH:mm:ss", "#,##0.00", "#,###", "R$ #,##0.00", new Locale("pt", "BR")), DATETIME_FORMAT.parse("2016-02-28T15:45:46"), "28/02/2016 15:45:46", DATE_FORMAT.parse("2016-02-28"), "28/02/2016", TIME_FORMAT.parse("15:45:46"), "15:45:46", 12025.5, "12.025,50"}
         };

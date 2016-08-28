@@ -133,9 +133,6 @@ public class WorkbookUtil {
     }
 
     private void setCellStyle(Cell cell, TableCell tableCell, Workbook wb, String cellFormat) {
-        if (tableCell.getCellType() == CellType.BRL_TYPE) {
-            cellFormat = "_$R$ #,##0.00";
-        }
         TableCellStyle tableCellStyle = tableCell.getTableCellStyle().clone();
         tableCellStyle.setCellFormat(cellFormat);
         cell.setCellStyle(getOrNewCellStyle(tableCellStyle, wb));

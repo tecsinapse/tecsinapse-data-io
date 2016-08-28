@@ -20,7 +20,6 @@ import org.testng.annotations.Test;
 
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.builds.TableCellBuilder;
 
 public class ExportHtmlTest {
 
@@ -79,11 +78,10 @@ public class ExportHtmlTest {
         for(List<String> cols : rows) {
             table.addNewRow();
             for(String col : cols) {
-                TableCell cell = TableCellBuilder.newTableCellBuilder()
-                        .content(col)
-                        .colspan(colspan)
-                        .rowspan(rowspan)
-                        .build();
+                TableCell cell = new TableCell(col)
+                        .withContent(col)
+                        .withColspan(colspan)
+                        .withRowspan(rowspan);
                 table.add(cell);
             }
         }

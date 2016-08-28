@@ -21,8 +21,8 @@ import br.com.tecsinapse.exporter.util.ExporterDateUtils.DateType;
 
 public class ExporterFormatter {
 
-    public static final ExporterFormatter PT_BR = new ExporterFormatter(Constants.LOCALE_PT_BR);
-    public static final ExporterFormatter DEFAULT = new ExporterFormatter(Locale.ENGLISH);
+    public static final ExporterFormatter BRAZILIAN = new ExporterFormatter(Constants.LOCALE_PT_BR);
+    public static final ExporterFormatter ENGLISH = new ExporterFormatter(Locale.ENGLISH);
 
     private static final String CELL_SUFIX_FORMAT = ";@";
 
