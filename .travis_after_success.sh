@@ -10,7 +10,7 @@ if [[ $TRAVIS_JDK_VERSION != "oraclejdk7" ]]; then
     echo "Skipping after_success actions for JDK version \"${TRAVIS_JDK_VERSION}\""
     exit $?
 fi
-echo "TRAVIS_JOB_ID: $TRAVIS_JOB_ID"
+
 mvn -B -Denv.TRAVIS_JOB_ID=$TRAVIS_JOB_ID jacoco:report coveralls:report
 
 if [[ -n $TRAVIS_TAG ]]; then
