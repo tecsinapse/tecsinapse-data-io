@@ -1,5 +1,5 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Importer and Exporter
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -50,7 +50,7 @@ public final class ZipUtil {
     }
 
     /**
-     * This method is moved. It will be removed. Use dependency "tecsinapse-exporter-jsf"
+     * This method is moved. It will be removed. Use dependency "ts-data-ie-jsf"
      *
      * @deprecated use methods from {@link br.com.tecsinapse.exporter.servlet.ExportServletUtil.facesDownloadZip(baos, fileName + "." + fileExtension)}
      * @throws IOException IOException
