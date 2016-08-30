@@ -1,5 +1,5 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Input and Output
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -40,7 +40,7 @@ public class CsvParser<T> implements Parser<T> {
     private Class<?> group;
     private List<String> csvLines;
     private int headersRows = Importer.DEFAULT_START_ROW;
-    private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
+    private ExporterFormatter exporterFormatter = ExporterFormatter.ENGLISH;
 
     private boolean ignoreBlankLinesAtEnd = false;
 

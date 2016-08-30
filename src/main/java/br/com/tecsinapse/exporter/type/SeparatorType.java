@@ -1,5 +1,5 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Input and Output
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -9,19 +9,19 @@ package br.com.tecsinapse.exporter.type;
 
 public enum SeparatorType {
 
-    TAB('\t'),
-    NONE('\0'),
-    SPACE(' '),
-    SEMICOLON(';'),
-    COMMA(',');
+    TAB("\t"),
+    NONE(""),
+    SPACE(" "),
+    SEMICOLON(";"),
+    COMMA(",");
 
-    private final char separator;
+    private final String separator;
 
-    SeparatorType(char separator) {
+    SeparatorType(String separator) {
         this.separator = separator;
     }
 
-    public char getSeparator() {
+    public String getSeparator() {
         return separator;
     }
 

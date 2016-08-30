@@ -1,5 +1,5 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Input and Output
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -21,8 +21,8 @@ import br.com.tecsinapse.exporter.util.ExporterDateUtils.DateType;
 
 public class ExporterFormatter {
 
-    public static final ExporterFormatter PT_BR = new ExporterFormatter(Constants.LOCALE_PT_BR);
-    public static final ExporterFormatter DEFAULT = new ExporterFormatter(Locale.ENGLISH);
+    public static final ExporterFormatter BRAZILIAN = new ExporterFormatter(Constants.LOCALE_PT_BR);
+    public static final ExporterFormatter ENGLISH = new ExporterFormatter(Locale.ENGLISH);
 
     private static final String CELL_SUFIX_FORMAT = ";@";
 

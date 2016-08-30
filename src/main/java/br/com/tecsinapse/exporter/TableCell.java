@@ -1,5 +1,5 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Input and Output
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -28,110 +28,6 @@ public class TableCell {
 
     }
 
-    @Deprecated
-    public TableCell(String content, boolean bold) {
-        this(content);
-        setBold(bold);
-    }
-
-    @Deprecated
-    public TableCell(String content, String style) {
-        this(content);
-        setStyle(style);
-    }
-
-    @Deprecated
-    public TableCell(String content, String style, int colspan) {
-        this(content);
-        setStyle(style);
-        setColspan(colspan);
-    }
-
-    @Deprecated
-    public TableCell(String content, String style, int colspan, int rowspan) {
-        this(content);
-        setStyle(style);
-        setColspan(colspan);
-        setRowspan(rowspan);
-    }
-
-    @Deprecated
-    public TableCell(String content, int colspan) {
-        this(content);
-        setColspan(colspan);
-    }
-
-    @Deprecated
-    public TableCell(String content, int colspan, int rowspan) {
-        this(content);
-        setRowspan(rowspan);
-        setColspan(colspan);
-    }
-
-    @Deprecated
-    public TableCell(Number content, boolean bold) {
-        this(content);
-        setBold(bold);
-    }
-
-    @Deprecated
-    public TableCell(Number content, TableCellType tableCellType, boolean bold) {
-        this(content, tableCellType);
-        setBold(bold);
-    }
-
-    @Deprecated
-    public TableCell(String content, CellType cellType) {
-        this(content);
-        setCellType(cellType);
-    }
-
-    @Deprecated
-    public TableCell(String content, TableCellType tableCellType, boolean bold) {
-        this(content, tableCellType);
-        setBold(bold);
-    }
-
-    @Deprecated
-    public TableCell(String content, TableCellType tableCellType, int colspan) {
-        this(content, tableCellType);
-        setColspan(colspan);
-    }
-
-    @Deprecated
-    public TableCell(String content, TableCellType tableCellType, int colspan, int rowspan) {
-        this(content, tableCellType);
-        setColspan(colspan);
-        setRowspan(rowspan);
-    }
-
-    @Deprecated
-    public TableCell(String content, TableCellType tableCellType, String style) {
-        this(content, tableCellType);
-        setStyle(style);
-    }
-
-    @Deprecated
-    public TableCell(String content, TableCellType tableCellType, String style, int colspan) {
-        this(content, tableCellType);
-        setStyle(style);
-        setColspan(colspan);
-    }
-
-    @Deprecated
-    public TableCell(String content, TableCellType tableCellType, String style, int colspan, int rowspan) {
-        this(content, tableCellType);
-        setStyle(style);
-        setColspan(colspan);
-        setRowspan(rowspan);
-    }
-
-    @Deprecated
-    public TableCell(Object content, TableCellType tableCellType) {
-        this(content);
-        setTableCellType(tableCellType);
-    }
-
     public TableCell(Object content) {
         this.content = content;
         this.cellType = CellType.byObject(content);
@@ -145,6 +41,12 @@ public class TableCell {
     public TableCell(Object content, TableCellStyle tableCellStyle) {
         this(content);
         setTableCellStyle(tableCellStyle);
+    }
+
+    public TableCell(Object content, TableCellStyle tableCellStyle, int colspan) {
+        this(content);
+        setTableCellStyle(tableCellStyle);
+        setColspan(colspan);
     }
 
     public int getDefaultColumnWidth() {
@@ -197,35 +99,6 @@ public class TableCell {
         this.rowspan = rowspan;
     }
 
-    @Deprecated
-    public boolean isBold() {
-        return tableCellStyle != null ? tableCellStyle.isBold() : false;
-    }
-
-    @Deprecated
-    public void setBold(boolean bold) {
-        if (tableCellStyle == null) {
-            tableCellStyle = TableCellStyle.BODY;
-        }
-        tableCellStyle.setBold(bold);
-    }
-
-    @Deprecated
-    public void setTableCellType(TableCellType tableCellType) {
-        if (tableCellType == TableCellType.BODY) {
-            setTableCellStyle(TableCellStyle.BODY);
-            return;
-        }
-        if (tableCellType == TableCellType.HEADER) {
-            setTableCellStyle(TableCellStyle.HEADER);
-            return;
-        }
-        if (tableCellType == TableCellType.FOOTER) {
-            setTableCellStyle(TableCellStyle.FOOTER);
-            return;
-        }
-    }
-
     public CellType getCellType() {
         return cellType;
     }
@@ -275,5 +148,40 @@ public class TableCell {
 
     public void setExporterFormatter(ExporterFormatter exporterFormatter) {
         this.exporterFormatter = exporterFormatter;
+    }
+
+    public TableCell withExporterFormatter(ExporterFormatter exporterFormatter) {
+        setExporterFormatter(exporterFormatter);
+        return this;
+    }
+
+    public TableCell withCellType(CellType cellType) {
+        setCellType(cellType);
+        return this;
+    }
+
+    public TableCell withContent(Object content) {
+        setContent(content);
+        return this;
+    }
+
+    public TableCell withTableCellStyle(TableCellStyle tableCellStyle) {
+        setTableCellStyle(tableCellStyle);
+        return this;
+    }
+
+    public TableCell withStyle(String style) {
+        setStyle(style);
+        return this;
+    }
+
+    public TableCell withColspan(int colspan) {
+        setColspan(colspan);
+        return this;
+    }
+
+    public TableCell withRowspan(int rowspan) {
+        setRowspan(rowspan);
+        return this;
     }
 }

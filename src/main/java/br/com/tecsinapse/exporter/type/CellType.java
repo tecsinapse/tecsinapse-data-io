@@ -1,5 +1,5 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Input and Output
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -18,9 +18,7 @@ public enum CellType {
     DATETIME_TYPE(true),
     DATE_TYPE(true),
     TIME_TYPE(true),
-    CURRENCY_TYPE(true),
-    @Deprecated
-    BRL_TYPE(true);
+    CURRENCY_TYPE(true);
 
     private final boolean allowFormat;
 

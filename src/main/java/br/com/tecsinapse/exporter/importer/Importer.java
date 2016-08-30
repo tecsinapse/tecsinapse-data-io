@@ -1,5 +1,5 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Input and Output
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -58,11 +58,6 @@ public class Importer<T> implements Closeable {
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename, Class<?> group) throws IOException {
         this(clazz, inputStream, filename, false, group);
-    }
-
-    @Deprecated
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) throws IOException {
-        this(clazz, inputStream, filename, false, Default.class);
     }
 
     public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet) throws IOException {

@@ -1,5 +1,5 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Input and Output
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -46,7 +46,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
     private int headersRows;
     private int sheetNumber;
     private boolean lastsheet = false;
-    private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
+    private ExporterFormatter exporterFormatter = ExporterFormatter.ENGLISH;
     private Workbook workbook;
     private final FileType fileType;
     public SpreadsheetParser(Class<T> clazz, File file) throws IOException {

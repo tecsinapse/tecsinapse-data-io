@@ -1,5 +1,5 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Input and Output
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -13,18 +13,24 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import br.com.tecsinapse.exporter.builds.TableCellBuilder;
 import br.com.tecsinapse.exporter.style.TableCellStyle;
-import br.com.tecsinapse.exporter.type.CellType;
 import br.com.tecsinapse.exporter.util.WorkbookUtil;
 
 public class Table {
 
-    private ExporterFormatter exporterFormatter = ExporterFormatter.DEFAULT;
+    private ExporterFormatter exporterFormatter;
 
     private String title;
     private boolean autoSizeColumnSheet = true;
     private List<List<TableCell>> cells = new ArrayList<>();
+
+    public Table() {
+        this(ExporterFormatter.ENGLISH);
+    }
+
+    public Table(ExporterFormatter exporterFormatter) {
+        this.exporterFormatter = exporterFormatter;
+    }
 
     public void replace(TableCell cell, Integer row, Integer column) {
         cells.get(row).set(column, cell);
@@ -79,36 +85,7 @@ public class Table {
     }
 
     public void add(Object content, TableCellStyle tableCellStyle, int colspan) {
-        add(TableCellBuilder.newTableCellBuilder()
-                .content(content)
-                .tableCellStyle(tableCellStyle)
-                .colspan(colspan)
-        );
-    }
-
-    public Table withNewRow() {
-        addNewRow();
-        return this;
-    }
-
-    public Table withCell(TableCell tableCell) {
-        add(tableCell);
-        return this;
-    }
-
-    public Table withCell(Object content) {
-        add(content);
-        return this;
-    }
-
-    public Table withCell(Object content, TableCellStyle tableCellStyle) {
-        add(content, tableCellStyle);
-        return this;
-    }
-
-    public Table withCell(Object content, TableCellStyle tableCellStyle, int colspan) {
-        add(content, tableCellStyle, colspan);
-        return this;
+        add(new TableCell(content, tableCellStyle, colspan));
     }
 
     public void addOnNewRow(TableCell cell) {
@@ -406,75 +383,29 @@ public class Table {
         this.exporterFormatter = exporterFormatter;
     }
 
-    // Deprecated methods
-
-    @Deprecated
-    public void add(String content, boolean bold) {
-        add(new TableCell(content, bold));
+    public Table withNewRow() {
+        addNewRow();
+        return this;
     }
 
-    @Deprecated
-    public void add(String content, TableCellType tableCellType) {
-        add(new TableCell(content, tableCellType));
+    public Table withCell(TableCell tableCell) {
+        add(tableCell);
+        return this;
     }
 
-    @Deprecated
-    public void add(String content, TableCellType tableCellType, boolean bold) {
-        add(new TableCell(content, tableCellType, bold));
+    public Table withCell(Object content) {
+        add(content);
+        return this;
     }
 
-    @Deprecated
-    public void add(String content, TableCellType tableCellType, int colspan) {
-        add(new TableCell(content, tableCellType, colspan));
+    public Table withCell(Object content, TableCellStyle tableCellStyle) {
+        add(content, tableCellStyle);
+        return this;
     }
 
-    @Deprecated
-    public void add(String content, TableCellType tableCellType, int colspan, int rowspan) {
-        add(new TableCell(content, tableCellType, colspan, rowspan));
+    public Table withCell(Object content, TableCellStyle tableCellStyle, int colspan) {
+        add(content, tableCellStyle, colspan);
+        return this;
     }
 
-    @Deprecated
-    public void add(String content, TableCellType tableCellType, String style, int colspan) {
-        add(new TableCell(content, tableCellType, style, colspan));
-    }
-
-    @Deprecated
-    public void add(String content, TableCellType tableCellType, String style, int colspan, int rowspan) {
-        add(new TableCell(content, tableCellType, style, colspan, rowspan));
-    }
-
-    @Deprecated
-    public void add(String content, String style) {
-        add(new TableCell(content, style));
-    }
-
-    @Deprecated
-    public void add(String content, String style, int colspan) {
-        add(new TableCell(content, style, colspan));
-    }
-
-    @Deprecated
-    public void add(String content, String style, int colspan, int rowspan) {
-        add(new TableCell(content, style, colspan, rowspan));
-    }
-
-    @Deprecated
-    public void add(String content, int colspan) {
-        add(new TableCell(content, colspan));
-    }
-
-    @Deprecated
-    public void add(String content, int colspan, int rowspan) {
-        add(new TableCell(content, colspan, rowspan));
-    }
-
-    @Deprecated
-    public void add(String content, CellType cellType) {
-        add(new TableCell(content, cellType));
-    }
-
-    @Deprecated
-    public void add(Number content, boolean bold) {
-        add(new TableCell(content, bold));
-    }
 }

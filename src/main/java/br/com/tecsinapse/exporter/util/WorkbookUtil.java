@@ -1,5 +1,5 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Input and Output
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -133,9 +133,6 @@ public class WorkbookUtil {
     }
 
     private void setCellStyle(Cell cell, TableCell tableCell, Workbook wb, String cellFormat) {
-        if (tableCell.getCellType() == CellType.BRL_TYPE) {
-            cellFormat = "_$R$ #,##0.00";
-        }
         TableCellStyle tableCellStyle = tableCell.getTableCellStyle().clone();
         tableCellStyle.setCellFormat(cellFormat);
         cell.setCellStyle(getOrNewCellStyle(tableCellStyle, wb));

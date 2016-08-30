@@ -1,10 +1,12 @@
 /*
- * TecSinapse Exporter
+ * Tecsinapse Data Input and Output
  *
  * License: GNU Lesser General Public License (LGPL), version 3 or later
  * See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
  */
 package br.com.tecsinapse.exporter.txt;
+
+import br.com.tecsinapse.exporter.type.SeparatorType;
 
 /**
  * Representa cada coluna de uma linha no arquivo {@code .txt}
@@ -35,7 +37,7 @@ public class FieldTxt {
 
     private String content;
     private FieldTxtAlign align;
-    private SeparatorTxt separator;
+    private SeparatorType separator;
     private int fixedSize;
     private String filler;
 
@@ -79,7 +81,7 @@ public class FieldTxt {
 
         private String content;
         private FieldTxtAlign align = FieldTxtAlign.LEFT;
-        private SeparatorTxt separator = SeparatorTxt.NONE;
+        private SeparatorType separator = SeparatorType.NONE;
         private int fixedSize = 0;
         private String filler = " ";
 
@@ -100,7 +102,7 @@ public class FieldTxt {
             return this;
         }
 
-        public Builder withSeparator(SeparatorTxt separator) {
+        public Builder withSeparator(SeparatorType separator) {
             this.separator = separator;
             return this;
         }
