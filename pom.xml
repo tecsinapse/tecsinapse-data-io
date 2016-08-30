@@ -1,5 +1,5 @@
 <!--
-  Tecsinapse Data Importer and Exporter
+  Tecsinapse Data Input and Output
 
   License: GNU Lesser General Public License (LGPL), version 3 or later
   See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -11,14 +11,14 @@
         <artifactId>tecsinapse-oss-parent</artifactId>
         <version>1.0.0</version>
     </parent>
-    <artifactId>ts-data-ie</artifactId>
+    <artifactId>tecsinapse-data-io</artifactId>
     <version>1.6.0-SNAPSHOT</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
 
     <description>A simple way to work with CSV, XLSX? and TXT files</description>
 
-    <url>https://github.com/tecsinapse/ts-data-ie</url>
+    <url>https://github.com/tecsinapse/tecsinapse-data-io</url>
 
     <properties>
         <!-- dependencies -->
@@ -92,20 +92,20 @@
     </developers>
 
     <scm>
-        <url>https://github.com/tecsinapse/ts-data-ie</url>
-        <connection>scm:git:git@github.com:tecsinapse/ts-data-ie.git</connection>
-        <developerConnection>scm:git:git@github.com:tecsinapse/ts-data-ie.git</developerConnection>
+        <url>https://github.com/tecsinapse/tecsinapse-data-io</url>
+        <connection>scm:git:git@github.com:tecsinapse/tecsinapse-data-io.git</connection>
+        <developerConnection>scm:git:git@github.com:tecsinapse/tecsinapse-data-io.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/tecsinapse/ts-data-ie/issues</url>
+        <url>https://github.com/tecsinapse/tecsinapse-data-io/issues</url>
     </issueManagement>
 
     <ciManagement>
         <system>Travis CI</system>
-        <url>https://travis-ci.org/tecsinapse/ts-data-ie</url>
+        <url>https://travis-ci.org/tecsinapse/tecsinapse-data-io</url>
     </ciManagement>
 
     <dependencies>
