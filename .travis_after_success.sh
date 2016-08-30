@@ -31,6 +31,8 @@ fi
 # generate release only branch release
 if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "release" ]]; then
     echo "Generate release from branch \"${TRAVIS_BRANCH}\""
-    mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true --settings $GPG_DIR/settings.xml
+    eval ${SECURITY_APPLY}
+    git remote add origin git@github.com:tecsinapse/tecsinapse-data-io.git
+    mvn -B release:clean release:prepare deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true --settings $GPG_DIR/settings.xml
     exit $?
 fi
