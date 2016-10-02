@@ -78,6 +78,10 @@ Documentation and samples
 
 For documentation and samples check out our [wiki](https://github.com/tecsinapse/tecsinapse-data-io/wiki)
 
+Getting Started
+---
+Go to [Getting Started](https://tecsinapse.github.io/tecsinapse-data-io/getting-started.html)  to usage example.
+
 Need help or found an issue?
 ---
 
