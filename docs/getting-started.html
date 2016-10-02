@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Tecsinapse Data IO - Docs</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        .top-margin {
+            margin-top: 30px;
+        }
+
+        .bottom-margin {
+            margin-bottom: 30px;
+        }
+    </style>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Tecsinapse Data IO</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="http://www.tecsinapse.com.br">Tecsinapse</a></li>
+                <li><a href="https://github.com/tecsinapse/tecsinapse-data-io">Github</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li>
+                    <img src="img/tecsinapse.svg" class="logo-tecsinapse"/>
+                </li>
+
+            </ul>
+            <ul class="nav nav-sidebar">
+                <li><a href="index.html">Overview</a></li>
+                <li class="active"><a href="getting-started.html">Getting Started<span class="sr-only">(current)</span></a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header text-primary">Importação de planilha para um banco de dados</h1>
+            <br/>
+            Neste primeiro exemplo de uso da biblioteca, estaremos realizando a importação de uma planilha de dados do IBGE em formato xls, diretamente para a entidade de uma tabela do banco de dados. Em seguida gravaremos a mesma em uma base de dados utilizando a engine de banco H2.
+
+            Para realizar isto estaremos utilizando as seguintes bibliotecas:
+            <ul class="top-margin bottom-margin">
+                <li><a href="https://github.com/tecsinapse/tecsinapse-data-io">Tecsinapse Data IO</a></li>
+                <li><a href="https://github.com/tecsinapse/tecsinapse-data-io-converter-java-time">Tecsinapse Data IO - Java Time converters</a></li>
+                <li>Hibernate (Não é obrigatório, mas como vamos salvar em banco vamos usar o hibernate para persistir a entidade no banco)</li>
+                <li>Database h2 (Não é obrigatório, mas como vamos gravar em banco, utilizaremos esta engine de banco de dados)</li>
+                <li>Testng (para escrever a execução em forma de testes)</li>
+            </ul>
+            <div class="top-margin bottom-margin">&nbsp;</div>
+            <h3 class="top-margin bottom-margin text-primary">Criando a entidade da dados com mapeamento de colunas</h3>
+            <div>Para os campos que queremos preencher com as informações do arquivos faremos o mapeamento destes campos nos setters dos mesmos</div>
+            <div class="bottom-margin top-margin">
+                <script src="https://gist.github.com/edimarlnx/238eb778c4ddedf08ee936da0016a2fb.js"></script>
+            </div>
+            <div>No códigos acima, temos os seguintes mapeamentos de colunas:</div>
+            <ul class="top-margin bottom-margin">
+                <li><strong>Região</strong>: <code>@TableCellMapping(columnIndex = 0)</code> - Primeira coluna da planilha mapeada como string (padrão);</li>
+                <li><strong>Código do município</strong>: <code>@TableCellMapping(columnIndex = 2, converter = IntegerTableCellConverter.class)</code> - Terceira coluna da planilha mapeada como Integer;</li>
+                <li><strong>Nome do município</strong>: <code>@TableCellMapping(columnIndex = 3)</code> - Quarta coluna da planilha mapeada como string (padrão);</li>
+                <li><strong>Data da lei</strong>: <code>@TableCellMapping(columnIndex = 5, converter = LocalDateTableCellConverter.class)</code> - Sexta coluna da planilha mapeada como LocalDate do Java(8) time;</li>
+            </ul>
+            <div>O mapeamento acima irá converter os dados das colunas para o formato exigido por cada campo mapeado.</div>
+            <div class="top-margin bottom-margin">&nbsp;</div>
+            <h3 class="top-margin bottom-margin text-primary">Criando o código que irá processar nossa planilha e gravar no banco</h3>
+            <div class="bottom-margin top-margin">
+                <script src="https://gist.github.com/edimarlnx/f9cd324c8221c3fe152208c8421386a8.js"></script>
+            </div>
+            <div class="bottom-margin">O código acima irá processar a planilha e devolver uma lista com as entidades preenchidas, deixando para nós apenas o trabalho de gravarmos no banco de dados. O resultado após a execução do código é apresentado na imagem abaixo:</div>
+            <img src="img/sample-db-from-file-db-data.png" />
+            <div class="top-margin bottom-margin">Este é um exemplo simples de um dos funcionamentos da biblioteca. Em breve estaremos disponibilizando mais formas de utilização da biblioteca que não se resume a apenas a importação, mas também é possível exportar em vários formatos.</div>
+            <div class="top-margin bottom-margin">No link a seguir é possível baixar o projeto de exemplo(s) com estes código para execução local: <a href="https://github.com/edimarlnx/tecsinapse-data-io-samples">https://github.com/edimarlnx/tecsinapse-data-io-samples</a></div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>
