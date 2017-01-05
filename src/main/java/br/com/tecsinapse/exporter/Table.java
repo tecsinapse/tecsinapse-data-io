@@ -47,7 +47,7 @@ public class Table {
 	}
 
 	public String getLastCellContent() {
-		return getLastCell().getContent();
+		return getLastCell().getContentText();
 	}
 
 	public void replaceLastCellContent(String content) {
@@ -133,6 +133,14 @@ public class Table {
 	public void add(String content, CellType cellType) {
 		add(new TableCell(content, cellType));
 	}
+
+	public void add(String content, TableCellType cellType,ContentType contentType) {
+		add(new TableCell(content, cellType, contentType));
+	}
+
+	public void add(String content, ContentType contentType) {
+		add(new TableCell(content, contentType));
+	}
 	
 	public void add(Number content) {
 		add(new TableCell(content));
@@ -203,7 +211,7 @@ public class Table {
 					c++;
 				}
 				if (!spanMark[r][c]) {
-					matrix.get(r).set(c, cell.getContent());
+					matrix.get(r).set(c, cell.getContentText());
 
 					int rowspan = cell.getRowspan();
 					int colspan = cell.getColspan();
@@ -335,7 +343,7 @@ public class Table {
 
 		for (List<TableCell> row : cells) {
 			for (TableCell cell : row) {
-				System.out.print("|" + cell.getContent());
+				System.out.print("|" + cell.getContentText());
 			}
 			System.out.println();
 		}
@@ -378,7 +386,7 @@ public class Table {
 
 		for (List<TableCell> row : matrix) {
 			Row sheetRow = sheet.createRow(r);
-			
+
 			for (TableCell tableCell : row) {
 				while (matrixFull.get(r - titleRows)
 						.get(c) == EmptyTableCell.EMPTY_CELL) {
@@ -487,7 +495,7 @@ public class Table {
 		}
 
         //somente seta valor quando diferente de nulo. Default "" SXSSF não suporta nulos
-        final String content = tableCell.getContent();
+        final String content = tableCell.getContentText();
         if (content != null) {
             cell.setCellValue(content);
         }

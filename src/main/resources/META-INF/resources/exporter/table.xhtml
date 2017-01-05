@@ -2,6 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:c="http://java.sun.com/jsp/jstl/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:cc="http://java.sun.com/jsf/composite">
@@ -22,7 +23,16 @@
             <ui:repeat value="#{cc.attrs.value.cells}" var="linha">
                 <tr>
                     <ui:repeat value="#{linha}" var="item">
-                        <td rowspan="#{item.rowspan}" colspan="#{item.colspan}" style="#{item.style}" class="#{item.styleClass}">#{item.content}</td>
+						<ui:fragment rendered="#{item.tableCellType.header}">
+							<th rowspan="#{item.rowspan}" colspan="#{item.colspan}" style="#{item.style}" class="#{item.styleClass}">
+								<h:outputText escape="#{item.contentType.text}" value="#{item.content}"/>
+							</th>
+						</ui:fragment>
+						<ui:fragment rendered="#{not item.tableCellType.header}">
+							<td rowspan="#{item.rowspan}" colspan="#{item.colspan}" style="#{item.style}" class="#{item.styleClass}">
+								<h:outputText escape="#{item.contentType.text}" value="#{item.content}"/>
+							</td>
+						</ui:fragment>
                     </ui:repeat>
                 </tr>
             </ui:repeat>

@@ -63,6 +63,7 @@ import br.com.tecsinapse.exporter.ExcelType;
 import br.com.tecsinapse.exporter.ExcelUtil;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
+import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.TableCellConverter;
 import br.com.tecsinapse.exporter.converter.group.Default;
 
@@ -260,7 +261,7 @@ public class ExcelParser<T> implements Parser<T> {
 			public boolean apply(PropertyDescriptor propertyDescriptor) {
 				final Method writeMethod = propertyDescriptor.getWriteMethod();
 				for (Annotation annotation : writeMethod.getDeclaredAnnotations()) {
-					if (annotation instanceof TableCellMapping) {
+					if (annotation instanceof TableCellMapping || annotation instanceof TableCellMappings) {
 						return true;
 					}
 				}

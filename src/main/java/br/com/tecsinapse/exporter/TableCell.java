@@ -8,6 +8,7 @@ public class TableCell {
 	private String content = "";
 	private Integer colspan = 1;
 	private Integer rowspan = 1;
+	private ContentType contentType = ContentType.TEXT;
 	private TableCellType tableCellType = TableCellType.BODY;
 	private CellType cellType = CellType.STRING_TYPE;
     private String style;
@@ -19,7 +20,7 @@ public class TableCell {
 	}
 	
 	int getDefaultColumnWidth(){
-		return content == null || content.trim().length() == 0 ? 0 : content.length() * COLUMN_WIDTH;
+		return getContentText() == null || getContentText().trim().length() == 0 ? 0 : getContentText().length() * COLUMN_WIDTH;
 	}
 
 	public TableCell(String content) {
@@ -86,7 +87,17 @@ public class TableCell {
 		this(content);
 		this.cellType = cellType;
 	}
-	
+
+	public TableCell(String content, TableCellType tableCellType, ContentType contentType) {
+		this(content, tableCellType);
+		this.contentType = contentType;
+	}
+
+	public TableCell(String content, ContentType contentType) {
+		this(content);
+		this.contentType = contentType;
+	}
+
 	public TableCell(String content, TableCellType tableCellType) {
         this(content);
 		this.tableCellType = tableCellType;
@@ -126,7 +137,15 @@ public class TableCell {
         this.rowspan = rowspan;
     }
 
-    public String getContent() {
+    public String getContentText() {
+		if (contentType.isHtml()) {
+			final String content = HtmlUtil.htmlToText(this.content);
+			return content.replaceAll("[\u0000-\u001f]", ""); // removendo caracteres invisiveis
+		}
+		return content;
+	}
+
+	public String getContent() {
 		return content;
 	}
 
@@ -175,7 +194,7 @@ public class TableCell {
 	}
 
 	public Double getContentAsDoubleOrNull(){
-		return content == null ? null : Doubles.tryParse(content);
+		return getContentText() == null ? null : Doubles.tryParse(getContentText());
 	}
 
     public String getStyle() {
@@ -196,4 +215,8 @@ public class TableCell {
     public void setStyleClass(String styleClass) {
         this.styleClass = styleClass;
     }
+
+	public ContentType getContentType() {
+		return contentType;
+	}
 }

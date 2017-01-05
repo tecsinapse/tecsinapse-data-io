@@ -20,4 +20,8 @@ public enum TableCellType {
     public String getDefaultStyle() {
         return defaultStyle;
     }
+
+    public boolean isHeader() {
+		return this == HEADER;
+	}
 }
