@@ -76,8 +76,9 @@ public class DataParser implements ApplyTest<DataParser> {
         return time;
     }
 
+    // Test for not accessible method
     @TableCellMapping(columnIndex = 0, converter = LocalDateTableCellConverter.class)
-    public void setDate(LocalDate date) {
+    void setDate(LocalDate date) {
         this.date = date;
     }
 

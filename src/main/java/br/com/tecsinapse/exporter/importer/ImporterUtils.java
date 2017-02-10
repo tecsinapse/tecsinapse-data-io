@@ -207,6 +207,9 @@ public class ImporterUtils {
             if (value == null) {
                 return;
             }
+            if (!method.isAccessible()) {
+                method.setAccessible(true);
+            }
             Class<?> converterReturnType = getReturnTypeApply(tcc);
             Class<?> converterInputType = getInputTypeApply(tcc);
 
