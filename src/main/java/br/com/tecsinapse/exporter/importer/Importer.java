@@ -154,4 +154,14 @@ public class Importer<T> implements Closeable {
     public void close() throws IOException {
         parser.close();
     }
+
+    /**
+     * For compatibility
+     *
+     * @deprecated
+     */
+    @Deprecated
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) throws IOException {
+        this(clazz, inputStream, filename);
+    }
 }

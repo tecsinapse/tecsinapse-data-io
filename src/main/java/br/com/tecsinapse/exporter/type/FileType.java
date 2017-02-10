@@ -91,4 +91,24 @@ public enum FileType {
         String filenameOnly = filenameWithExtension.length() >= extension.length() ? filenameWithExtension.substring(0, filenameWithExtension.length() - extension.length()) : filenameWithExtension;
         return  filenameOnly + "_" +  now  + extension;
     }
+
+    /**
+     * For compatibility
+     *
+     * @deprecated
+     */
+    @Deprecated
+    public FileType getExcelType() {
+        return this;
+    }
+
+    /**
+     * For compatibility
+     *
+     * @deprecated
+     */
+    @Deprecated
+    public static FileType getExcelType(String filename) {
+        return getFileType(filename);
+    }
 }

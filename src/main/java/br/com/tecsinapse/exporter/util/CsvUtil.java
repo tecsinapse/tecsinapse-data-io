@@ -86,6 +86,10 @@ public class CsvUtil {
         return file;
     }
 
+    public static <T> void write(List<List<T>> csv, OutputStream o, String chartsetName, char separator) throws IOException {
+        write(csv, o, chartsetName, String.valueOf(separator));
+    }
+
     public static <T> void write(List<List<T>> csv, OutputStream o, String chartsetName, String separator) throws IOException {
         try (OutputStreamWriter writer = new OutputStreamWriter(o, chartsetName)) {
             for (List<T> row : csv) {

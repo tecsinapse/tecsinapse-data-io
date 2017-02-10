@@ -33,6 +33,7 @@ import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.converter.group.Default;
 import br.com.tecsinapse.exporter.importer.ImporterUtils;
+import br.com.tecsinapse.exporter.importer.ImporterXLSXType;
 import br.com.tecsinapse.exporter.importer.Parser;
 import br.com.tecsinapse.exporter.type.FileType;
 
@@ -58,13 +59,19 @@ public class SpreadsheetParser<T> implements Parser<T> {
     }
 
     public SpreadsheetParser(Class<T> clazz, InputStream inputStream, FileType fileType) {
+        this(clazz, inputStream, fileType, 0, false);
+    }
+
+    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, FileType fileType, int headersRows, boolean lastSheet) {
         this.fileType = fileType;
         this.clazz = clazz;
         this.inputStream = new BufferedInputStream(inputStream);
         this.group = Default.class;
         setIgnoreBlankLinesAtEnd(true);
-        setSheetNumber(0);
-        setHeadersRows(0);
+        setHeadersRows(headersRows);
+        if (!lastSheet) {
+            setSheetNumber(0);
+        }
     }
 
     public boolean isIgnoreBlankLinesAtEnd() {
@@ -85,6 +92,16 @@ public class SpreadsheetParser<T> implements Parser<T> {
 
     public void setHeadersRows(int headersRows) {
         this.headersRows = headersRows;
+    }
+
+    /**
+     * For compatibility
+     *
+     * @deprecated use {@link SpreadsheetParser#setHeadersRows(int)} }
+     */
+    @Deprecated
+    public void setAfterLine(int headersRows) {
+        setHeadersRows(headersRows);
     }
 
     public int getSheetNumber() {
@@ -213,6 +230,16 @@ public class SpreadsheetParser<T> implements Parser<T> {
     @Override
     public void close() throws IOException {
         inputStream.close();
+    }
+
+    /**
+     * For compatibility
+     *
+     * @deprecated
+     */
+    @Deprecated
+    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, FileType fileType, int headersRows, boolean lastSheet, ImporterXLSXType importerXLSXType) {
+        this(clazz, inputStream, fileType, headersRows, lastSheet);
     }
 
 }
