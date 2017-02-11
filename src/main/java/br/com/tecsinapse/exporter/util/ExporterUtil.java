@@ -110,8 +110,16 @@ public final class ExporterUtil {
         return Files.createTempFile(name, ext.isEmpty() ? "" : "." + ext).toFile();
     }
 
+    public static File getCsvFile(Table t, String fileName, String charsetName, char separator) throws IOException {
+        return getCsvFile(t, fileName, charsetName, String.valueOf(separator));
+    }
+
     public static File getCsvFile(Table t, String fileName, String charsetName, String separator) throws IOException {
         return writeDataToFile(Arrays.asList(t), FileType.CSV, fileName, charsetName, separator);
+    }
+
+    public static File getCsvFile(Table t, File f, String charsetName, char separator) throws IOException {
+        return getCsvFile(t, f, charsetName, String.valueOf(separator));
     }
 
     public static File getCsvFile(Table t, File f, String charsetName, String separator) throws IOException {
