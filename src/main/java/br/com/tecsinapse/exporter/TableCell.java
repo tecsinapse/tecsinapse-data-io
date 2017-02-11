@@ -49,8 +49,18 @@ public class TableCell {
         setColspan(colspan);
     }
 
+    public TableCell(Object content, int colspan) {
+        this(content);
+        setColspan(colspan);
+    }
+
     public TableCell(Object content, TableCellStyle tableCellStyle, int colspan, int rowspan) {
         this(content, tableCellStyle, colspan);
+        setRowspan(rowspan);
+    }
+
+    public TableCell(Object content, int colspan, int rowspan) {
+        this(content, colspan);
         setRowspan(rowspan);
     }
 
