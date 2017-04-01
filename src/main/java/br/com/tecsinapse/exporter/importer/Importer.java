@@ -164,4 +164,13 @@ public class Importer<T> implements Closeable {
     public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) throws IOException {
         this(clazz, inputStream, filename);
     }
+
+    /**
+     * For compatibility
+     *
+     * @deprecated
+     */
+    @Deprecated
+    public void setDateStringPattern(String patternIgnored) {
+    }
 }

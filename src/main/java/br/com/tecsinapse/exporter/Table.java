@@ -88,6 +88,38 @@ public class Table {
         add(new TableCell(content, tableCellStyle, colspan));
     }
 
+    public void add(Object content, TableCellStyle tableCellStyle, int colspan, int rowspan) {
+        add(new TableCell(content, tableCellStyle, colspan, rowspan));
+    }
+
+    public void add(Object content, TableCellStyle tableCellStyle, String cssStyle, int colspan) {
+        add(new TableCell(content, tableCellStyle, colspan).withStyle(cssStyle));
+    }
+
+    public void add(Object content, TableCellStyle tableCellStyle, String cssStyle, int colspan, int rowspan) {
+        add(new TableCell(content, tableCellStyle, colspan, rowspan).withStyle(cssStyle));
+    }
+
+    public void add(Object content, String cssStyle) {
+        add(new TableCell(content).withStyle(cssStyle));
+    }
+
+    public void add(Object content, int colspan) {
+        add(new TableCell(content, colspan));
+    }
+
+    public void add(Object content, int colspan, int rowspan) {
+        add(new TableCell(content, colspan, rowspan));
+    }
+
+    public void add(Object content, String cssStyle, int colspan) {
+        add(new TableCell(content, colspan).withStyle(cssStyle));
+    }
+
+    public void add(Object content, String cssStyle, int colspan, int rowspan) {
+        add(new TableCell(content, colspan, rowspan).withStyle(cssStyle));
+    }
+
     public void addOnNewRow(TableCell cell) {
         addNewRow();
         add(cell);
