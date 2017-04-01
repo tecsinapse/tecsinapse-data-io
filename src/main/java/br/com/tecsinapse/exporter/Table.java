@@ -45,7 +45,7 @@ public class Table {
     }
 
     public String getLastCellContent() {
-        return getLastCell().getContent();
+        return getLastCell().getContentText();
     }
 
     public void replaceLastCellContent(String content) {

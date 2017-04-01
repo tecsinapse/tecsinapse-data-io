@@ -121,6 +121,14 @@ public class TableCellStyle implements Cloneable {
         this.cellFormat = cellFormat;
     }
 
+    public boolean isHeader() {
+        return this.equals(HEADER);
+    }
+
+    public boolean isFooter() {
+        return this.equals(FOOTER);
+    }
+
     public String getCssStyle() {
         StringBuilder css = new StringBuilder();
         if (getBackgroundColor() != null) {

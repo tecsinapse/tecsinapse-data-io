@@ -10,6 +10,7 @@ import com.google.common.primitives.Doubles;
 
 import br.com.tecsinapse.exporter.style.TableCellStyle;
 import br.com.tecsinapse.exporter.type.CellType;
+import br.com.tecsinapse.exporter.util.HtmlUtil;
 
 public class TableCell {
 
@@ -65,7 +66,7 @@ public class TableCell {
     }
 
     public int getDefaultColumnWidth() {
-        String value = getContent();
+        String value = getContentText();
         return value == null || value.trim().length() == 0 ? 0 : value.length() * COLUMN_WIDTH;
     }
 
@@ -77,6 +78,15 @@ public class TableCell {
         return getFormattedContent(exporterFormatter);
     }
 
+    public String getContentText() {
+        if (cellType == CellType.HTML_TYPE) {
+            final String content = HtmlUtil.htmlToText(getContent());
+            return content.replaceAll("[\u0000-\u001f]", ""); // removendo caracteres invisiveis
+        }
+        return getFormattedContent(exporterFormatter);
+    }
+
+
     public String getFormattedContentInternalFirst(ExporterFormatter externalExporterFormatter) {
         return getFormattedContent(exporterFormatter == null ? externalExporterFormatter : exporterFormatter);
     }
@@ -85,7 +95,7 @@ public class TableCell {
         if (content == null) {
             return null;
         }
-        if (exporterFormatter != null) {
+        if (exporterFormatter != null && cellType.isAllowFormat()) {
             return exporterFormatter.formatByType(content, cellType == CellType.CURRENCY_TYPE);
         }
         return content.toString();
@@ -127,7 +137,7 @@ public class TableCell {
         if (content instanceof Number) {
             return ((Number) content).doubleValue();
         }
-        return content == null ? null : Doubles.tryParse(getContent());
+        return content == null ? null : Doubles.tryParse(getContentText());
     }
 
     public String getStyle() {

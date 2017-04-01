@@ -106,4 +106,12 @@ public class TableCellStyleTest {
         Assert.assertEquals(cellStyle.getFillForegroundColor(), bgIndex);
     }
 
+    @Test
+    public void equalsTest() {
+        Assert.assertTrue(TableCellStyle.HEADER.isHeader());
+        Assert.assertFalse(TableCellStyle.BODY.isHeader());
+        Assert.assertFalse(TableCellStyle.BODY.isFooter());
+        Assert.assertTrue(TableCellStyle.FOOTER.isFooter());
+    }
+
 }
