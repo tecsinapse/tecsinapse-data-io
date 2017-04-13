@@ -20,6 +20,7 @@ import org.testng.annotations.Test;
 
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
+import br.com.tecsinapse.exporter.style.TableCellStyle;
 
 public class ExportHtmlTest {
 
@@ -29,42 +30,42 @@ public class ExportHtmlTest {
         tableMap.put("border", "1");
         tableMap.put("style", "background-color: #DFDFDF");
         return new Object[][] {
-                {null, 1, 1, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")), "<table>\n" +
+                {null, 1, 1, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")), false, "<table>\n" +
                         "<tr>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c1</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c2</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c3</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c1</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c2</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c3</td>\n" +
                         "</tr>\n" +
                         "<tr>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c4</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c5</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c6</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c4</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c5</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c6</td>\n" +
                         "</tr>\n" +
                         "</table>\n"},
-                {tableMap, 1, 1, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")),
+                {tableMap, 1, 1, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")), true,
                         "<table border=\"1\" style=\"background-color: #DFDFDF\">\n" +
                         "<tr>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c1</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c2</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c3</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c1</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c2</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c3</td>\n" +
                         "</tr>\n" +
                         "<tr>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c4</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c5</td>\n" +
-                        "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\">c6</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c4</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c5</td>\n" +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c6</td>\n" +
                         "</tr>\n" +
                         "</table>\n"},
-                {tableMap, 2, 2, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")),
+                {tableMap, 2, 2, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")), false,
                         "<table border=\"1\" style=\"background-color: #DFDFDF\">\n" +
                                 "<tr>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c1</td>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c2</td>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c3</td>\n" +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c1</td>\n" +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c2</td>\n" +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c3</td>\n" +
                                 "</tr>\n" +
                                 "<tr>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c4</td>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c5</td>\n" +
-                                "<td style=\"background-color:#FFFFFF;border:solid #000000 1px;text-align:center;font-size:10;\" rowspan=\"2\" colspan=\"2\">c6</td>\n" +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c4</td>\n" +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c5</td>\n" +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c6</td>\n" +
                                 "</tr>\n" +
                                 "</table>\n"}
         };
@@ -72,16 +73,21 @@ public class ExportHtmlTest {
 
     @Test(dataProvider = "toHtmlDs")
     public void testNewInstance(Map<String, String> tableProps, int colspan, int rowspan,
-                                List<List<String>> rows, String expected) throws Exception {
+                                List<List<String>> rows, boolean whiteAsTransparent, String expected) throws Exception {
         ExportHtml exportHtml = tableProps == null ? ExportHtml.newInstance(Charset.forName("UTF-8")) : ExportHtml.newInstance(tableProps, Charset.forName("UTF-8"));
         Table table = rows.isEmpty() ? null : new Table();
+        TableCellStyle cellStyle = TableCellStyle.BODY.clone();
+        cellStyle.setCssWhiteAsTransparent(whiteAsTransparent);
+        cellStyle.setIgnoreCssStyle(false);
+        table.setTableCellStyleDefaultBody(cellStyle);
         for(List<String> cols : rows) {
             table.addNewRow();
             for(String col : cols) {
                 TableCell cell = new TableCell(col)
                         .withContent(col)
                         .withColspan(colspan)
-                        .withRowspan(rowspan);
+                        .withRowspan(rowspan)
+                        .withTableCellStyle(cellStyle);
                 table.add(cell);
             }
         }

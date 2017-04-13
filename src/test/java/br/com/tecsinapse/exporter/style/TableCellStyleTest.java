@@ -31,28 +31,32 @@ public class TableCellStyleTest {
         return new Object[][] {
                 {BLACK, 11, RED, null,
                         "background-color:#000000;" + BOLD.getCss() + ITALIC.getCss() + STRIKEOUT.getCss() + UNDERLINE.getCss() + CssStyle.toFontSize(11) + CssStyle.toTextColor(RED),
-                        WHITE, "background-color:#FFFFFF;border:solid #000000 1px;font-size:11;color:#FF0000;",
-                        true, true, true, true},
+                        WHITE, "background-color:#FFFFFF;font-size:11;color:#FF0000;",
+                        true, true, true, true, false},
                 {WHITE, null, null, null,
                         "background-color:#FFFFFF;" + BOLD.getCss() + ITALIC.getCss() + STRIKEOUT.getCss() + UNDERLINE.getCss(),
-                        RED, "background-color:#FF0000;border:solid #000000 1px;",
-                        true, true, true, true},
+                        RED, "background-color:#FF0000;",
+                        true, true, true, true, false},
+                {WHITE, null, null, null,
+                        BOLD.getCss() + ITALIC.getCss() + STRIKEOUT.getCss() + UNDERLINE.getCss(),
+                        RED, "background-color:#FF0000;",
+                        true, true, true, true, true},
                 {RED, null, null, null,
                         "background-color:#FF0000;" + BOLD.getCss() + STRIKEOUT.getCss(),
-                        BLUE, "background-color:#0000FF;border:solid #000000 1px;" + ITALIC.getCss() + UNDERLINE.getCss(),
-                        true, false, true, false},
+                        BLUE, "background-color:#0000FF;" + ITALIC.getCss() + UNDERLINE.getCss(),
+                        true, false, true, false, false},
                 {BLUE, null, null, null,
                         "background-color:#0000FF;" + BOLD.getCss() + UNDERLINE.getCss(),
-                        BRIGHT_GREEN, "background-color:#00FF00;border:solid #000000 1px;" + ITALIC.getCss() + STRIKEOUT.getCss(),
-                        true, false, false, true},
+                        BRIGHT_GREEN, "background-color:#00FF00;" + ITALIC.getCss() + STRIKEOUT.getCss(),
+                        true, false, false, true, false},
                 {BRIGHT_GREEN, null, null, null,
                         "background-color:#00FF00;" + BOLD.getCss() + ITALIC.getCss() + STRIKEOUT.getCss() + UNDERLINE.getCss(),
-                        BLACK, "background-color:#000000;border:solid #000000 1px;",
-                        true, true, true, true},
+                        BLACK, "background-color:#000000;",
+                        true, true, true, true, false},
                 {null, 14, BLUE, CellStyleBorder.DEFAULT,
                         CellStyleBorder.DEFAULT.toCss() + BOLD.getCss() + ITALIC.getCss() + STRIKEOUT.getCss() + UNDERLINE.getCss() + CssStyle.toFontSize(14) + CssStyle.toTextColor(BLUE),
                         BLACK, "background-color:#000000;border:solid #000000 1px;font-size:14;color:#0000FF;",
-                        true, true, true, true}
+                        true, true, true, true, false}
         };
     }
 
@@ -67,8 +71,9 @@ public class TableCellStyleTest {
 
     @Test(dataProvider = "cssDs")
     public void cssStyleTest(HSSFColor hssfColor, Integer fontSize, HSSFColor fontColor, CellStyleBorder border, String cssStyle, HSSFColor hssfColorPost, String cssStylePost,
-                             boolean bold, boolean italic, boolean strikeout, boolean underline) {
+                             boolean bold, boolean italic, boolean strikeout, boolean underline, boolean whiteAsTransparent) {
         TableCellStyle style = new TableCellStyle(hssfColor);
+        style.setCssWhiteAsTransparent(whiteAsTransparent);
         style.setFontColor(fontColor);
         style.setFontSize(fontSize);
         style.setBorder(border);
@@ -84,6 +89,7 @@ public class TableCellStyleTest {
         Assert.assertEquals(style.getCssStyle(), cssStyle);
 
         TableCellStyle style2 = style.clone();
+        style2.setCssWhiteAsTransparent(whiteAsTransparent);
         style2.setBold(!bold);
         style2.setItalic(!italic);
         style2.setStrikeout(!strikeout);

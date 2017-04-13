@@ -31,7 +31,9 @@ public class ExcelCellColorExampleTest {
         Table table = new Table();
 
         int line = 0;
-        for (HSSFColor color : HSSFColor.getIndexHash().values()) {
+        List<HSSFColor> colors = new ArrayList<>(HSSFColor.getIndexHash().values());
+        colors.add(new HSSFColor.AUTOMATIC());
+        for (HSSFColor color : colors) {
             table.addNewRow();
             line++;
             TableCell tableCell = new TableCell(String.format("Line %d - Color: %s", line, color.getClass().getSimpleName()));

@@ -152,7 +152,10 @@ public class TableCell {
     }
 
     public String getStyleClass() {
-        return styleClass;
+        if (styleClass != null) {
+            return styleClass;
+        }
+        return tableCellStyle != null ? tableCellStyle.getCssBlockClassName() : null;
     }
 
     public void setStyleClass(String styleClass) {

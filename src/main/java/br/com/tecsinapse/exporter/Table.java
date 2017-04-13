@@ -14,11 +14,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.com.tecsinapse.exporter.style.TableCellStyle;
+import br.com.tecsinapse.exporter.type.CellType;
 import br.com.tecsinapse.exporter.util.WorkbookUtil;
 
 public class Table {
 
     private ExporterFormatter exporterFormatter;
+
+    private TableCellStyle tableCellStyleDefaultBody = TableCellStyle.BODY;
 
     private String title;
     private boolean autoSizeColumnSheet = true;
@@ -77,7 +80,7 @@ public class Table {
     }
 
     public void add(Object content) {
-        add(new TableCell(content));
+        add(new TableCell(content, getTableCellStyleDefaultBody()));
     }
 
     public void add(Object content, TableCellStyle tableCellStyle) {
@@ -101,23 +104,27 @@ public class Table {
     }
 
     public void add(Object content, String cssStyle) {
-        add(new TableCell(content).withStyle(cssStyle));
+        add(new TableCell(content, getTableCellStyleDefaultBody()).withStyle(cssStyle));
     }
 
     public void add(Object content, int colspan) {
-        add(new TableCell(content, colspan));
+        add(new TableCell(content, getTableCellStyleDefaultBody(), colspan));
     }
 
     public void add(Object content, int colspan, int rowspan) {
-        add(new TableCell(content, colspan, rowspan));
+        add(new TableCell(content, getTableCellStyleDefaultBody(), colspan, rowspan));
     }
 
     public void add(Object content, String cssStyle, int colspan) {
-        add(new TableCell(content, colspan).withStyle(cssStyle));
+        add(new TableCell(content, getTableCellStyleDefaultBody(), colspan).withStyle(cssStyle));
     }
 
     public void add(Object content, String cssStyle, int colspan, int rowspan) {
-        add(new TableCell(content, colspan, rowspan).withStyle(cssStyle));
+        add(new TableCell(content, getTableCellStyleDefaultBody(), colspan, rowspan).withStyle(cssStyle));
+    }
+
+    public void add(Object content, CellType cellType) {
+        add(new TableCell(content, getTableCellStyleDefaultBody()).withCellType(cellType));
     }
 
     public void addOnNewRow(TableCell cell) {
@@ -363,7 +370,7 @@ public class Table {
         int biggerRow = this.getBiggerRowSize();
         List<TableCell> emptyCells = new ArrayList<>();
         for (int i = 0; i < biggerRow; ++i) {
-            emptyCells.add(new TableCell(" "));
+            emptyCells.add(new TableCell(" ", getTableCellStyleDefaultBody()));
         }
 
         this.addNewRow();
@@ -411,6 +418,14 @@ public class Table {
         return exporterFormatter;
     }
 
+    public void setTableCellStyleDefaultBody(TableCellStyle tableCellStyleDefaultBody) {
+        this.tableCellStyleDefaultBody = tableCellStyleDefaultBody;
+    }
+
+    public TableCellStyle getTableCellStyleDefaultBody() {
+        return tableCellStyleDefaultBody != null ? tableCellStyleDefaultBody : TableCellStyle.BODY;
+    }
+
     public void setExporterFormatter(ExporterFormatter exporterFormatter) {
         this.exporterFormatter = exporterFormatter;
     }
@@ -438,6 +453,18 @@ public class Table {
     public Table withCell(Object content, TableCellStyle tableCellStyle, int colspan) {
         add(content, tableCellStyle, colspan);
         return this;
+    }
+
+    public List<TableCellStyle> getTableCellStyles() {
+        List<TableCellStyle> tableCellStyles = new ArrayList<>();
+        for (List<TableCell> cells : getCells()) {
+            for (TableCell cell : cells) {
+                if (!tableCellStyles.contains(cell.getTableCellStyle())) {
+                    tableCellStyles.add(cell.getTableCellStyle());
+                }
+            }
+        }
+        return tableCellStyles;
     }
 
 }

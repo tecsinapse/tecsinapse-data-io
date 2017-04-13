@@ -28,9 +28,18 @@ public class TableCellStyle implements Cloneable {
     private boolean underline = false;
     private boolean strikeout = false;
     private String cellFormat;
+    private boolean cssWhiteAsTransparent = true;
+    private boolean ignoreCssStyle;
+    private String cssClass;
+
+    public TableCellStyle(HSSFColor backgroundColor, String cssClass, boolean ignoreCssStyle) {
+        this.backgroundColor = backgroundColor;
+        this.ignoreCssStyle = ignoreCssStyle;
+        this.cssClass = cssClass;
+    }
 
     public TableCellStyle(HSSFColor backgroundColor) {
-        this.backgroundColor = backgroundColor;
+        this(backgroundColor, null, false);
     }
 
     public HSSFColor getBackgroundColor() {
@@ -129,10 +138,37 @@ public class TableCellStyle implements Cloneable {
         return this.equals(FOOTER);
     }
 
+    public boolean isCssWhiteAsTransparent() {
+        return cssWhiteAsTransparent;
+    }
+
+    public void setCssWhiteAsTransparent(boolean cssWhiteAsTransparent) {
+        this.cssWhiteAsTransparent = cssWhiteAsTransparent;
+    }
+
+    public boolean isIgnoreCssStyle() {
+        return ignoreCssStyle;
+    }
+
+    public void setIgnoreCssStyle(boolean ignoreCssStyle) {
+        this.ignoreCssStyle = ignoreCssStyle;
+    }
+
+    public String getCssClass() {
+        return cssClass;
+    }
+
+    public void setCssClass(String cssClass) {
+        this.cssClass = cssClass;
+    }
+
     public String getCssStyle() {
+        if (ignoreCssStyle) {
+            return null;
+        }
         StringBuilder css = new StringBuilder();
         if (getBackgroundColor() != null) {
-            css.append(CssStyle.toBackgroundColor(backgroundColor));
+            css.append(CssStyle.toBackgroundColor(backgroundColor, cssWhiteAsTransparent));
         }
         if (getBorder() != null) {
             css.append(border.toCss());
@@ -210,6 +246,8 @@ public class TableCellStyle implements Cloneable {
         CellStyleBorder csb = getBorder();
         if (csb != null) {
             tcs.setBorder(csb == CellStyleBorder.DEFAULT ? csb : csb.clone());
+        } else {
+            tcs.setBorder(null);
         }
 
         tcs.setvAlign(getvAlign());
@@ -222,6 +260,9 @@ public class TableCellStyle implements Cloneable {
         tcs.setStrikeout(isStrikeout());
         tcs.setItalic(isItalic());
         tcs.setUnderline(isUnderline());
+        tcs.setCssWhiteAsTransparent(isCssWhiteAsTransparent());
+        tcs.setIgnoreCssStyle(isIgnoreCssStyle());
+        tcs.setCssClass(getCssClass());
         return tcs;
     }
 
@@ -248,6 +289,12 @@ public class TableCellStyle implements Cloneable {
         if (strikeout != that.strikeout) {
             return false;
         }
+        if (cssWhiteAsTransparent != that.isCssWhiteAsTransparent()) {
+            return false;
+        }
+        if (ignoreCssStyle != that.isIgnoreCssStyle()) {
+            return false;
+        }
         if (backgroundColor != null ? !backgroundColor.equals(that.backgroundColor) : that.backgroundColor != null) {
             return false;
         }
@@ -263,7 +310,10 @@ public class TableCellStyle implements Cloneable {
         if (border != null ? !border.equals(that.border) : that.border != null) {
             return false;
         }
-        if (cellFormat != null ? !cellFormat.equals(that.cellFormat) : that.cellFormat != null) {
+        if (cellFormat != null && !cellFormat.equals(that.cellFormat)) {
+            return false;
+        }
+        if (cssClass != null && !cssClass.equals(that.cssClass)) {
             return false;
         }
         return fontSize != null ? fontSize.equals(that.fontSize) : that.fontSize == null;
@@ -282,6 +332,21 @@ public class TableCellStyle implements Cloneable {
         result = 31 * result + (italic ? 1 : 0);
         result = 31 * result + (underline ? 1 : 0);
         result = 31 * result + (strikeout ? 1 : 0);
+        result = 31 * result + (ignoreCssStyle ? 1 : 0);
+        result = 31 * result + (cssWhiteAsTransparent ? 1 : 0);
+        result = 31 * result + (cssClass != null ? cssClass.hashCode() : 0);
         return result;
+    }
+
+    public String getCssBlockClassName() {
+        return String.format("tbcs-%s", cssClass != null
+                ? cssClass
+                : Integer.toHexString(System.identityHashCode(this)));
+    }
+
+    public String getCssBlock() {
+        return String.format(".%s {%s}\n",
+                getCssBlockClassName(),
+                getCssStyle());
     }
 }
