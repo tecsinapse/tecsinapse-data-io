@@ -128,6 +128,10 @@ public class TableCell {
         return cellType;
     }
 
+    public boolean isUserDefinedCellType() {
+        return userDefinedCellType;
+    }
+
     public void setCellType(CellType cellType) {
         this.userDefinedCellType = true;
         this.cellType = cellType;
