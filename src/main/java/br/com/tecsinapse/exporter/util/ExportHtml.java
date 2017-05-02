@@ -79,10 +79,10 @@ public class ExportHtml {
             bw.newLine();
             for (TableCell cell : cells) {
                 bw.append("<td");
-                writeNonNullProperty(bw, "style", cell.getStyle());
                 writeNonNullProperty(bw, "class", cell.getStyleClass());
                 writeNonNullPropertyIgnoreOne(bw, "rowspan", cell.getRowspan());
                 writeNonNullPropertyIgnoreOne(bw, "colspan", cell.getColspan());
+                writeNonNullProperty(bw, "style", cell.getStyle());
                 bw.append(">");
                 bw.append(cell.getFormattedContentInternalFirst(tableExporterFormatter));
                 bw.append("</td>");

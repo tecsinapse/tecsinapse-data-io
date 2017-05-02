@@ -12,7 +12,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 final class TableCellStyleDefaultHeaderFooter extends TableCellStyle {
 
     public TableCellStyleDefaultHeaderFooter() {
-        super(Colors.GREY_25_PERCENT);
+        super(Colors.GREY_25_PERCENT, "header", true);
         super.setBold(true);
         super.setFontSize(10);
         super.sethAlign(CellHAlign.CENTER);
@@ -76,6 +76,21 @@ final class TableCellStyleDefaultHeaderFooter extends TableCellStyle {
 
     @Override
     public void setCellFormat(String cellFormat) {
+        throwUnsupportedOperationException();
+    }
+
+    @Override
+    public void setCssWhiteAsTransparent(boolean cssWhiteAsTransparent) {
+        throwUnsupportedOperationException();
+    }
+
+    @Override
+    public void setCssClass(String cssClass) {
+        throwUnsupportedOperationException();
+    }
+
+    @Override
+    public void setIgnoreCssStyle(boolean ignoreCssStyle) {
         throwUnsupportedOperationException();
     }
 }

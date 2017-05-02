@@ -14,6 +14,7 @@ import br.com.tecsinapse.exporter.util.ExporterDateUtils.DateType;
 public enum CellType {
 
     STRING_TYPE(false),
+    HTML_TYPE(false, "html"),
     NUMERIC_TYPE(true),
     DATETIME_TYPE(true),
     DATE_TYPE(true),
@@ -21,9 +22,15 @@ public enum CellType {
     CURRENCY_TYPE(true);
 
     private final boolean allowFormat;
+    private final String contenType;
 
     CellType(boolean allowFormat) {
+        this(allowFormat, "text");
+    }
+
+    CellType(boolean allowFormat, String contenType) {
         this.allowFormat = allowFormat;
+        this.contenType = contenType;
     }
 
     public static CellType byObject(Object o) {
@@ -49,5 +56,9 @@ public enum CellType {
 
     public boolean isAllowFormat() {
         return allowFormat;
+    }
+
+    public String getContenType() {
+        return contenType;
     }
 }

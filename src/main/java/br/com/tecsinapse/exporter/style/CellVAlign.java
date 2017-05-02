@@ -10,10 +10,10 @@ package br.com.tecsinapse.exporter.style;
 import org.apache.poi.ss.usermodel.CellStyle;
 
 public enum CellVAlign {
-    CENTER(CellStyle.VERTICAL_CENTER, ""),
+    CENTER(CellStyle.VERTICAL_CENTER, "vertical-align:middle;"),
     JUSTIFY(CellStyle.VERTICAL_JUSTIFY, ""),
-    TOP(CellStyle.VERTICAL_TOP, ""),
-    BOTTOM(CellStyle.VERTICAL_BOTTOM, "");
+    TOP(CellStyle.VERTICAL_TOP, "vertical-align:top;"),
+    BOTTOM(CellStyle.VERTICAL_BOTTOM, "vertical-align:bottom;");
 
     private final short cellStyleVAlign;
     private final String css;

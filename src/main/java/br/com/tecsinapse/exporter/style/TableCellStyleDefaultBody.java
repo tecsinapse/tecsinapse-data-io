@@ -12,9 +12,9 @@ import org.apache.poi.hssf.util.HSSFColor;
 final class TableCellStyleDefaultBody extends TableCellStyle {
 
     public TableCellStyleDefaultBody() {
-        super(Colors.WHITE);
+        super(Colors.WHITE, "body", true);
         super.setFontSize(10);
-        super.sethAlign(CellHAlign.CENTER);
+        super.sethAlign(CellHAlign.LEFT);
         super.setvAlign(CellVAlign.CENTER);
     }
 
@@ -75,6 +75,21 @@ final class TableCellStyleDefaultBody extends TableCellStyle {
 
     @Override
     public void setCellFormat(String cellFormat) {
+        throwUnsupportedOperationException();
+    }
+
+    @Override
+    public void setCssWhiteAsTransparent(boolean cssWhiteAsTransparent) {
+        throwUnsupportedOperationException();
+    }
+
+    @Override
+    public void setCssClass(String cssClass) {
+        throwUnsupportedOperationException();
+    }
+
+    @Override
+    public void setIgnoreCssStyle(boolean ignoreCssStyle) {
         throwUnsupportedOperationException();
     }
 }

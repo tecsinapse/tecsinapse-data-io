@@ -15,6 +15,7 @@ import java.util.Locale;
 
 import org.apache.poi.ss.util.DateFormatConverter;
 
+import br.com.tecsinapse.exporter.type.CellType;
 import br.com.tecsinapse.exporter.util.Constants;
 import br.com.tecsinapse.exporter.util.ExporterDateUtils;
 import br.com.tecsinapse.exporter.util.ExporterDateUtils.DateType;
@@ -180,5 +181,28 @@ public class ExporterFormatter {
         }
         return null;
     }
+
+    public String getCellStringFormatByUserType(Object o, CellType cellType) {
+        if (cellType == CellType.DATE_TYPE) {
+            return cellDateFormat;
+        }
+        if (cellType == CellType.TIME_TYPE) {
+            return cellTimeFormat;
+        }
+        if (cellType == CellType.DATETIME_TYPE) {
+            return cellDateTimeFormat;
+        }
+        if (cellType == CellType.CURRENCY_TYPE) {
+            return cellCurrencyFormat;
+        }
+        if (cellType == CellType.NUMERIC_TYPE) {
+            if (o instanceof Integer || o instanceof Long) {
+                return cellIntegerFormat;
+            }
+            return cellDecimalFormat;
+        }
+        return null;
+    }
+
 
 }

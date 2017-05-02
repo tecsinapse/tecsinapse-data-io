@@ -8,6 +8,7 @@
 package br.com.tecsinapse.exporter.style;
 
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.WHITE;
 
 public enum CssStyle {
     BOLD("font-weight:bold;"),
@@ -26,9 +27,18 @@ public enum CssStyle {
     }
 
     public static String toBackgroundColor(HSSFColor hssfColor) {
+        return toBackgroundColor(hssfColor, false);
+    }
+
+    public static String toBackgroundColor(HSSFColor hssfColor, boolean whiteAsTransparent) {
         if (hssfColor == null) {
             return "";
         }
+
+        if (whiteAsTransparent && WHITE.hexString.equals(hssfColor.getHexString())) {
+            return "";
+        }
+
         return String.format("background-color:%s;", StyleColorUtil.toHexColor(hssfColor));
     }
 

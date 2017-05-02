@@ -154,16 +154,23 @@ public class WorkbookUtil {
             return null;
         }
         if (tableCell.getCellType().isAllowFormat()) {
-            ExporterFormatter cellExporterFormatter = tableCell.getExporterFormatter();
-            ExporterFormatter exporterFormatter = cellExporterFormatter == null ? tableExporterFormatter : tableCell.getExporterFormatter();
-            boolean isCurrency = tableCell.getCellType() == CellType.CURRENCY_TYPE;
-            String dataFormat = exporterFormatter != null ? exporterFormatter.getCellStringFormatByType(cellValue, isCurrency) : null;
+            String dataFormat = getCellFormat(tableCell, tableExporterFormatter, cellValue);
             if (dataFormat != null && setCellValueByType(cell, cellValue)) {
                 return dataFormat;
             }
         }
         cell.setCellValue(tableCell.getFormattedContentInternalFirst(tableExporterFormatter));
         return null;
+    }
+
+    private String getCellFormat(TableCell tableCell, ExporterFormatter tableExporterFormatter, Object cellValue) {
+        ExporterFormatter cellExporterFormatter = tableCell.getExporterFormatter();
+        ExporterFormatter exporterFormatter = cellExporterFormatter == null ? tableExporterFormatter : tableCell.getExporterFormatter();
+        if (tableCell.isUserDefinedCellType()) {
+            return exporterFormatter.getCellStringFormatByUserType(cellValue, tableCell.getCellType());
+        }
+        boolean isCurrency = tableCell.getCellType() == CellType.CURRENCY_TYPE;
+        return exporterFormatter != null ? exporterFormatter.getCellStringFormatByType(cellValue, isCurrency) : null;
     }
 
     private boolean setCellValueByType(Cell cell, Object o) {
