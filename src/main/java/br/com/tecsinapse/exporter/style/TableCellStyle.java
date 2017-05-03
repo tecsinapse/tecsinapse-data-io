@@ -36,7 +36,7 @@ public class TableCellStyle implements Cloneable {
         this.backgroundColor = backgroundColor;
         this.ignoreCssStyle = ignoreCssStyle;
         this.cssClass = cssClass;
-        setFontSize(10);
+        this.fontSize = 10;
     }
 
     public TableCellStyle(HSSFColor backgroundColor) {
