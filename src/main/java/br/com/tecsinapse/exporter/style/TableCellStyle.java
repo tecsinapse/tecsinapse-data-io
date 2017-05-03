@@ -246,7 +246,7 @@ public class TableCellStyle implements Cloneable {
         TableCellStyle tcs = new TableCellStyle(getBackgroundColor());
         CellStyleBorder csb = getBorder();
         if (csb != null) {
-            tcs.setBorder(csb == CellStyleBorder.DEFAULT ? csb : csb.clone());
+            tcs.setBorder(csb.clone());
         } else {
             tcs.setBorder(null);
         }
