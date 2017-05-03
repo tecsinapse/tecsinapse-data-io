@@ -13,7 +13,6 @@ final class TableCellStyleDefaultBody extends TableCellStyle {
 
     public TableCellStyleDefaultBody() {
         super(Colors.WHITE, "body", true);
-        super.setFontSize(10);
         super.sethAlign(CellHAlign.LEFT);
         super.setvAlign(CellVAlign.CENTER);
     }

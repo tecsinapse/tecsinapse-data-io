@@ -14,7 +14,6 @@ final class TableCellStyleDefaultHeaderFooter extends TableCellStyle {
     public TableCellStyleDefaultHeaderFooter() {
         super(Colors.GREY_25_PERCENT, "header", true);
         super.setBold(true);
-        super.setFontSize(10);
         super.sethAlign(CellHAlign.CENTER);
         super.setvAlign(CellVAlign.CENTER);
     }
