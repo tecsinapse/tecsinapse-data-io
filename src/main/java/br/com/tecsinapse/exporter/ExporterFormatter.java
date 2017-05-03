@@ -52,8 +52,8 @@ public class ExporterFormatter {
         this.cellDateTimeFormat = DateFormatConverter.convert(locale, dateTimeFormat.toPattern());
         this.cellDateFormat = DateFormatConverter.convert(locale, dateFormat.toPattern());
         this.cellTimeFormat = DateFormatConverter.convert(locale, timeFormat.toPattern());
-        this.cellDecimalFormat = DateFormatConverter.convert(locale, decimalFormat.toLocalizedPattern());
-        this.cellIntegerFormat = DateFormatConverter.convert(locale, integerFormat.toLocalizedPattern());
+        this.cellDecimalFormat = DateFormatConverter.convert(locale, decimalFormat.toPattern());
+        this.cellIntegerFormat = DateFormatConverter.convert(locale, integerFormat.toPattern());
         this.cellCurrencyFormat = DateFormatConverter.convert(locale, getCurrencyFormatString());
     }
 
@@ -78,7 +78,7 @@ public class ExporterFormatter {
     }
 
     private String getCurrencyFormatString() {
-        String currencyFormat = this.currencyFormat.toLocalizedPattern();
+        String currencyFormat = this.currencyFormat.toPattern();
         currencyFormat = currencyFormat.replace(CURRENCY_SYMBOL_PATTERN, this.currencyFormat.getPositivePrefix());
         return currencyFormat;
     }
