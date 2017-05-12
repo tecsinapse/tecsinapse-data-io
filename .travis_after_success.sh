@@ -14,7 +14,8 @@ fi
 mvn -B jacoco:report coveralls:report
 
 if [[ -n $TRAVIS_TAG ]]; then
-    echo "Skipping deployment for tag \"${TRAVIS_TAG}\""
+    echo "Deploy for tag \"${TRAVIS_TAG}\""
+    mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=false --settings $GPG_DIR/settings.xml
     exit $?
 fi
 
