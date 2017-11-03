@@ -20,7 +20,7 @@ public class TableCell {
     private Integer rowspan = 1;
     private CellType cellType = CellType.STRING_TYPE;
     private boolean userDefinedCellType = false;
-    private TableCellStyle tableCellStyle = TableCellStyle.BODY;
+    private TableCellStyle tableCellStyle = TableCellStyle.BODY_CENTER;
     private String style;
     private String styleClass;
     private ExporterFormatter exporterFormatter;

@@ -14,7 +14,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class TableCellStyle implements Cloneable {
 
     public static final TableCellStyle HEADER = new TableCellStyleDefaultHeaderFooter();
-    public static final TableCellStyle BODY = new TableCellStyleDefaultBody();
+    public static final TableCellStyle BODY = new TableCellStyleDefaultBody(false);
+    public static final TableCellStyle BODY_CENTER = new TableCellStyleDefaultBody(true);
     public static final TableCellStyle FOOTER = new TableCellStyleDefaultHeaderFooter();
 
     private HSSFColor backgroundColor;

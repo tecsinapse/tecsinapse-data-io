@@ -15,7 +15,7 @@ public class TableCellStyleDefaultNotSetsTest {
     @DataProvider(name = "objsNotSetsDs")
     public Object[][] objsNotSetsDs() {
         return new Object[][] {
-                {new TableCellStyleDefaultBody()},
+                {new TableCellStyleDefaultBody(false)},
                 {new TableCellStyleDefaultHeaderFooter()}
         };
     }

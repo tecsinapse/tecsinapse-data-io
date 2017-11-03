@@ -11,9 +11,9 @@ import org.apache.poi.hssf.util.HSSFColor;
 
 final class TableCellStyleDefaultBody extends TableCellStyle {
 
-    public TableCellStyleDefaultBody() {
+    public TableCellStyleDefaultBody(boolean center) {
         super(Colors.WHITE, "body", true);
-        super.sethAlign(CellHAlign.LEFT);
+        super.sethAlign(center ? CellHAlign.CENTER : CellHAlign.LEFT);
         super.setvAlign(CellVAlign.CENTER);
     }
 

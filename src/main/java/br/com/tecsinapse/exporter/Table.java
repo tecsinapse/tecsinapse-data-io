@@ -21,7 +21,7 @@ public class Table {
 
     private ExporterFormatter exporterFormatter;
 
-    private TableCellStyle tableCellStyleDefaultBody = TableCellStyle.BODY;
+    private TableCellStyle tableCellStyleDefaultBody = TableCellStyle.BODY_CENTER;
 
     private String title;
     private boolean autoSizeColumnSheet = true;
@@ -423,7 +423,7 @@ public class Table {
     }
 
     public TableCellStyle getTableCellStyleDefaultBody() {
-        return tableCellStyleDefaultBody != null ? tableCellStyleDefaultBody : TableCellStyle.BODY;
+        return tableCellStyleDefaultBody != null ? tableCellStyleDefaultBody : TableCellStyle.BODY_CENTER;
     }
 
     public void setExporterFormatter(ExporterFormatter exporterFormatter) {
