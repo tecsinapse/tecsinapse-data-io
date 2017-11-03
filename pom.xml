@@ -108,6 +108,19 @@
         <url>https://travis-ci.org/tecsinapse/tecsinapse-data-io</url>
     </ciManagement>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>maven-central</id>
+            <name>Maven Central Repository</name>
+            <url>https://oss.sonatype.org</url>
+        </snapshotRepository>
+        <repository>
+            <id>maven-central</id>
+            <name>Maven Central Repository</name>
+            <url>https://oss.sonatype.org</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
