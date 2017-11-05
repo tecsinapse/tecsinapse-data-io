@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -55,6 +53,9 @@ import br.com.tecsinapse.exporter.converter.Converter;
 import br.com.tecsinapse.exporter.util.ExporterDateUtils;
 
 public class ImporterUtils {
+
+    private ImporterUtils() {
+    }
 
     public static final String EMPTY_STRING = "";
 
@@ -242,7 +243,7 @@ public class ImporterUtils {
 
             Converter<?, ?> converter = tcc.newInstance();
             method.invoke(instance, converter.apply(toStringNullSafe(value)));
-        } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             Converter<?, ?> converter = tcc.newInstance();
             method.invoke(instance, converter.apply(toStringNullSafe(value)));
         }
@@ -258,8 +259,7 @@ public class ImporterUtils {
                 return Boolean.valueOf(cellValue.getBooleanValue());
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    Date date = cell.getDateCellValue();
-                    return date;
+                    return cell.getDateCellValue();
                 }
                 BigDecimal bd = BigDecimal.valueOf(cell.getNumericCellValue()).setScale(DECIMAL_PRECISION, BigDecimal.ROUND_HALF_UP);
                 return bd.stripTrailingZeros();
@@ -290,12 +290,12 @@ public class ImporterUtils {
         return exporterFormatter.formatNumber(number);
     }
 
-    private static boolean isInstanceOf(Object value, Class<?> targetType) throws NoSuchMethodException {
+    private static boolean isInstanceOf(Object value, Class<?> targetType) {
         return value != null && targetType != null && targetType.isInstance(value);
     }
 
-    private static Method getTypedMethodConverter(Class<?> converter) throws NoSuchMethodException {
-        Method converterMethod[] = converter.getMethods();
+    private static Method getTypedMethodConverter(Class<?> converter) {
+        Method[] converterMethod = converter.getMethods();
         for (Method method : converterMethod) {
             Class<?>[] paramTypes = method.getParameterTypes();
             if (method.getName().equals("apply") && paramTypes.length >0 && !isStringOrObject(paramTypes[0])) {
@@ -306,25 +306,24 @@ public class ImporterUtils {
     }
 
     private static Class<?> getTypedToComparePrimitive(Class<?> c) throws NoSuchFieldException, IllegalAccessException {
-        Class<?> classz = (Class<?>) c.getField("TYPE").get(null);
-        return classz;
+        return  (Class<?>) c.getField("TYPE").get(null);
     }
 
     private static boolean isStringOrObject(Class<?> type) {
         return String.class.equals(type) || Object.class.equals(type);
     }
 
-    private static Class<?> getReturnTypeApply(Class<?> converter) throws NoSuchMethodException {
+    private static Class<?> getReturnTypeApply(Class<?> converter) {
         Method converterMethod = getTypedMethodConverter(converter);
         return converterMethod == null ? null : converterMethod.getReturnType();
     }
 
-    private static Class<?> getInputTypeApply(Class<?> converter) throws NoSuchMethodException {
+    private static Class<?> getInputTypeApply(Class<?> converter) {
         Method converterMethod = getTypedMethodConverter(converter);
         return converterMethod == null ? null : converterMethod.getParameterTypes()[0];
     }
 
-    private static Class<?> getMethodParamType(Method method) throws NoSuchMethodException {
+    private static Class<?> getMethodParamType(Method method) {
         Class<?>[] inputParamsType = method.getParameterTypes();
         if (inputParamsType.length > 0) {
             return inputParamsType[0];
@@ -332,7 +331,7 @@ public class ImporterUtils {
         return null;
     }
 
-    private static boolean isSameClassOrExtendedNullSafe(Class<?> c1, Class<?> c2) throws NoSuchMethodException, NoSuchFieldException, IllegalAccessException {
+    private static boolean isSameClassOrExtendedNullSafe(Class<?> c1, Class<?> c2) throws NoSuchFieldException, IllegalAccessException {
         if (c1 == null || c2 == null) {
             return false;
         }

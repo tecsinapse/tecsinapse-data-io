@@ -25,6 +25,8 @@ import br.com.tecsinapse.exporter.type.SeparatorType;
 
 public class CsvUtil {
 
+    private CsvUtil() {}
+
     private static final String DEFAULT_SEPARATOR_CHAR = SeparatorType.SEMICOLON.getSeparator();
 
     private static final String SEPARATOR = String.valueOf(DEFAULT_SEPARATOR_CHAR);

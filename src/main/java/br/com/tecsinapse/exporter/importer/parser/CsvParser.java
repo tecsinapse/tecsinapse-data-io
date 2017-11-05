@@ -203,7 +203,7 @@ public class CsvParser<T> implements Parser<T> {
     }
 
     private List<String> split(String line) {
-        int index = 0;
+        int index;
         int lastIndex = 0;
 
         List<String> linhaParseadaPorAspas = new ArrayList<>();

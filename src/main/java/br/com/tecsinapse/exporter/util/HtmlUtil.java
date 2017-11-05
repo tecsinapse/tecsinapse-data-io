@@ -10,6 +10,11 @@ import javax.swing.text.EditorKit;
 import javax.swing.text.html.HTMLEditorKit;
 
 public class HtmlUtil {
+
+    private HtmlUtil() {
+
+    }
+
 	public static String htmlToText(String html) {
 		EditorKit kit = new HTMLEditorKit();
 		Document doc = kit.createDefaultDocument();

@@ -6,12 +6,12 @@
  */
 package br.com.tecsinapse.exporter.style;
 
+import static br.com.tecsinapse.exporter.style.Colors.AUTOMATIC;
 import static br.com.tecsinapse.exporter.style.Colors.BLACK;
 import static br.com.tecsinapse.exporter.style.Colors.BLUE;
 import static br.com.tecsinapse.exporter.style.Colors.BRIGHT_GREEN;
 import static br.com.tecsinapse.exporter.style.Colors.RED;
 import static br.com.tecsinapse.exporter.style.Colors.WHITE;
-import static br.com.tecsinapse.exporter.style.Colors.AUTOMATIC;
 import static br.com.tecsinapse.exporter.style.CssStyle.BOLD;
 import static br.com.tecsinapse.exporter.style.CssStyle.ITALIC;
 import static br.com.tecsinapse.exporter.style.CssStyle.STRIKEOUT;
