@@ -13,6 +13,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.testng.Assert;
+import org.testng.Assert.ThrowingRunnable;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -23,7 +24,7 @@ public class FileTypeTest {
 
     @DataProvider(name = "fileTypeDs")
     private Object[][] fileTypeDs() {
-        return new Object[][] {
+        return new Object[][]{
                 {"XLS", ResourceFiles.MOCK_PLANILHA_XLS, FileType.XLS, HSSFWorkbook.class, "application/vnd.ms-excel"},
                 {"XLSX", ResourceFiles.MOCK_PLANILHA_XLSX, FileType.XLSX, XSSFWorkbook.class, "application/vnd.ms-excel"},
                 {"XLSM", ResourceFiles.EXCEL_XLSM, FileType.XLSM, XSSFWorkbook.class, "application/vnd.ms-excel"},
@@ -35,7 +36,7 @@ public class FileTypeTest {
 
     @DataProvider(name = "fileTypeExtensionDs")
     private Object[][] fileTypeExtensionDs() {
-        return new Object[][] {
+        return new Object[][]{
                 {"file1.zip", "file1%s.zip", FileType.ZIP},
                 {"file1.csv", "file1%s.csv", FileType.CSV},
                 {"file1.txt", "file1%s.txt", FileType.TXT},
@@ -53,18 +54,24 @@ public class FileTypeTest {
     }
 
     @Test(dataProvider = "fileTypeDs")
-    public void getFileTypeTest(String fromString, ResourceFiles resourceFile, FileType expected, Class<Workbook> wkExpected, String mimeTypeExpected) throws Exception {
+    public void getFileTypeTest(String fromString, final ResourceFiles resourceFile, FileType expected, Class<Workbook> wkExpected, String mimeTypeExpected) throws Exception {
         FileType actualFromString = FileType.valueOf(fromString);
         Assert.assertEquals(actualFromString, expected, String.format("%s - %s", actualFromString.getDescription(), actualFromString.getDescription()));
 
-        FileType actualFromFileName = FileType.getFileType(resourceFile.getFileName());
+        final FileType actualFromFileName = FileType.getFileType(resourceFile.getFileName());
         Assert.assertEquals(actualFromFileName, expected, String.format("%s - %s", actualFromFileName.getDescription(), actualFromFileName.getDescription()));
 
         Assert.assertEquals(actualFromFileName.getMimeType(), mimeTypeExpected);
-        Workbook wk = actualFromFileName.buildWorkbook(new FileInputStream(resourceFile.getFile()));
+
         if (wkExpected == null) {
-            Assert.assertNull(wk, resourceFile.getFileName());
+            Assert.assertThrows(UnsupportedOperationException.class, new ThrowingRunnable() {
+                @Override
+                public void run() throws Throwable {
+                    Workbook wk = actualFromFileName.buildWorkbook(new FileInputStream(resourceFile.getFile()));
+                }
+            });
         } else {
+            Workbook wk = actualFromFileName.buildWorkbook(new FileInputStream(resourceFile.getFile()));
             Assert.assertTrue(wkExpected.isInstance(wk), resourceFile.getFileName());
         }
     }
