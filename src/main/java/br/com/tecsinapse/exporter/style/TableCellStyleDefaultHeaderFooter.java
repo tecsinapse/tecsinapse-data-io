@@ -7,88 +7,9 @@
 
 package br.com.tecsinapse.exporter.style;
 
-import org.apache.poi.hssf.util.HSSFColor;
+final class TableCellStyleDefaultHeaderFooter extends TableCellStyleProtected {
 
-final class TableCellStyleDefaultHeaderFooter extends TableCellStyle {
-
-    public TableCellStyleDefaultHeaderFooter() {
-        super(Colors.GREY_25_PERCENT, "header", true);
-        super.sethAlign(CellHAlign.CENTER);
-        super.setvAlign(CellVAlign.CENTER);
-    }
-
-    private void throwUnsupportedOperationException() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("TableCellStyleDefaultHeaderFooter: Unsupported operation for default objects.");
-    }
-
-
-    @Override
-    public void setFontColor(HSSFColor fontColor) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setBackgroundColor(HSSFColor backgroundColor) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setFontSize(Integer fontSize) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setBold(boolean bold) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setItalic(boolean italic) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setUnderline(boolean underline) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setStrikeout(boolean strikeout) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setvAlign(CellVAlign vAlign) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void sethAlign(CellHAlign hAlign) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setBorder(CellStyleBorder border) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setCellFormat(String cellFormat) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setCssWhiteAsTransparent(boolean cssWhiteAsTransparent) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setCssClass(String cssClass) {
-        throwUnsupportedOperationException();
-    }
-
-    @Override
-    public void setIgnoreCssStyle(boolean ignoreCssStyle) {
-        throwUnsupportedOperationException();
+    TableCellStyleDefaultHeaderFooter() {
+        super(Colors.GREY_25_PERCENT, "header", true, CellHAlign.CENTER, CellVAlign.CENTER);
     }
 }
