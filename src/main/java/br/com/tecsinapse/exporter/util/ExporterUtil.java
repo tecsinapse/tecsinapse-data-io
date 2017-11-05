@@ -111,6 +111,10 @@ public final class ExporterUtil {
     }
 
     private static File createFile(String fileName) throws IOException {
+        File originalFile = new File(fileName);
+        if (originalFile.isAbsolute()) {
+            return originalFile;
+        }
         Path tempDir = Files.createTempDirectory("data-io-tmp");
         return new File(tempDir.toFile(), fileName);
     }
