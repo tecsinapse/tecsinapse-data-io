@@ -130,7 +130,17 @@
             <artifactId>reflections</artifactId>
             <version>${reflections.verson}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.18</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j13</artifactId>
+            <version>1.0.1</version>
+        </dependency>
         <!-- test -->
         <dependency>
             <groupId>org.testng</groupId>

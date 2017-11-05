@@ -12,14 +12,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public final class ExporterDateUtils {
 
     // private static final Date DATETIME_BIGBANG = new Date(-2209064400000L);
     private static final Date DATETIME_BIGBANG_PLUS_24H = new Date(-2208977612000L);
-    private static final SimpleDateFormat TIME_ISO_FORMAT = new SimpleDateFormat("HH:mm:ss");
-    private static final SimpleDateFormat DATE_ISO_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat DATETIME_ISO_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    private static final SimpleDateFormat DATETIME_FILE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH-mm");
+    private static final String TIME_ISO_FORMAT = "HH:mm:ss";
+    private static final String DATE_ISO_FORMAT = "yyyy-MM-dd";
+    private static final String DATETIME_ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    private static final String DATETIME_FILE_FORMAT = "yyyy-MM-dd_HH-mm";
 
     private ExporterDateUtils() {
 
@@ -54,16 +57,16 @@ public final class ExporterDateUtils {
             return null;
         }
         if (dateType == DateType.TIME) {
-            return TIME_ISO_FORMAT.format(date);
+            return formatDate(TIME_ISO_FORMAT, date);
         }
         if (dateType == DateType.DATE) {
-            return DATE_ISO_FORMAT.format(date);
+            return formatDate(DATE_ISO_FORMAT, date);
         }
-        return DATETIME_ISO_FORMAT.format(date);
+        return formatDate(DATETIME_ISO_FORMAT, date);
     }
 
     public static String formatAsFileDateTime(Date date) {
-        return DATETIME_FILE_FORMAT.format(date);
+        return formatDate(DATETIME_FILE_FORMAT, date);
     }
 
     public static Date parseDate(String strDate) {
@@ -71,14 +74,19 @@ public final class ExporterDateUtils {
             return null;
         }
         try {
-            return DATETIME_ISO_FORMAT.parse(strDate);
+            return new SimpleDateFormat(DATETIME_ISO_FORMAT).parse(strDate);
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            log.error("Parse date '{0}' error.", strDate, e);
+            return null;
         }
     }
 
     public enum DateType {
         TIME, DATE, DATETIME, NO_DATE
+    }
+
+    private static String formatDate(String format, Date date) {
+        return new SimpleDateFormat(format).format(date);
     }
 
 }

@@ -56,6 +56,8 @@ import br.com.tecsinapse.exporter.util.ExporterDateUtils;
 
 public class ImporterUtils {
 
+    public static final String EMPTY_STRING = "";
+
     public static <T> void removeBlankLinesOfEnd(List<T> resultList, Class<T> clazz) throws InvocationTargetException, IllegalAccessException, IntrospectionException {
         Collections.reverse(resultList);
         final PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
@@ -239,10 +241,10 @@ public class ImporterUtils {
             }
 
             Converter<?, ?> converter = tcc.newInstance();
-            method.invoke(instance, converter.apply(value.toString()));
+            method.invoke(instance, converter.apply(toStringNullSafe(value)));
         } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException e) {
             Converter<?, ?> converter = tcc.newInstance();
-            method.invoke(instance, converter.apply(value.toString()));
+            method.invoke(instance, converter.apply(toStringNullSafe(value)));
         }
     }
 
@@ -346,6 +348,10 @@ public class ImporterUtils {
     private static boolean comparePrimitive(Class<?> c1, Class<?> primitive) throws NoSuchFieldException, IllegalAccessException {
         Class<?> classz = getTypedToComparePrimitive(c1);
         return classz != null && classz.equals(primitive);
+    }
+
+    private static String toStringNullSafe(Object o) {
+        return o == null ? EMPTY_STRING : o.toString();
     }
 
 }
