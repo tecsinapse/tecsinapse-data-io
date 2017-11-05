@@ -5,18 +5,27 @@ jdk:
 notifications:
   email:
     recipients:
-    - dev@tecsinapse.com.br
+    - edimar.cardoso@tecsinapse.com.br
     on_success: change
     on_failure: always
+install: true
+addons:
+  sonarcloud:
+    organization: "tecsinapse-oss"
+    token:
+      secure: "CcaWIBconKNASq/BIAE2cadxNGHby1T3VbIlteV7G4meIFaTs7gXj0Endrgt6tLN5benNnWDP6bl1mx3vd/BWdz5wtL4A8ebP3eiKp/FgqXhIdvm22RrvBas3C9TA34UDa12nor/Cux/w9RLR6tMlJ4IUUIQZVQ9oyIgS1nm8PEVIP5tmelK8fvZ7MNmA+pFIA05tL3Cl1VCMAybQxK4JmcCiqa8UndOzeKl7uy+a9dZ5l/gTjyiyY0ijJZkN8SnFvjhPzZ/oaswVP4qd8rUTVelouuBUnsezBpwfPTodGncLBUSJC8TjdgeBTCwXY41LQPwW7GPbFbIh/QMEYyGyOVLutfioeRbv0HIk3W9O2pNz2MYm3NtaIZLaHFKx8gfckos9//h887Z6o7hhnBOdmv8qTE9kdd8phj7LzpvxlQg2/v/1bhCnT1OILDf21uWAJPKRMnjKHxHePQNQ/Io0h0SniBFJisPvZ9OOFrHIK9XXhSUMjUprSu/KJPS3rMTDXtb8V1eQ12NwSWipLc7+pJT+KQlqjy5SKJPoiitAx6tWcbHbFcmOrID3n8rsHOrjwrVuEAQXLmc08M4+k/yUvYH6JdHNK37o71tPfsquOFNOcRbetCtFRlBHl0OoNRgAR0/kq6SVYN+arPRnCFW2uZVkYX6I7LpBjBSsv3W9aU="
 after_success:
 - openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $GPG_DIR/pubring.gpg.enc
   -out $GPG_DIR/pubring.gpg -d
 - openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $GPG_DIR/secring.gpg.enc
   -out $GPG_DIR/secring.gpg -d
 - bash .travis_after_success.sh
+script:
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
 cache:
   directories:
   - "$HOME/.m2"
+  - '$HOME/.sonar/cache'
 env:
   global:
   - GPG_DIR="`pwd`/travis"
