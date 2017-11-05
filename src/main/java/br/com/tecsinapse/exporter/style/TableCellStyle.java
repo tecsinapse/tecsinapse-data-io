@@ -11,7 +11,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
 
-public class TableCellStyle implements Cloneable {
+public class TableCellStyle {
 
     public static final TableCellStyle HEADER = new TableCellStyleDefaultHeaderFooter();
     public static final TableCellStyle BODY = new TableCellStyleDefaultBody(false);

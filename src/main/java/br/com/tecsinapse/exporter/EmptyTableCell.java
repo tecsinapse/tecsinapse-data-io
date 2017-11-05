@@ -15,7 +15,7 @@ public final class EmptyTableCell extends TableCell {
     private EmptyTableCell() {
     }
 
-    private void throwUnsupportedOperationException() throws UnsupportedOperationException {
+    private void throwUnsupportedOperationException() {
         throw new UnsupportedOperationException("EmptyTableCell: Unsupported operation for default objects.");
     }
 

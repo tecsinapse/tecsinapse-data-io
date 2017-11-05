@@ -10,7 +10,7 @@ package br.com.tecsinapse.exporter.style;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 
-public class CellStyleBorder implements Cloneable {
+public class CellStyleBorder {
 
     public static final CellStyleBorder DEFAULT = new CellStyleBorderDefault();
 

@@ -9,8 +9,13 @@ package br.com.tecsinapse.exporter.util;
 
 import java.util.Locale;
 
-public interface Constants {
-    short DECIMAL_PRECISION = 10;
-    Locale LOCALE_PT_BR = new Locale("pt", "BR");
-    Locale LOCALE_ES_ES = new Locale("es", "ES");
+public final class Constants {
+
+    private Constants() {}
+
+    public static final short DECIMAL_PRECISION = 10;
+    public static final Locale LOCALE_PT_BR = new Locale("pt", "BR");
+    public static final Locale LOCALE_ES_ES = new Locale("es", "ES");
+    public static final String MSG_IGNORED = "Ignored";
+    public static final String MIME_XLSX_XLS = "application/vnd.ms-excel";
 }

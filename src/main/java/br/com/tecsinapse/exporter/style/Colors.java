@@ -26,23 +26,25 @@ import org.apache.poi.hssf.util.HSSFColor.RED;
 import org.apache.poi.hssf.util.HSSFColor.WHITE;
 import org.apache.poi.hssf.util.HSSFColor.YELLOW;
 
-public interface Colors {
+public final class Colors {
 
-    HSSFColor AUTOMATIC = new AUTOMATIC();
-    HSSFColor BLACK = new BLACK();
-    HSSFColor BLUE = new BLUE();
-    HSSFColor BRIGHT_GREEN = new BRIGHT_GREEN();
-    HSSFColor BROWN = new BROWN();
-    HSSFColor DARK_BLUE = new DARK_BLUE();
-    HSSFColor DARK_GREEN = new DARK_GREEN();
-    HSSFColor DARK_RED = new DARK_RED();
-    HSSFColor DARK_YELLOW = new DARK_YELLOW();
-    HSSFColor GREY_25_PERCENT = new GREY_25_PERCENT();
-    HSSFColor GREY_40_PERCENT = new GREY_40_PERCENT();
-    HSSFColor GREY_50_PERCENT = new GREY_50_PERCENT();
-    HSSFColor GREY_80_PERCENT = new GREY_80_PERCENT();
-    HSSFColor ORANGE = new ORANGE();
-    HSSFColor RED = new RED();
-    HSSFColor WHITE = new WHITE();
-    HSSFColor YELLOW = new YELLOW();
+    private Colors() {}
+
+    public static final HSSFColor AUTOMATIC = new AUTOMATIC();
+    public static final HSSFColor BLACK = new BLACK();
+    public static final HSSFColor BLUE = new BLUE();
+    public static final HSSFColor BRIGHT_GREEN = new BRIGHT_GREEN();
+    public static final HSSFColor BROWN = new BROWN();
+    public static final HSSFColor DARK_BLUE = new DARK_BLUE();
+    public static final HSSFColor DARK_GREEN = new DARK_GREEN();
+    public static final HSSFColor DARK_RED = new DARK_RED();
+    public static final HSSFColor DARK_YELLOW = new DARK_YELLOW();
+    public static final HSSFColor GREY_25_PERCENT = new GREY_25_PERCENT();
+    public static final HSSFColor GREY_40_PERCENT = new GREY_40_PERCENT();
+    public static final HSSFColor GREY_50_PERCENT = new GREY_50_PERCENT();
+    public static final HSSFColor GREY_80_PERCENT = new GREY_80_PERCENT();
+    public static final HSSFColor ORANGE = new ORANGE();
+    public static final HSSFColor RED = new RED();
+    public static final HSSFColor WHITE = new WHITE();
+    public static final HSSFColor YELLOW = new YELLOW();
 }

@@ -149,7 +149,7 @@ public class Table {
     }
 
     public void removeFirstRow() {
-        if (cells.size() > 0) {
+        if (!cells.isEmpty()) {
             cells.remove(0);
         }
     }
@@ -457,8 +457,8 @@ public class Table {
 
     public List<TableCellStyle> getTableCellStyles() {
         List<TableCellStyle> tableCellStyles = new ArrayList<>();
-        for (List<TableCell> cells : getCells()) {
-            for (TableCell cell : cells) {
+        for (List<TableCell> cellsTable : getCells()) {
+            for (TableCell cell : cellsTable) {
                 if (!tableCellStyles.contains(cell.getTableCellStyle())) {
                     tableCellStyles.add(cell.getTableCellStyle());
                 }

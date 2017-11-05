@@ -33,46 +33,46 @@ public class Importer<T> implements Closeable {
     private int headersRows = DEFAULT_START_ROW;
     private boolean isLastSheet;
 
-    public Importer(Class<T> clazz, Charset charset, File file) throws IOException {
+    public Importer(Class<T> clazz, Charset charset, File file) {
         this(clazz, charset, Default.class);
         this.file = file;
     }
 
-    public Importer(Class<T> clazz, Charset charset, InputStream inputStream, String filename) throws IOException {
+    public Importer(Class<T> clazz, Charset charset, InputStream inputStream, String filename) {
         this(clazz, inputStream, filename);
         this.charset = charset;
     }
 
-    public Importer(Class<T> clazz, File file) throws IOException {
+    public Importer(Class<T> clazz, File file) {
         this(clazz, file, Default.class);
     }
 
-    public Importer(Class<T> clazz, File file, Class<?> group) throws IOException {
+    public Importer(Class<T> clazz, File file, Class<?> group) {
         this(clazz, group);
         this.file = file;
     }
 
-    public Importer(Class<T> clazz, InputStream inputStream, String filename) throws IOException {
+    public Importer(Class<T> clazz, InputStream inputStream, String filename) {
         this(clazz, inputStream, filename, Default.class);
     }
 
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, Class<?> group) throws IOException {
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, Class<?> group) {
         this(clazz, inputStream, filename, false, group);
     }
 
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet) throws IOException {
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet) {
         this(clazz, inputStream, filename, isLastSheet, Default.class);
     }
 
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet, Class<?> group) throws IOException {
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, boolean isLastSheet, Class<?> group) {
         this(clazz, inputStream, filename, DEFAULT_START_ROW, isLastSheet, group);
     }
 
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, int afterLine, boolean isLastSheet) throws IOException {
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, int afterLine, boolean isLastSheet) {
         this(clazz, inputStream, filename, afterLine, isLastSheet, Default.class);
     }
 
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, int afterLine, boolean isLastSheet, Class<?> group) throws IOException {
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, int afterLine, boolean isLastSheet, Class<?> group) {
         this(clazz, group);
         this.inputStream = inputStream;
         this.filename = filename;
@@ -98,14 +98,14 @@ public class Importer<T> implements Closeable {
         FileType fileType = getFileType();
         if (fileType == FileType.XLSX || fileType == FileType.XLS) {
             if (file != null) {
-                parser = new SpreadsheetParser<T>(clazz, file);
+                parser = new SpreadsheetParser<>(clazz, file);
                 parser.setGroup(group);
                 parser.setHeadersRows(headersRows);
                 parser.setLastsheet(isLastSheet);
                 return;
             }
             if (inputStream != null) {
-                parser = new SpreadsheetParser<T>(clazz, inputStream, fileType);
+                parser = new SpreadsheetParser<>(clazz, inputStream, fileType);
                 parser.setGroup(group);
                 parser.setHeadersRows(headersRows);
                 parser.setLastsheet(isLastSheet);
@@ -113,12 +113,11 @@ public class Importer<T> implements Closeable {
             }
         }
         if (file != null) {
-            parser = new CsvParser<T>(clazz, file, charset, headersRows, group);
+            parser = new CsvParser<>(clazz, file, charset, headersRows, group);
             return;
         }
         if (inputStream != null) {
-            parser = new CsvParser<T>(clazz, inputStream, charset, headersRows, group);
-            return;
+            parser = new CsvParser<>(clazz, inputStream, charset, headersRows, group);
         }
     }
 
@@ -161,7 +160,7 @@ public class Importer<T> implements Closeable {
      * @deprecated
      */
     @Deprecated
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) throws IOException {
+    public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) {
         this(clazz, inputStream, filename);
     }
 
@@ -172,5 +171,6 @@ public class Importer<T> implements Closeable {
      */
     @Deprecated
     public void setDateStringPattern(String patternIgnored) {
+        throw new UnsupportedOperationException("Ignored.");
     }
 }

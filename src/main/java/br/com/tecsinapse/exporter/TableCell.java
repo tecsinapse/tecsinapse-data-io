@@ -80,8 +80,8 @@ public class TableCell {
 
     public String getContentText() {
         if (cellType == CellType.HTML_TYPE) {
-            final String content = HtmlUtil.htmlToText(getContent());
-            return content.replaceAll("[\u0000-\u001f]", ""); // removendo caracteres invisiveis
+            final String contentHtml = HtmlUtil.htmlToText(getContent());
+            return contentHtml.replaceAll("[\u0000-\u001f]", ""); // removendo caracteres invisiveis
         }
         return getFormattedContent(exporterFormatter);
     }

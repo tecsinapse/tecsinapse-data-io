@@ -78,9 +78,9 @@ public class ExporterFormatter {
     }
 
     private String getCurrencyFormatString() {
-        String currencyFormat = this.currencyFormat.toPattern();
-        currencyFormat = currencyFormat.replace(CURRENCY_SYMBOL_PATTERN, this.currencyFormat.getPositivePrefix());
-        return currencyFormat;
+        String cf = this.currencyFormat.toPattern();
+        cf = cf.replace(CURRENCY_SYMBOL_PATTERN, this.currencyFormat.getPositivePrefix());
+        return cf;
     }
 
     public String getLocalDateTimeFormat() {

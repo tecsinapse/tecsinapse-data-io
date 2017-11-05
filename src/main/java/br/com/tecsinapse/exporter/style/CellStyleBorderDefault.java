@@ -15,7 +15,7 @@ final class CellStyleBorderDefault extends CellStyleBorder {
         super(true, true, true, true);
     }
 
-    private void throwUnsupportedOperationException() throws UnsupportedOperationException {
+    private void throwUnsupportedOperationException() {
         throw new UnsupportedOperationException("CellStyleBorderDefault: Unsupported operation for default objects.");
     }
 

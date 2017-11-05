@@ -6,6 +6,9 @@
  */
 package br.com.tecsinapse.exporter.type;
 
+import static br.com.tecsinapse.exporter.util.Constants.MIME_XLSX_XLS;
+import static br.com.tecsinapse.exporter.util.Constants.MSG_IGNORED;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -18,19 +21,19 @@ import br.com.tecsinapse.exporter.util.ExporterDateUtils;
 
 public enum FileType {
 
-    XLS("MS Excel file (.xls)", "application/vnd.ms-excel", ".xls") {
+    XLS("MS Excel file (.xls)", MIME_XLSX_XLS, ".xls") {
         @Override
         public Workbook buildWorkbook(InputStream inputStream) throws IOException {
             return new HSSFWorkbook(inputStream);
         }
     },
-    XLSX("MS Excel file (.xlsx)", "application/vnd.ms-excel", ".xlsx") {
+    XLSX("MS Excel file (.xlsx)", MIME_XLSX_XLS, ".xlsx") {
         @Override
         public Workbook buildWorkbook(InputStream inputStream) throws IOException {
             return new XSSFWorkbook(inputStream);
         }
     },
-    XLSM("MS Excel file (.xlsm)", "application/vnd.ms-excel", ".xlsm") {
+    XLSM("MS Excel file (.xlsm)", MIME_XLSX_XLS, ".xlsm") {
         @Override
         public Workbook buildWorkbook(InputStream inputStream) throws IOException {
             return XLSX.buildWorkbook(inputStream);
@@ -64,7 +67,7 @@ public enum FileType {
     }
 
     public Workbook buildWorkbook(InputStream inputStream) throws IOException {
-        return null;
+        throw new UnsupportedOperationException(MSG_IGNORED);
     }
 
     public String getMimeType() {

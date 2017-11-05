@@ -142,7 +142,7 @@ public class ImporterUtils {
         Multimap<Method, Optional<TableCellMapping>> tableCellMappingByMethod = FluentIterable.from(cellMappingMethods)
                 .index(new Function<Method, Optional<TableCellMapping>>() {
                     @Override
-                    public Optional<TableCellMapping> apply(@Nonnull Method method) {
+                    public Optional<TableCellMapping> apply(Method method) {
                         checkNotNull(method);
                         return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
                                 .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class), group));
@@ -152,7 +152,7 @@ public class ImporterUtils {
 
         tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, new Predicate<Entry<Method, Optional<TableCellMapping>>>() {
             @Override
-            public boolean apply(@Nonnull Entry<Method, Optional<TableCellMapping>> entry) {
+            public boolean apply(Entry<Method, Optional<TableCellMapping>> entry) {
                 checkNotNull(entry);
                 return entry.getValue().isPresent()
                         && any(Lists.newArrayList(entry.getValue().get().groups()), assignableTo(group));
@@ -161,7 +161,7 @@ public class ImporterUtils {
 
         Multimap<Method, TableCellMapping> methodByTableCellMapping = transformValues(tableCellMappingByMethod, new Function<Optional<TableCellMapping>, TableCellMapping>() {
             @Override
-            public TableCellMapping apply(@Nonnull Optional<TableCellMapping> tcmOptional) {
+            public TableCellMapping apply(Optional<TableCellMapping> tcmOptional) {
                 checkNotNull(tcmOptional);
                 return tcmOptional.get();
             }
@@ -169,7 +169,7 @@ public class ImporterUtils {
 
         return Maps.transformValues(methodByTableCellMapping.asMap(), new Function<Collection<TableCellMapping>, TableCellMapping>() {
             @Override
-            public TableCellMapping apply(@Nonnull Collection<TableCellMapping> tcms) {
+            public TableCellMapping apply(Collection<TableCellMapping> tcms) {
                 checkNotNull(tcms);
                 return Iterables.getFirst(tcms, null);
             }
@@ -184,7 +184,7 @@ public class ImporterUtils {
         return FluentIterable.from(Lists.newArrayList(tcms.value()))
                 .filter(new Predicate<TableCellMapping>() {
                     @Override
-                    public boolean apply(@Nonnull TableCellMapping tcm) {
+                    public boolean apply(TableCellMapping tcm) {
                         checkNotNull(tcm);
                         return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
                     }
@@ -195,7 +195,7 @@ public class ImporterUtils {
     private static Predicate<? super Class<?>> assignableTo(final Class<?> group) {
         return new Predicate<Class<?>>() {
             @Override
-            public boolean apply(@Nonnull Class<?> g) {
+            public boolean apply(Class<?> g) {
                 checkNotNull(g);
                 return g.isAssignableFrom(group);
             }

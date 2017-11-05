@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,6 +33,7 @@ import br.com.tecsinapse.exporter.importer.Importer;
 import br.com.tecsinapse.exporter.importer.ImporterUtils;
 import br.com.tecsinapse.exporter.importer.Parser;
 import br.com.tecsinapse.exporter.type.FileType;
+import br.com.tecsinapse.exporter.util.Constants;
 import br.com.tecsinapse.exporter.util.CsvUtil;
 
 public class CsvParser<T> implements Parser<T> {
@@ -88,17 +90,17 @@ public class CsvParser<T> implements Parser<T> {
 
     @Override
     public void setSheetNumber(int sheetNumber) {
-
+        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
     }
 
     @Override
     public void setLastsheet(boolean lastsheet) {
-
+        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
     }
 
     @Override
     public void setFirstVisibleSheet() {
-
+        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
     }
 
     @Override
@@ -108,7 +110,7 @@ public class CsvParser<T> implements Parser<T> {
 
     @Override
     public void setSheetNumberAsFirstNotHidden() {
-
+        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
     }
 
     @Override
@@ -146,7 +148,7 @@ public class CsvParser<T> implements Parser<T> {
 
     @Override
     public List<List<String>> getLines() throws SAXException, OpenXML4JException, ParserConfigurationException, IOException {
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -212,7 +214,7 @@ public class CsvParser<T> implements Parser<T> {
          * Se houver, é preciso ignorar os ; internos às aspas
          */
         while (lastIndex != -1 && lastIndex < line.length()) {
-            index = line.indexOf(";", lastIndex);
+            index = line.indexOf(';', lastIndex);
 
             if (index == -1) {
                 //ultima coluna
@@ -262,7 +264,7 @@ public class CsvParser<T> implements Parser<T> {
     }
 
     private boolean temAspas(String column) {
-        return column.indexOf("\"") != -1;
+        return column.indexOf('"') != -1;
     }
 
     private String substringNormalizada(String line, int i, int f) {

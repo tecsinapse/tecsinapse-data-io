@@ -6,15 +6,17 @@
  */
 package br.com.tecsinapse.exporter.style;
 
-public interface Style {
+public final class Style {
 
-    String BACKGROUND_COLOR_GRAY = "background-color: rgb(221, 221, 221);";
-    String FONT_SIZE_1_2_EM = "font-size: 1.2em;";
-    String FONT_SIZE_1_4_EM = "font-size: 1.4em;";
-    String FONT_SIZE_1_6_EM = "font-size: 1.6em;";
-    String FONT_SIZE_1_8_EM = "font-size: 1.8em;";
-    String FONT_WEIGHT_BOLD = "font-weight: bold;";
-    String TEXT_ALIGN_LEFT = "text-align: left;";
-    String VERTICAL_ALIGN_MIDDLE = "vertical-align: middle;";
+    private Style() {}
+
+    public static final String BACKGROUND_COLOR_GRAY = "background-color: rgb(221, 221, 221);";
+    public static final String FONT_SIZE_1_2_EM = "font-size: 1.2em;";
+    public static final String FONT_SIZE_1_4_EM = "font-size: 1.4em;";
+    public static final String FONT_SIZE_1_6_EM = "font-size: 1.6em;";
+    public static final String FONT_SIZE_1_8_EM = "font-size: 1.8em;";
+    public static final String FONT_WEIGHT_BOLD = "font-weight: bold;";
+    public static final String TEXT_ALIGN_LEFT = "text-align: left;";
+    public static final String VERTICAL_ALIGN_MIDDLE = "vertical-align: middle;";
 
 }

@@ -18,7 +18,7 @@ class TableCellStyleProtected extends TableCellStyle {
         super.setvAlign(cellVAlign);
     }
 
-    private void throwUnsupportedOperationException() throws UnsupportedOperationException {
+    private void throwUnsupportedOperationException() {
         throw new UnsupportedOperationException("TableCellStyleDefaultHeaderFooter: Unsupported operation for default objects.");
     }
 
