@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,9 @@ public final class ExporterUtil {
 
     public static File writeDataToFile(List<Table> table, FileType fileType, String filename, String charset, String separator) throws IOException, ExporterNotImplementedException {
         File file = createFile(filename);
-        writeData(table, fileType, new FileOutputStream(file), charset, separator);
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            writeData(table, fileType, fos, charset, separator);
+        }
         return file;
     }
 
@@ -54,14 +57,17 @@ public final class ExporterUtil {
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
         if (fileType == FileType.XLSX || fileType == FileType.XLSM) {
             writeXlsx(table, bufferedOutputStream);
+            bufferedOutputStream.flush();
             return;
         }
         if (fileType == FileType.XLS) {
             writeXls(table, bufferedOutputStream);
+            bufferedOutputStream.flush();
             return;
         }
         if (fileType == FileType.CSV || fileType == FileType.TXT) {
             writeCsv(table, bufferedOutputStream, charset, separator);
+            bufferedOutputStream.flush();
             return;
         }
         throw new ExporterNotImplementedException(String.format("File type not supported. %s", fileType));
@@ -105,9 +111,8 @@ public final class ExporterUtil {
     }
 
     private static File createFile(String fileName) throws IOException {
-        String ext = com.google.common.io.Files.getFileExtension(fileName);
-        String name = com.google.common.io.Files.getNameWithoutExtension(fileName);
-        return Files.createTempFile(name, ext.isEmpty() ? "" : "." + ext).toFile();
+        Path tempDir = Files.createTempDirectory("data-io-tmp");
+        return new File(tempDir.toFile(), fileName);
     }
 
     public static File getCsvFile(Table t, String fileName, String charsetName, char separator) throws IOException {
