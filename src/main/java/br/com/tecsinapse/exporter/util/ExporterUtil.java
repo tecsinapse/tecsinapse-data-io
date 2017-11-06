@@ -37,15 +37,15 @@ public final class ExporterUtil {
 
     }
 
-    public static File writeDataToFile(List<Table> table, FileType fileType, String filename) throws IOException, ExporterNotImplementedException {
+    public static File writeDataToFile(List<Table> table, FileType fileType, String filename) throws IOException {
         return writeDataToFile(table, fileType, filename, "UTF-8");
     }
 
-    public static File writeDataToFile(List<Table> table, FileType fileType, String filename, String charset) throws IOException, ExporterNotImplementedException {
+    public static File writeDataToFile(List<Table> table, FileType fileType, String filename, String charset) throws IOException {
         return writeDataToFile(table, fileType, filename, charset, SEMICOLON.getSeparator());
     }
 
-    public static File writeDataToFile(List<Table> table, FileType fileType, String filename, String charset, String separator) throws IOException, ExporterNotImplementedException {
+    public static File writeDataToFile(List<Table> table, FileType fileType, String filename, String charset, String separator) throws IOException {
         File file = createFile(filename);
         try (FileOutputStream fos = new FileOutputStream(file)) {
             writeData(table, fileType, fos, charset, separator);
@@ -53,7 +53,7 @@ public final class ExporterUtil {
         return file;
     }
 
-    public static void writeData(List<Table> table, FileType fileType, OutputStream outputStream, String charset, String separator) throws IOException, ExporterNotImplementedException {
+    public static void writeData(List<Table> table, FileType fileType, OutputStream outputStream, String charset, String separator) throws IOException {
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
         if (fileType == FileType.XLSX || fileType == FileType.XLSM) {
             writeXlsx(table, bufferedOutputStream);

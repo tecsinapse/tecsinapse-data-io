@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class ExporterDateUtils {
 
-    // private static final Date DATETIME_BIGBANG = new Date(-2209064400000L);
     private static final Date DATETIME_BIGBANG_PLUS_24H = new Date(-2208977612000L);
     private static final String TIME_ISO_FORMAT = "HH:mm:ss";
     private static final String DATE_ISO_FORMAT = "yyyy-MM-dd";

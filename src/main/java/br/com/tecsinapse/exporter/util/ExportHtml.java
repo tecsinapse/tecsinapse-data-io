@@ -112,7 +112,7 @@ public class ExportHtml {
         return tableHtmlProperties;
     }
 
-    private <TP> void checkNpe(TP o) {
+    private <T> void checkNpe(T o) {
         if (o == null) {
             throw new NullPointerException("Object is null.");
         }

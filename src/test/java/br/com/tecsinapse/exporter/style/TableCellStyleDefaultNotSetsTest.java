@@ -16,7 +16,8 @@ public class TableCellStyleDefaultNotSetsTest {
     public Object[][] objsNotSetsDs() {
         return new Object[][] {
                 {new TableCellStyleDefaultBody(false)},
-                {new TableCellStyleDefaultHeaderFooter()}
+                {new TableCellStyleDefaultHeaderFooter()},
+                {new TableCellStyleProtected(Colors.WHITE, null, true, CellHAlign.CENTER, CellVAlign.CENTER)}
         };
     }
 
@@ -73,6 +74,21 @@ public class TableCellStyleDefaultNotSetsTest {
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
     public void testSetCellFormat(TableCellStyle tableCellStyle) throws Exception {
         tableCellStyle.setCellFormat(null);
+    }
+
+    @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
+    public void testSetCssWhiteAsTransparent(TableCellStyle tableCellStyle) throws Exception {
+        tableCellStyle.setCssWhiteAsTransparent(true);
+    }
+
+    @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
+    public void testSetCssClass(TableCellStyle tableCellStyle) throws Exception {
+        tableCellStyle.setCssClass(null);
+    }
+
+    @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
+    public void testSetIgnoreCssStyle(TableCellStyle tableCellStyle) throws Exception {
+        tableCellStyle.setIgnoreCssStyle(true);
     }
 
 }
