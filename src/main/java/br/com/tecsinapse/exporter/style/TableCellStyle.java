@@ -6,6 +6,9 @@
  */
 package br.com.tecsinapse.exporter.style;
 
+import static br.com.tecsinapse.exporter.style.Style.TABLE_CELL_STYLE_FOOTER;
+import static br.com.tecsinapse.exporter.style.Style.TABLE_CELL_STYLE_HEADER;
+
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -13,16 +16,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 public class TableCellStyle {
 
-    public static final TableCellStyle HEADER = new TableCellStyleDefaultHeaderFooter();
-    public static final TableCellStyle BODY = new TableCellStyleDefaultBody(false);
-    public static final TableCellStyle BODY_CENTER = new TableCellStyleDefaultBody(true);
-    public static final TableCellStyle FOOTER = new TableCellStyleDefaultHeaderFooter();
-
     private HSSFColor backgroundColor;
     private HSSFColor fontColor;
     private CellVAlign vAlign;
     private CellHAlign hAlign;
-    private CellStyleBorder border = CellStyleBorder.DEFAULT;
+    private CellStyleBorder border = Style.CELL_STYLE_BORDER_DEFAULT;
     private Integer fontSize;
     private boolean bold = false;
     private boolean italic = false;
@@ -133,11 +131,11 @@ public class TableCellStyle {
     }
 
     public boolean isHeader() {
-        return this.equals(HEADER);
+        return this.equals(TABLE_CELL_STYLE_HEADER);
     }
 
     public boolean isFooter() {
-        return this.equals(FOOTER);
+        return this.equals(TABLE_CELL_STYLE_FOOTER);
     }
 
     public boolean isCssWhiteAsTransparent() {
@@ -243,11 +241,11 @@ public class TableCellStyle {
         }
     }
 
-    public TableCellStyle clone() {
+    public TableCellStyle duplicate() {
         TableCellStyle tcs = new TableCellStyle(getBackgroundColor());
         CellStyleBorder csb = getBorder();
         if (csb != null) {
-            tcs.setBorder(csb.clone());
+            tcs.setBorder(csb.duplicate());
         } else {
             tcs.setBorder(null);
         }

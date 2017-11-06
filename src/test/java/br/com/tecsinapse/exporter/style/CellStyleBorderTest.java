@@ -37,7 +37,7 @@ public class CellStyleBorderTest {
         Assert.assertEquals(cellStyleBorder.isBottom(), bottom);
         Assert.assertEquals(cellStyleBorder.toCss(), expectedCss);
 
-        CellStyleBorder cellStyleBorder2 = cellStyleBorder.clone();
+        CellStyleBorder cellStyleBorder2 = cellStyleBorder.duplicate();
         cellStyleBorder2.setBorderColor(color2);
         cellStyleBorder2.setLeft(!left);
         cellStyleBorder2.setRight(!right);
@@ -54,7 +54,7 @@ public class CellStyleBorderTest {
 
     @Test
     public void cellStyleBorderWithSpreadsheetStyleNullTest() {
-        Assert.assertNull(CellStyleBorder.DEFAULT.toCellStyle(null));
+        Assert.assertNull(Style.CELL_STYLE_BORDER_DEFAULT.toCellStyle(null));
     }
 
 

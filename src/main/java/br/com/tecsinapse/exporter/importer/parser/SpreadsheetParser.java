@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -161,7 +160,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
         return resultList;
     }
 
-    private List<T> parseCurrentSheet() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException, NoSuchMethodException {
+    private List<T> parseCurrentSheet() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
         List<T> list = new ArrayList<>();
         workbook = getWorkbook();
         Sheet sheet = workbook.getSheetAt(this.sheetNumber);
@@ -188,7 +187,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
         return list;
     }
 
-    private List<List<String>> parseCurrentSheetAsStringList() throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, InvalidFormatException, NoSuchMethodException {
+    private List<List<String>> parseCurrentSheetAsStringList() {
         workbook = getWorkbook();
         Sheet sheet = workbook.getSheetAt(getSheetNumber());
         final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();

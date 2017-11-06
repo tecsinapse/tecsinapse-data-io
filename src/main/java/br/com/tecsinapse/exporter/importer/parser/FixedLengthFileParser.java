@@ -191,6 +191,22 @@ public class FixedLengthFileParser<T> {
         }
 
         @Override
+        public int hashCode() {
+            return flc != null ? flc.columnIndex() : 0;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || !(o instanceof AnnotationMethod)) {
+                return false;
+            }
+            return compareTo((AnnotationMethod) o) == 0;
+        }
+
+        @Override
         public int compareTo(AnnotationMethod other) {
             return Ints.compare(this.flc.columnIndex(), other.getFlc().columnIndex());
         }

@@ -13,6 +13,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import br.com.tecsinapse.exporter.style.Style;
 import br.com.tecsinapse.exporter.style.TableCellStyle;
 import br.com.tecsinapse.exporter.type.CellType;
 import br.com.tecsinapse.exporter.util.WorkbookUtil;
@@ -21,7 +22,7 @@ public class Table {
 
     private ExporterFormatter exporterFormatter;
 
-    private TableCellStyle tableCellStyleDefaultBody = TableCellStyle.BODY_CENTER;
+    private TableCellStyle tableCellStyleDefaultBody = Style.TABLE_CELL_STYLE_BODY_CENTER;
 
     private String title;
     private boolean autoSizeColumnSheet = true;
@@ -423,7 +424,7 @@ public class Table {
     }
 
     public TableCellStyle getTableCellStyleDefaultBody() {
-        return tableCellStyleDefaultBody != null ? tableCellStyleDefaultBody : TableCellStyle.BODY_CENTER;
+        return tableCellStyleDefaultBody != null ? tableCellStyleDefaultBody : Style.TABLE_CELL_STYLE_BODY_CENTER;
     }
 
     public void setExporterFormatter(ExporterFormatter exporterFormatter) {

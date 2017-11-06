@@ -6,6 +6,8 @@
  */
 package br.com.tecsinapse.exporter.test;
 
+import static br.com.tecsinapse.exporter.style.Style.TABLE_CELL_STYLE_HEADER;
+
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -15,6 +17,7 @@ import org.testng.annotations.Test;
 import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
+import br.com.tecsinapse.exporter.style.Style;
 import br.com.tecsinapse.exporter.style.TableCellStyle;
 
 public class TableTest {
@@ -78,11 +81,11 @@ public class TableTest {
     public void testColspanFirstLine() {
         Table t = new Table();
         t.addNewRow();
-        TableCell cellDados = new TableCell("Coluna 1", TableCellStyle.HEADER);
+        TableCell cellDados = new TableCell("Coluna 1", TABLE_CELL_STYLE_HEADER);
         cellDados.setColspan(6);
         t.add(cellDados);
 
-        TableCell cellComparacao = new TableCell("Coluna 2", TableCellStyle.HEADER);
+        TableCell cellComparacao = new TableCell("Coluna 2", TABLE_CELL_STYLE_HEADER);
         cellComparacao.setColspan(2);
         t.add(cellComparacao);
 
@@ -94,16 +97,16 @@ public class TableTest {
     public void testRowspanFirstLine() {
         Table t = new Table();
         t.addNewRow();
-        TableCell l1 = new TableCell("Linha 1", TableCellStyle.HEADER);
+        TableCell l1 = new TableCell("Linha 1", TABLE_CELL_STYLE_HEADER);
         l1.setColspan(6);
         t.add(l1);
 
-        TableCell l12 = new TableCell("Linha 1/2", TableCellStyle.HEADER);
+        TableCell l12 = new TableCell("Linha 1/2", TABLE_CELL_STYLE_HEADER);
         l12.setRowspan(2);
         t.add(l12);
 
         t.addNewRow();
-        TableCell l2 = new TableCell("Linha 2", TableCellStyle.HEADER);
+        TableCell l2 = new TableCell("Linha 2", TABLE_CELL_STYLE_HEADER);
         l2.setColspan(6);
         t.add(l2);
 
@@ -118,15 +121,15 @@ public class TableTest {
     public void testRowAndColspanFirstLine() {
         Table t = new Table();
         t.addNewRow();
-        TableCell l1 = new TableCell("Linha/Coluna 1", TableCellStyle.HEADER);
+        TableCell l1 = new TableCell("Linha/Coluna 1", TABLE_CELL_STYLE_HEADER);
         l1.setColspan(2);
         l1.setRowspan(2);
         t.add(l1);
 
-        t.add(new TableCell("Linha 1", TableCellStyle.HEADER));
+        t.add(new TableCell("Linha 1", TABLE_CELL_STYLE_HEADER));
 
         t.addNewRow();
-        t.add(new TableCell("Linha 2", TableCellStyle.HEADER));
+        t.add(new TableCell("Linha 2", TABLE_CELL_STYLE_HEADER));
 
 
         String text = t.getStringMatrixAsString(t.toStringMatrix());
@@ -139,8 +142,8 @@ public class TableTest {
     public void testNumber() {
         Table t = new Table();
         t.addNewRow();
-        t.add(new TableCell(1, TableCellStyle.HEADER));
-        t.add(new TableCell(2.2, TableCellStyle.HEADER));
+        t.add(new TableCell(1, TABLE_CELL_STYLE_HEADER));
+        t.add(new TableCell(2.2, TABLE_CELL_STYLE_HEADER));
 
         t.addNewRow();
         t.add(10);

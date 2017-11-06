@@ -6,6 +6,8 @@
  */
 package br.com.tecsinapse.files.test;
 
+import static br.com.tecsinapse.exporter.style.Style.TABLE_CELL_STYLE_FOOTER;
+import static br.com.tecsinapse.exporter.style.Style.TABLE_CELL_STYLE_HEADER;
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.FRENCH;
 import static org.testng.Assert.assertEquals;
@@ -161,12 +163,12 @@ public class ExporterFileTest {
 
             //header
             table.addNewRow();
-            table.add("Cidade", TableCellStyle.HEADER);
-            table.add("Estado", TableCellStyle.HEADER);
-            table.add("Data", TableCellStyle.HEADER);
-            table.add("", TableCellStyle.HEADER);
-            table.add("Inteiro", TableCellStyle.HEADER);
-            table.add("Decimal", TableCellStyle.HEADER);
+            table.add("Cidade", TABLE_CELL_STYLE_HEADER);
+            table.add("Estado", TABLE_CELL_STYLE_HEADER);
+            table.add("Data", TABLE_CELL_STYLE_HEADER);
+            table.add("", TABLE_CELL_STYLE_HEADER);
+            table.add("Inteiro", TABLE_CELL_STYLE_HEADER);
+            table.add("Decimal", TABLE_CELL_STYLE_HEADER);
 
             for (FileBean bean : beans) {
                 //body
@@ -185,8 +187,8 @@ public class ExporterFileTest {
             table.add(" ");
             table.add((String) null);
             table.add((Number) null);
-            table.add("last", TableCellStyle.FOOTER);
-            table.add(new TableCell("last tc", TableCellStyle.FOOTER));
+            table.add("last", TABLE_CELL_STYLE_FOOTER);
+            table.add(new TableCell("last tc", TABLE_CELL_STYLE_FOOTER));
 
             table.setExporterFormatter(exporterFormatter);
             final File file = toFile.apply(table);

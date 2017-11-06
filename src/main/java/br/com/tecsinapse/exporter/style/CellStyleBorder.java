@@ -12,8 +12,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 
 public class CellStyleBorder {
 
-    public static final CellStyleBorder DEFAULT = new CellStyleBorderDefault();
-
     private HSSFColor borderColor;
     private boolean left;
     private boolean right;
@@ -120,7 +118,7 @@ public class CellStyleBorder {
         return builder.toString();
     }
 
-    public CellStyleBorder clone() {
+    public CellStyleBorder duplicate() {
         return new CellStyleBorder(getBorderColor(), isLeft(), isRight(), isTop(), isBottom());
     }
 

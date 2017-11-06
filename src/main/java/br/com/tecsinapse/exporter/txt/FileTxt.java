@@ -13,7 +13,7 @@ import br.com.tecsinapse.exporter.type.SeparatorType;
 
 public class FileTxt {
 
-    private List<List<FieldTxt>> fields = new ArrayList<List<FieldTxt>>();
+    private List<List<FieldTxt>> fields = new ArrayList<>();
     private boolean endsWithSeparator = false;
 
     public void addNewLine() {

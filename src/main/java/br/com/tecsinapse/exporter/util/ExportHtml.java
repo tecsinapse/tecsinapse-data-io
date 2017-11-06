@@ -54,7 +54,7 @@ public class ExportHtml {
         return new String(arrayOutputStream.toByteArray(), charset);
     }
 
-    public void toHtml(Table table, File file) throws IOException, NullPointerException {
+    public void toHtml(Table table, File file) throws IOException {
         checkNpe(table);
         if (!file.exists() && !file.createNewFile()) {
             throw new IOException("File not exists or not created!");

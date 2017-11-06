@@ -53,8 +53,8 @@ public class TableCellStyleTest {
                         "background-color:#00FF00;" + BOLD.getCss() + ITALIC.getCss() + STRIKEOUT.getCss() + UNDERLINE.getCss(),
                         BLACK, "background-color:#000000;",
                         true, true, true, true, false},
-                {null, 14, BLUE, CellStyleBorder.DEFAULT,
-                        CellStyleBorder.DEFAULT.toCss() + BOLD.getCss() + ITALIC.getCss() + STRIKEOUT.getCss() + UNDERLINE.getCss() + CssStyle.toFontSize(14) + CssStyle.toTextColor(BLUE),
+                {null, 14, BLUE, Style.CELL_STYLE_BORDER_DEFAULT,
+                        Style.CELL_STYLE_BORDER_DEFAULT.toCss() + BOLD.getCss() + ITALIC.getCss() + STRIKEOUT.getCss() + UNDERLINE.getCss() + CssStyle.toFontSize(14) + CssStyle.toTextColor(BLUE),
                         BLACK, "background-color:#000000;border:solid #000000 1px;font-size:14;color:#0000FF;",
                         true, true, true, true, false}
         };
@@ -88,7 +88,7 @@ public class TableCellStyleTest {
         Assert.assertEquals(style.isUnderline(), underline);
         Assert.assertEquals(style.getCssStyle(), cssStyle);
 
-        TableCellStyle style2 = style.clone();
+        TableCellStyle style2 = style.duplicate();
         style2.setCssWhiteAsTransparent(whiteAsTransparent);
         style2.setBold(!bold);
         style2.setItalic(!italic);
@@ -114,10 +114,10 @@ public class TableCellStyleTest {
 
     @Test
     public void equalsTest() {
-        Assert.assertTrue(TableCellStyle.HEADER.isHeader());
-        Assert.assertFalse(TableCellStyle.BODY.isHeader());
-        Assert.assertFalse(TableCellStyle.BODY.isFooter());
-        Assert.assertTrue(TableCellStyle.FOOTER.isFooter());
+        Assert.assertTrue(Style.TABLE_CELL_STYLE_HEADER.isHeader());
+        Assert.assertFalse(Style.TABLE_CELL_STYLE_BODY.isHeader());
+        Assert.assertFalse(Style.TABLE_CELL_STYLE_BODY_CENTER.isFooter());
+        Assert.assertTrue(Style.TABLE_CELL_STYLE_FOOTER.isFooter());
     }
 
 }

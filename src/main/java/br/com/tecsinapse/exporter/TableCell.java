@@ -8,6 +8,7 @@ package br.com.tecsinapse.exporter;
 
 import com.google.common.primitives.Doubles;
 
+import br.com.tecsinapse.exporter.style.Style;
 import br.com.tecsinapse.exporter.style.TableCellStyle;
 import br.com.tecsinapse.exporter.type.CellType;
 import br.com.tecsinapse.exporter.util.HtmlUtil;
@@ -20,7 +21,7 @@ public class TableCell {
     private Integer rowspan = 1;
     private CellType cellType = CellType.STRING_TYPE;
     private boolean userDefinedCellType = false;
-    private TableCellStyle tableCellStyle = TableCellStyle.BODY_CENTER;
+    private TableCellStyle tableCellStyle = Style.TABLE_CELL_STYLE_BODY_CENTER;
     private String style;
     private String styleClass;
     private ExporterFormatter exporterFormatter;

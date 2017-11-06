@@ -20,6 +20,7 @@ import org.testng.annotations.Test;
 
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
+import br.com.tecsinapse.exporter.style.Style;
 import br.com.tecsinapse.exporter.style.TableCellStyle;
 
 public class ExportHtmlTest {
@@ -76,7 +77,7 @@ public class ExportHtmlTest {
                                 List<List<String>> rows, boolean whiteAsTransparent, String expected) throws Exception {
         ExportHtml exportHtml = tableProps == null ? ExportHtml.newInstance(Charset.forName("UTF-8")) : ExportHtml.newInstance(tableProps, Charset.forName("UTF-8"));
         Table table = rows.isEmpty() ? null : new Table();
-        TableCellStyle cellStyle = TableCellStyle.BODY.clone();
+        TableCellStyle cellStyle = Style.TABLE_CELL_STYLE_BODY.duplicate();
         cellStyle.setCssWhiteAsTransparent(whiteAsTransparent);
         cellStyle.setIgnoreCssStyle(false);
         table.setTableCellStyleDefaultBody(cellStyle);

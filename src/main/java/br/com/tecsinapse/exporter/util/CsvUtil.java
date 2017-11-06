@@ -66,7 +66,7 @@ public class CsvUtil {
         return columns[index].trim();
     }
 
-    public static List<String> simpleLine(Object[] fields) throws Exception {
+    public static List<String> simpleLine(Object[] fields) {
         List<String> list = new ArrayList<>();
         if (fields != null && fields.length > 0) {
             for (Object o : fields) {

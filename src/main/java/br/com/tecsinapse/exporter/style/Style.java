@@ -19,4 +19,11 @@ public final class Style {
     public static final String TEXT_ALIGN_LEFT = "text-align: left;";
     public static final String VERTICAL_ALIGN_MIDDLE = "vertical-align: middle;";
 
+    public static final CellStyleBorder CELL_STYLE_BORDER_DEFAULT = new CellStyleBorderDefault();
+
+    public static final TableCellStyle TABLE_CELL_STYLE_HEADER = new TableCellStyleDefaultHeaderFooter();
+    public static final TableCellStyle TABLE_CELL_STYLE_BODY = new TableCellStyleDefaultBody(false);
+    public static final TableCellStyle TABLE_CELL_STYLE_BODY_CENTER = new TableCellStyleDefaultBody(true);
+    public static final TableCellStyle TABLE_CELL_STYLE_FOOTER = new TableCellStyleDefaultHeaderFooter();
+
 }
