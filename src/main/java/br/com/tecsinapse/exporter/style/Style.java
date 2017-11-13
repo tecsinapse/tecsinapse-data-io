@@ -21,9 +21,13 @@ public final class Style {
 
     public static final CellStyleBorder CELL_STYLE_BORDER_DEFAULT = new CellStyleBorderDefault();
 
-    public static final TableCellStyle TABLE_CELL_STYLE_HEADER = new TableCellStyleDefaultHeaderFooter();
-    public static final TableCellStyle TABLE_CELL_STYLE_BODY = new TableCellStyleDefaultBody(false);
-    public static final TableCellStyle TABLE_CELL_STYLE_BODY_CENTER = new TableCellStyleDefaultBody(true);
-    public static final TableCellStyle TABLE_CELL_STYLE_FOOTER = new TableCellStyleDefaultHeaderFooter();
+    public static final TableCellStyle TABLE_CELL_STYLE_HEADER = new TableCellStyleDefaultHeader(false);
+    public static final TableCellStyle TABLE_CELL_STYLE_HEADER_BOLD = new TableCellStyleDefaultHeader(true);
+    public static final TableCellStyle TABLE_CELL_STYLE_BODY = new TableCellStyleDefaultBody(false, false);
+    public static final TableCellStyle TABLE_CELL_STYLE_BODY_BOLD = new TableCellStyleDefaultBody(false, true);
+    public static final TableCellStyle TABLE_CELL_STYLE_BODY_CENTER = new TableCellStyleDefaultBody(true, false);
+    public static final TableCellStyle TABLE_CELL_STYLE_BODY_CENTER_BOLD = new TableCellStyleDefaultBody(true, true);
+    public static final TableCellStyle TABLE_CELL_STYLE_FOOTER = new TableCellStyleDefaultFooter(false);
+    public static final TableCellStyle TABLE_CELL_STYLE_FOOTER_BOLD = new TableCellStyleDefaultFooter(true);
 
 }

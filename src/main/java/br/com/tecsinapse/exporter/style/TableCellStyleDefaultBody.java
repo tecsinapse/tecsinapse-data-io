@@ -8,7 +8,7 @@
 package br.com.tecsinapse.exporter.style;
 
 final class TableCellStyleDefaultBody extends TableCellStyleProtected {
-    TableCellStyleDefaultBody(boolean center) {
-        super(Colors.WHITE, "body", true, center ? CellHAlign.CENTER : CellHAlign.LEFT, CellVAlign.CENTER);
+    TableCellStyleDefaultBody(boolean center, boolean bold) {
+        super(Colors.WHITE, bold ? "body-bold" : "body", true, center ? CellHAlign.CENTER : CellHAlign.LEFT, CellVAlign.CENTER, bold);
     }
 }

@@ -66,6 +66,21 @@ public class TableCell {
         setRowspan(rowspan);
     }
 
+    public TableCell(Object content, String styleCss) {
+        this(content);
+        setStyle(styleCss);
+    }
+
+    public TableCell(Object content, TableCellStyle tableCellStyle, String styleCss) {
+        this(content, tableCellStyle);
+        setStyle(styleCss);
+    }
+
+    public TableCell(Object content, String styleCss, int colspan, int rowspan) {
+        this(content, colspan, rowspan);
+        setStyle(styleCss);
+    }
+
     public int getDefaultColumnWidth() {
         String value = getContentText();
         return value == null || value.trim().length() == 0 ? 0 : value.length() * COLUMN_WIDTH;

@@ -133,7 +133,11 @@ public class WorkbookUtil {
     }
 
     private void setCellStyle(Cell cell, TableCell tableCell, Workbook wb, String cellFormat) {
-        TableCellStyle tableCellStyle = tableCell.getTableCellStyle().duplicate();
+        TableCellStyle tableCellStyle = tableCell.getTableCellStyle();
+        if (tableCellStyle == null) {
+            return;
+        }
+        tableCellStyle = tableCellStyle.duplicate();
         tableCellStyle.setCellFormat(cellFormat);
         cell.setCellStyle(getOrNewCellStyle(tableCellStyle, wb));
     }

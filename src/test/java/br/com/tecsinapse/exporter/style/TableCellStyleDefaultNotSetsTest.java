@@ -15,9 +15,9 @@ public class TableCellStyleDefaultNotSetsTest {
     @DataProvider(name = "objsNotSetsDs")
     public Object[][] objsNotSetsDs() {
         return new Object[][] {
-                {new TableCellStyleDefaultBody(false)},
-                {new TableCellStyleDefaultHeaderFooter()},
-                {new TableCellStyleProtected(Colors.WHITE, null, true, CellHAlign.CENTER, CellVAlign.CENTER)}
+                {new TableCellStyleDefaultBody(false, false)},
+                {new TableCellStyleDefaultHeader(false)},
+                {new TableCellStyleProtected(Colors.WHITE, null, true, CellHAlign.CENTER, CellVAlign.CENTER, false)}
         };
     }
 

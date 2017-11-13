@@ -12,14 +12,15 @@ import org.apache.poi.hssf.util.HSSFColor;
 class TableCellStyleProtected extends TableCellStyle {
 
     TableCellStyleProtected(HSSFColor backgroundColor, String cssClass, boolean ignoreCssStyle,
-                            CellHAlign cellHAlign, CellVAlign cellVAlign) {
+                            CellHAlign cellHAlign, CellVAlign cellVAlign, boolean bold) {
         super(backgroundColor, cssClass, ignoreCssStyle);
         super.sethAlign(cellHAlign);
         super.setvAlign(cellVAlign);
+        super.setBold(bold);
     }
 
     private void throwUnsupportedOperationException() {
-        throw new UnsupportedOperationException("TableCellStyleDefaultHeaderFooter: Unsupported operation for default objects.");
+        throw new UnsupportedOperationException("TableCellStyleDefaultHeader: Unsupported operation for default objects.");
     }
 
 

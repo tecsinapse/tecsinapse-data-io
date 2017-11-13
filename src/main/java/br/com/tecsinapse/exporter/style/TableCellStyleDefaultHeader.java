@@ -7,9 +7,9 @@
 
 package br.com.tecsinapse.exporter.style;
 
-final class TableCellStyleDefaultHeaderFooter extends TableCellStyleProtected {
+final class TableCellStyleDefaultHeader extends TableCellStyleProtected {
 
-    TableCellStyleDefaultHeaderFooter() {
-        super(Colors.GREY_25_PERCENT, "header", true, CellHAlign.CENTER, CellVAlign.CENTER);
+    TableCellStyleDefaultHeader(boolean bold) {
+        super(Colors.GREY_25_PERCENT, bold ? "header-bold" : "header", true, CellHAlign.CENTER, CellVAlign.CENTER, bold);
     }
 }

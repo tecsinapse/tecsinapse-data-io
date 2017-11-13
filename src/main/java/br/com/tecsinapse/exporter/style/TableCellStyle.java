@@ -16,11 +16,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 public class TableCellStyle {
 
-    public static final TableCellStyle HEADER = Style.TABLE_CELL_STYLE_HEADER;
-    public static final TableCellStyle BODY = Style.TABLE_CELL_STYLE_BODY;
-    public static final TableCellStyle BODY_CENTER = Style.TABLE_CELL_STYLE_BODY_CENTER;
-    public static final TableCellStyle FOOTER = Style.TABLE_CELL_STYLE_FOOTER;
-
     private HSSFColor backgroundColor;
     private HSSFColor fontColor;
     private CellVAlign vAlign;
