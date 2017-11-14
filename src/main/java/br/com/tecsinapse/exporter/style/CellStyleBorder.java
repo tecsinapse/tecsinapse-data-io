@@ -7,8 +7,12 @@
 
 package br.com.tecsinapse.exporter.style;
 
+import static br.com.tecsinapse.exporter.util.WorkbookUtil.toRgbByte;
+
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 
 public class CellStyleBorder {
 
@@ -77,19 +81,35 @@ public class CellStyleBorder {
         }
         if (left) {
             cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-            cellStyle.setLeftBorderColor(borderColor.getIndex());
+            if (cellStyle instanceof XSSFCellStyle) {
+                ((XSSFCellStyle)cellStyle).setLeftBorderColor(new XSSFColor(toRgbByte(borderColor)));
+            } else {
+                cellStyle.setLeftBorderColor(borderColor.getIndex());
+            }
         }
         if (right) {
             cellStyle.setBorderRight(CellStyle.BORDER_THIN);
-            cellStyle.setRightBorderColor(borderColor.getIndex());
+            if (cellStyle instanceof XSSFCellStyle) {
+                ((XSSFCellStyle)cellStyle).setRightBorderColor(new XSSFColor(toRgbByte(borderColor)));
+            } else {
+                cellStyle.setRightBorderColor(borderColor.getIndex());
+            }
         }
         if (bottom) {
             cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-            cellStyle.setBottomBorderColor(borderColor.getIndex());
+            if (cellStyle instanceof XSSFCellStyle) {
+                ((XSSFCellStyle)cellStyle).setBottomBorderColor(new XSSFColor(toRgbByte(borderColor)));
+            } else {
+                cellStyle.setBottomBorderColor(borderColor.getIndex());
+            }
         }
         if (top) {
             cellStyle.setBorderTop(CellStyle.BORDER_THIN);
-            cellStyle.setTopBorderColor(borderColor.getIndex());
+            if (cellStyle instanceof XSSFCellStyle) {
+                ((XSSFCellStyle)cellStyle).setTopBorderColor(new XSSFColor(toRgbByte(borderColor)));
+            } else {
+                cellStyle.setTopBorderColor(borderColor.getIndex());
+            }
         }
         return cellStyle;
     }

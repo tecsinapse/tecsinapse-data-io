@@ -6,11 +6,16 @@
  */
 package br.com.tecsinapse.exporter.util;
 
+import java.awt.Color;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.poi.hssf.usermodel.HSSFPalette;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -46,6 +51,8 @@ public class WorkbookUtil {
     public Workbook toWorkBook(Workbook wb, Table table) {
         List<List<TableCell>> matrix = table.getCells();
         List<List<TableCell>> matrixFull = table.toTableCellMatrix();
+
+        replaceColorsPallete(table.getColorsReplaceMap(), wb);
 
         String sheetName = table.getTitle();
         Sheet sheet = sheetName == null ? wb.createSheet() : wb.createSheet(sheetName);
@@ -192,6 +199,28 @@ public class WorkbookUtil {
 
     private double toExcelDate(Date date) {
         return DateUtil.getExcelDate(date);
+    }
+
+    private void replaceColorsPallete(Map<HSSFColor, HSSFColor> colorsReplaceMap, Workbook wb) {
+        if (! (wb instanceof HSSFWorkbook)) {
+            return;
+        }
+
+        HSSFWorkbook hssfWb = (HSSFWorkbook) wb;
+        final HSSFPalette customPalette = hssfWb.getCustomPalette();
+        for (Entry<HSSFColor, HSSFColor> e : colorsReplaceMap.entrySet()) {
+            short[] rgb = e.getValue().getTriplet();
+            customPalette.setColorAtIndex(e.getKey().getIndex(),
+                    (byte)rgb[0],
+                    (byte)rgb[1],
+                    (byte)rgb[2]
+            );
+        }
+    }
+
+    public static byte[] toRgbByte(HSSFColor hssfColor) {
+        short[] rgb = hssfColor.getTriplet();
+        return new byte[] { (byte)rgb[0], (byte)rgb[1], (byte)rgb[2] };
     }
 
 }

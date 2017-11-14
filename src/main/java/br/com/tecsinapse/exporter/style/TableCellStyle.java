@@ -8,11 +8,15 @@ package br.com.tecsinapse.exporter.style;
 
 import static br.com.tecsinapse.exporter.style.Style.TABLE_CELL_STYLE_FOOTER;
 import static br.com.tecsinapse.exporter.style.Style.TABLE_CELL_STYLE_HEADER;
+import static br.com.tecsinapse.exporter.util.WorkbookUtil.toRgbByte;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 
 public class TableCellStyle {
 
@@ -185,9 +189,13 @@ public class TableCellStyle {
 
     public CellStyle toCellStyle(Workbook wb) {
         CellStyle cellStyle = wb.createCellStyle();
-        Font font = wb.createFont();
+
         if (getBackgroundColor() != null) {
-            cellStyle.setFillForegroundColor(getBackgroundColor().getIndex());
+            if (cellStyle instanceof XSSFCellStyle) {
+                ((XSSFCellStyle)cellStyle).setFillForegroundColor(new XSSFColor(toRgbByte(getBackgroundColor())));
+            } else {
+                cellStyle.setFillForegroundColor(getBackgroundColor().getIndex());
+            }
             cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
         }
         if (getBorder() != null) {
@@ -199,6 +207,7 @@ public class TableCellStyle {
         if (gethAlign() != null) {
             cellStyle.setAlignment(hAlign.getCellStyleHAlign());
         }
+        Font font = wb.createFont();
         configFont(font);
         cellStyle.setFont(font);
         if (cellFormat != null && !cellFormat.isEmpty()) {
@@ -216,7 +225,11 @@ public class TableCellStyle {
             font.setFontHeightInPoints(fontSize.shortValue());
         }
         if (getFontColor() != null) {
-            font.setColor(fontColor.getIndex());
+            if (font instanceof XSSFFont) {
+                ((XSSFFont)font).setColor(new XSSFColor(toRgbByte(fontColor)));
+            } else {
+                font.setColor(fontColor.getIndex());
+            }
         }
     }
 

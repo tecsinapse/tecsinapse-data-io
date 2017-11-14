@@ -33,6 +33,11 @@ public class ExcelCellColorExampleTest {
         int line = 0;
         List<HSSFColor> colors = new ArrayList<>(HSSFColor.getIndexHash().values());
         colors.add(new HSSFColor.AUTOMATIC());
+
+        HSSFColor cGreen = table.newCustomColor(new HSSFColor.AQUA(), new java.awt.Color(0,0,255));
+        HSSFColor cBlue = table.newCustomColor(new HSSFColor.RED(), new java.awt.Color(0,255,0));
+        colors.add(cGreen);
+        colors.add(cBlue);
         for (HSSFColor color : colors) {
             table.addNewRow();
             line++;
@@ -48,7 +53,7 @@ public class ExcelCellColorExampleTest {
             }
         }
         String xlsx = "XLSX-cell-color.xlsx";
-        Files.move(ExporterUtil.getXlsFile(table, xlsx).toPath(), ResourceUtils.newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(ExporterUtil.getXlsxFile(table, xlsx).toPath(), ResourceUtils.newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         String xls = "XLS-cell-color.xls";
         Files.move(ExporterUtil.getXlsFile(table, xls).toPath(), ResourceUtils.newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);

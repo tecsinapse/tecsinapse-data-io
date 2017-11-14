@@ -6,12 +6,18 @@
  */
 package br.com.tecsinapse.exporter;
 
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import lombok.Getter;
 
 import br.com.tecsinapse.exporter.style.Style;
 import br.com.tecsinapse.exporter.style.TableCellStyle;
@@ -27,6 +33,8 @@ public class Table {
     private String title;
     private boolean autoSizeColumnSheet = true;
     private List<List<TableCell>> cells = new ArrayList<>();
+    @Getter
+    private Map<HSSFColor, HSSFColor> colorsReplaceMap = new HashMap<>();
 
     public Table() {
         this(ExporterFormatter.ENGLISH);
@@ -466,6 +474,12 @@ public class Table {
             }
         }
         return tableCellStyles;
+    }
+
+    public HSSFColor newCustomColor(HSSFColor replaceColor, Color newColor) {
+        HSSFColor hssfColor = new CustomColor(replaceColor.getIndex(), newColor);
+        colorsReplaceMap.put(replaceColor, hssfColor);
+        return hssfColor;
     }
 
 }
