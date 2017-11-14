@@ -9,7 +9,7 @@ import lombok.Setter;
 
 class CustomColor extends HSSFColor {
 
-    @Getter @Setter
+    @Getter
     private short index;
     @Getter
     private final short[] triplet;
