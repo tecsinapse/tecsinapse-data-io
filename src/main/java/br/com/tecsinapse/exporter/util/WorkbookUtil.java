@@ -6,7 +6,6 @@
  */
 package br.com.tecsinapse.exporter.util;
 
-import java.awt.Color;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
