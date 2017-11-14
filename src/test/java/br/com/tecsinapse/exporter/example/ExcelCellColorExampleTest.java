@@ -20,6 +20,7 @@ import org.testng.annotations.Test;
 import br.com.tecsinapse.exporter.ResourceUtils;
 import br.com.tecsinapse.exporter.Table;
 import br.com.tecsinapse.exporter.TableCell;
+import br.com.tecsinapse.exporter.style.Style;
 import br.com.tecsinapse.exporter.style.TableCellStyle;
 import br.com.tecsinapse.exporter.util.ExportHtml;
 import br.com.tecsinapse.exporter.util.ExporterUtil;
@@ -34,8 +35,8 @@ public class ExcelCellColorExampleTest {
         List<HSSFColor> colors = new ArrayList<>(HSSFColor.getIndexHash().values());
         colors.add(new HSSFColor.AUTOMATIC());
 
-        HSSFColor cGreen = table.newCustomColor(new HSSFColor.AQUA(), new java.awt.Color(0,0,255));
-        HSSFColor cBlue = table.newCustomColor(new HSSFColor.RED(), new java.awt.Color(0,255,0));
+        HSSFColor cBlue = table.newCustomColor(new HSSFColor.AQUA(), new java.awt.Color(0,0,255));
+        HSSFColor cGreen = table.newCustomColor(new HSSFColor.RED(), new java.awt.Color(0,255,0));
         colors.add(cGreen);
         colors.add(cBlue);
         for (HSSFColor color : colors) {
