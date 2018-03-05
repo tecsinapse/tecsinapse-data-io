@@ -116,7 +116,11 @@ public final class ExporterUtil {
             return originalFile;
         }
         Path tempDir = Files.createTempDirectory("data-io-tmp");
-        return new File(tempDir.toFile(), fileName);
+        File newFile = new File(tempDir.toFile(), fileName);
+        if (!newFile.getParentFile().exists()) {
+            newFile.mkdirs();
+        }
+        return newFile;
     }
 
     public static File getCsvFile(Table t, String fileName, String charsetName, char separator) throws IOException {
