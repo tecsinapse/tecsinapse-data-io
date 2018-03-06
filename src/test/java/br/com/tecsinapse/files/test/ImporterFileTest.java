@@ -29,6 +29,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 
+import br.com.tecsinapse.ResourceFiles;
+import br.com.tecsinapse.datasources.ThreeColumnValue;
 import br.com.tecsinapse.exporter.converter.FromDateConverter;
 import br.com.tecsinapse.exporter.importer.Importer;
 import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
@@ -201,6 +203,24 @@ public class ImporterFileTest {
             } catch (Exception e) {
                 Assert.fail("Fail while reading first not hidden sheet.", e);
             }
+        }
+    }
+
+    @Test
+    public void fileWithFormulaError() {
+        List<ThreeColumnValue> expected = new ArrayList<>(3);
+        expected.add(new ThreeColumnValue(100, 200, 300));
+        expected.add(new ThreeColumnValue(100, 200, null));
+        expected.add(new ThreeColumnValue(100, 200, 200));
+        expected.add(new ThreeColumnValue(100, 200, -200));
+        try (SpreadsheetParser<ThreeColumnValue> parser = new SpreadsheetParser(ThreeColumnValue.class, ResourceFiles.EXCEL_ERROR_FORMULA.getFile())){
+            parser.setHeadersRows(1);
+            List<ThreeColumnValue> values = parser.parse();
+            for(int i = 0; i < values.size(); i++) {
+                Assert.assertEquals(values.get(i), expected.get(i));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

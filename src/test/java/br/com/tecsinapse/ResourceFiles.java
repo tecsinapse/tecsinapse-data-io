@@ -121,7 +121,8 @@ public enum ResourceFiles {
     FIXED_LENGTH_FILE_WITH_LONG_HEADER_AND_EOF_TXT("/files/fixed-length-file-with-long-header-and-eof.txt", TXT),
     FIXED_LENGTH_FILE_WITH_SPACE_LINE_AND_LONG_HEADER_AND_EOF_TXT("/files/fixed-length-file-with-space-line-and-long-header-and-eof.txt", TXT),
     TESTE_SEM_RAZAO_XLSX("/files/teste_sem_razao.xlsx", XLSX),
-    EXCEL_XLS_ZIP("/files/excel.xls.zip", ZIP),;
+    EXCEL_XLS_ZIP("/files/excel.xls.zip", ZIP),
+    EXCEL_ERROR_FORMULA("/files/excel-error-formula.xlsx", XLSX);
 
     private final String fileName;
     private final FileType fileType;

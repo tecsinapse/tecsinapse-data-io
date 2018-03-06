@@ -46,12 +46,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import lombok.extern.slf4j.Slf4j;
+
 import br.com.tecsinapse.exporter.ExporterFormatter;
 import br.com.tecsinapse.exporter.annotation.TableCellMapping;
 import br.com.tecsinapse.exporter.annotation.TableCellMappings;
 import br.com.tecsinapse.exporter.converter.Converter;
 import br.com.tecsinapse.exporter.util.ExporterDateUtils;
 
+@Slf4j
 public class ImporterUtils {
 
     private ImporterUtils() {
@@ -250,7 +253,7 @@ public class ImporterUtils {
     }
 
     public static Object getValueOrEmptyAsObject(FormulaEvaluator evaluator, Cell cell) {
-        final CellValue cellValue = evaluator.evaluate(cell);
+        final CellValue cellValue = safeEvaluteFormula(evaluator, cell);
         if (cellValue == null) {
             return "";
         }
@@ -270,6 +273,15 @@ public class ImporterUtils {
             default:
                 return "";
         }
+    }
+
+    private static CellValue safeEvaluteFormula(FormulaEvaluator evaluator, Cell cell) {
+        try {
+            return evaluator.evaluate(cell);
+        } catch (Exception e) {
+            log.warn("Formula evalute error (ignored)", e);
+        }
+        return null;
     }
 
     public static String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell, ExporterFormatter exporterFormatter) {
