@@ -96,5 +96,34 @@ public class ExcelCellColorExampleTest {
         ExportHtml.newInstance(Charset.forName("UTF-8")).toHtml(table, htmlOutput);*/
     }
 
+    @Test
+    public void generateExampleWrapText() throws IOException {
+
+        final String longText = "Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos.";
+
+        Table table = new Table();
+        table.setAutoSizeColumnSheet(false);
+
+        TableCellStyle styleNoWrapText = Style.TABLE_CELL_STYLE_BODY.duplicate();
+        TableCellStyle styleWrapText = styleNoWrapText.duplicate();
+        styleWrapText.setWrapText(true);
+
+        table.addNewRow();
+        table.add(longText, styleNoWrapText);
+        table.add(longText, styleWrapText);
+        table.add(1);
+        table.add(15);
+        table.add("Test");
+        table.add("Test Test");
+        table.add("Test Test Test");
+        table.add("Test Test Test Test");
+
+        String xlsx = "XLSX-wrap-text.xlsx";
+        Files.move(ExporterUtil.getXlsxFile(table, xlsx).toPath(), ResourceUtils.newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        String xls = "XLSX-wrap-text.xls";
+        Files.move(ExporterUtil.getXlsFile(table, xls).toPath(), ResourceUtils.newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
 
 }

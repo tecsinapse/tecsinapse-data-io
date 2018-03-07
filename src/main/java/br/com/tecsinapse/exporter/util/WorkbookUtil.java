@@ -131,7 +131,8 @@ public class WorkbookUtil {
                         sheet.autoSizeColumn(i, true);
                     }
                 } else {
-                    sheet.setColumnWidth(i, defaultColumnWidth.get(i));
+                    int width = table.getMinOrMaxOrActualCellWidth(defaultColumnWidth.get(i));
+                    sheet.setColumnWidth(i, width);
                 }
             }
         }

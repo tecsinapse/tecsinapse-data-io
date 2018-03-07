@@ -30,6 +30,7 @@ public class TableCellStyle {
     private boolean italic = false;
     private boolean underline = false;
     private boolean strikeout = false;
+    private boolean wrapText = false;
     private String cellFormat;
     private boolean cssWhiteAsTransparent = true;
     private boolean ignoreCssStyle;
@@ -100,6 +101,14 @@ public class TableCellStyle {
 
     public void setStrikeout(boolean strikeout) {
         this.strikeout = strikeout;
+    }
+
+    public boolean isWrapText() {
+        return wrapText;
+    }
+
+    public void setWrapText(boolean wrapText) {
+        this.wrapText = wrapText;
     }
 
     public CellVAlign getvAlign() {
@@ -207,6 +216,9 @@ public class TableCellStyle {
         if (gethAlign() != null) {
             cellStyle.setAlignment(hAlign.getCellStyleHAlign());
         }
+
+        cellStyle.setWrapText(isWrapText());
+
         Font font = wb.createFont();
         configFont(font);
         cellStyle.setFont(font);
@@ -271,6 +283,7 @@ public class TableCellStyle {
 
         tcs.setBold(isBold());
         tcs.setStrikeout(isStrikeout());
+        tcs.setWrapText(isWrapText());
         tcs.setItalic(isItalic());
         tcs.setUnderline(isUnderline());
         tcs.setCssWhiteAsTransparent(isCssWhiteAsTransparent());
@@ -300,6 +313,9 @@ public class TableCellStyle {
             return false;
         }
         if (strikeout != that.strikeout) {
+            return false;
+        }
+        if (wrapText != that.wrapText) {
             return false;
         }
         if (cssWhiteAsTransparent != that.isCssWhiteAsTransparent()) {
@@ -345,6 +361,7 @@ public class TableCellStyle {
         result = 31 * result + (italic ? 1 : 0);
         result = 31 * result + (underline ? 1 : 0);
         result = 31 * result + (strikeout ? 1 : 0);
+        result = 31 * result + (wrapText ? 1 : 0);
         result = 31 * result + (ignoreCssStyle ? 1 : 0);
         result = 31 * result + (cssWhiteAsTransparent ? 1 : 0);
         result = 31 * result + (cssClass != null ? cssClass.hashCode() : 0);
