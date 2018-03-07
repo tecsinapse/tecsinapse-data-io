@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import br.com.tecsinapse.exporter.style.Style;
 import br.com.tecsinapse.exporter.style.TableCellStyle;
@@ -32,6 +33,10 @@ public class Table {
 
     private String title;
     private boolean autoSizeColumnSheet = true;
+    @Getter @Setter
+    private Integer minColumnWidth = 8 * 256;
+    @Getter @Setter
+    private Integer maxColumnWidth = 32 * 256;
     private List<List<TableCell>> cells = new ArrayList<>();
     @Getter
     private Map<HSSFColor, HSSFColor> colorsReplaceMap = new HashMap<>();
@@ -480,6 +485,20 @@ public class Table {
         HSSFColor hssfColor = new CustomColor(replaceColor.getIndex(), newColor);
         colorsReplaceMap.put(replaceColor, hssfColor);
         return hssfColor;
+    }
+
+
+    public int getMinOrMaxOrActualCellWidth(int value) {
+        if (minColumnWidth == null && maxColumnWidth == null) {
+            return value;
+        }
+        if (minColumnWidth != null && value < minColumnWidth) {
+            return minColumnWidth;
+        }
+        if (maxColumnWidth != null && value > maxColumnWidth) {
+            return maxColumnWidth;
+        }
+        return value;
     }
 
 }
