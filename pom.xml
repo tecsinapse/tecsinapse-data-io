@@ -12,7 +12,7 @@
         <version>2.0.1</version>
     </parent>
     <artifactId>tecsinapse-data-io</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.1</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
 
@@ -99,7 +99,7 @@
         <url>https://github.com/tecsinapse/tecsinapse-data-io</url>
         <connection>scm:git:git@github.com:tecsinapse/tecsinapse-data-io.git</connection>
         <developerConnection>scm:git:git@github.com:tecsinapse/tecsinapse-data-io.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>tecsinapse-data-io-3.0.1</tag>
     </scm>
 
     <issueManagement>
