@@ -6,8 +6,8 @@
  */
 package br.com.tecsinapse.files.test;
 
-import static br.com.tecsinapse.exporter.style.Style.TABLE_CELL_STYLE_FOOTER;
-import static br.com.tecsinapse.exporter.style.Style.TABLE_CELL_STYLE_HEADER;
+import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_FOOTER;
+import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_HEADER;
 import static java.util.Locale.ENGLISH;
 import static java.util.Locale.FRENCH;
 import static org.testng.Assert.assertEquals;
@@ -35,13 +35,12 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.FluentIterable;
 
-import br.com.tecsinapse.exporter.ExporterFormatter;
-import br.com.tecsinapse.exporter.Table;
-import br.com.tecsinapse.exporter.TableCell;
-import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
-import br.com.tecsinapse.exporter.style.TableCellStyle;
-import br.com.tecsinapse.exporter.util.CsvUtil;
-import br.com.tecsinapse.exporter.util.ExporterUtil;
+import br.com.tecsinapse.dataio.ExporterFormatter;
+import br.com.tecsinapse.dataio.Table;
+import br.com.tecsinapse.dataio.TableCell;
+import br.com.tecsinapse.dataio.importer.parser.SpreadsheetParser;
+import br.com.tecsinapse.dataio.util.CsvUtil;
+import br.com.tecsinapse.dataio.util.ExporterUtil;
 
 public class ExporterFileTest {
 

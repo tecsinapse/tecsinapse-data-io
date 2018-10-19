@@ -13,13 +13,13 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.testng.Assert;
 
-import br.com.tecsinapse.exporter.annotation.TableCellMapping;
-import br.com.tecsinapse.exporter.converter.BigDecimalTableCellConverter;
-import br.com.tecsinapse.exporter.converter.IntegerTableCellConverter;
-import br.com.tecsinapse.exporter.converter.LocalDateTableCellConverter;
-import br.com.tecsinapse.exporter.converter.LocalDateTimeTableCellConverter;
-import br.com.tecsinapse.exporter.converter.LocalTimeTableCellConverter;
-import br.com.tecsinapse.exporter.converter.StringTableCellConverter;
+import br.com.tecsinapse.dataio.annotation.TableCellMapping;
+import br.com.tecsinapse.dataio.converter.BigDecimalTableCellConverter;
+import br.com.tecsinapse.dataio.converter.IntegerTableCellConverter;
+import br.com.tecsinapse.dataio.converter.LocalDateTableCellConverter;
+import br.com.tecsinapse.dataio.converter.LocalDateTimeTableCellConverter;
+import br.com.tecsinapse.dataio.converter.LocalTimeTableCellConverter;
+import br.com.tecsinapse.dataio.converter.StringTableCellConverter;
 
 public class DataParser implements ApplyTest<DataParser> {
 

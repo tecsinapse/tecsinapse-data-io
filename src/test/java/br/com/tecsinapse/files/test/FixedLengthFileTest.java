@@ -18,9 +18,9 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import br.com.tecsinapse.exporter.importer.parser.FixedLengthFileParser;
-import br.com.tecsinapse.exporter.test.FakeFixedLengthFilePojo;
-import br.com.tecsinapse.exporter.test.FakeFixedLengthFilePojoUseLineLength;
+import br.com.tecsinapse.dataio.importer.parser.FixedLengthFileParser;
+import br.com.tecsinapse.dataio.test.FakeFixedLengthFilePojo;
+import br.com.tecsinapse.dataio.test.FakeFixedLengthFilePojoUseLineLength;
 
 public class FixedLengthFileTest {
 

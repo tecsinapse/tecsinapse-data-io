@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import br.com.tecsinapse.exporter.annotation.TableCellMapping;
-import br.com.tecsinapse.exporter.converter.IntegerTableCellConverter;
+import br.com.tecsinapse.dataio.annotation.TableCellMapping;
+import br.com.tecsinapse.dataio.converter.IntegerTableCellConverter;
 
 @Getter
 @NoArgsConstructor

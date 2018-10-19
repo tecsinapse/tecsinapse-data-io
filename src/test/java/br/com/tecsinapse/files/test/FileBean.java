@@ -12,10 +12,10 @@ import java.util.List;
 
 import org.joda.time.LocalDate;
 
-import br.com.tecsinapse.exporter.annotation.TableCellMapping;
-import br.com.tecsinapse.exporter.converter.BigDecimalTableCellConverter;
-import br.com.tecsinapse.exporter.converter.IntegerFromBigDecimalTableCellConverter;
-import br.com.tecsinapse.exporter.converter.IntegerTableCellConverter;
+import br.com.tecsinapse.dataio.annotation.TableCellMapping;
+import br.com.tecsinapse.dataio.converter.BigDecimalTableCellConverter;
+import br.com.tecsinapse.dataio.converter.IntegerFromBigDecimalTableCellConverter;
+import br.com.tecsinapse.dataio.converter.IntegerTableCellConverter;
 import br.com.tecsinapse.files.test.ImporterFileTest.LocalDateConverter;
 
 /**

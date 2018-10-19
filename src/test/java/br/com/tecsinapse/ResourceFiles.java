@@ -7,18 +7,18 @@
 
 package br.com.tecsinapse;
 
-import static br.com.tecsinapse.exporter.type.FileType.CSV;
-import static br.com.tecsinapse.exporter.type.FileType.TXT;
-import static br.com.tecsinapse.exporter.type.FileType.XLS;
-import static br.com.tecsinapse.exporter.type.FileType.XLSM;
-import static br.com.tecsinapse.exporter.type.FileType.XLSX;
-import static br.com.tecsinapse.exporter.type.FileType.ZIP;
+import static br.com.tecsinapse.dataio.type.FileType.CSV;
+import static br.com.tecsinapse.dataio.type.FileType.TXT;
+import static br.com.tecsinapse.dataio.type.FileType.XLS;
+import static br.com.tecsinapse.dataio.type.FileType.XLSM;
+import static br.com.tecsinapse.dataio.type.FileType.XLSX;
+import static br.com.tecsinapse.dataio.type.FileType.ZIP;
 
 import java.io.File;
 
 import br.com.tecsinapse.datasources.DataParser;
 import br.com.tecsinapse.datasources.FileDataParser;
-import br.com.tecsinapse.exporter.type.FileType;
+import br.com.tecsinapse.dataio.type.FileType;
 @SuppressWarnings("unchecked")
 public enum ResourceFiles {
     MOCK_PLANILHA_CSV("/files/mock/planilha.csv", CSV),

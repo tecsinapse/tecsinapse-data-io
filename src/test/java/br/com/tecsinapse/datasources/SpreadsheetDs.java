@@ -15,8 +15,8 @@ import java.util.Locale;
 import org.testng.annotations.DataProvider;
 
 import br.com.tecsinapse.ResourceFiles;
-import br.com.tecsinapse.exporter.ExporterFormatter;
-import br.com.tecsinapse.exporter.util.Constants;
+import br.com.tecsinapse.dataio.ExporterFormatter;
+import br.com.tecsinapse.dataio.util.Constants;
 
 public class SpreadsheetDs {
 

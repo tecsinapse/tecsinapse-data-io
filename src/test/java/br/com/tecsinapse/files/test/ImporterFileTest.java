@@ -31,10 +31,10 @@ import com.google.common.base.Charsets;
 
 import br.com.tecsinapse.ResourceFiles;
 import br.com.tecsinapse.datasources.ThreeColumnValue;
-import br.com.tecsinapse.exporter.converter.FromDateConverter;
-import br.com.tecsinapse.exporter.importer.Importer;
-import br.com.tecsinapse.exporter.importer.parser.SpreadsheetParser;
-import br.com.tecsinapse.exporter.type.FileType;
+import br.com.tecsinapse.dataio.converter.FromDateConverter;
+import br.com.tecsinapse.dataio.importer.Importer;
+import br.com.tecsinapse.dataio.importer.parser.SpreadsheetParser;
+import br.com.tecsinapse.dataio.type.FileType;
 
 public class ImporterFileTest {
 

@@ -16,8 +16,8 @@ import java.util.Map.Entry;
 
 import org.testng.Assert;
 
-import br.com.tecsinapse.exporter.importer.Parser;
-import br.com.tecsinapse.exporter.type.FileType;
+import br.com.tecsinapse.dataio.importer.Parser;
+import br.com.tecsinapse.dataio.type.FileType;
 
 public class FileDataParser<T extends ApplyTest<T>> implements ApplyTest {
 
