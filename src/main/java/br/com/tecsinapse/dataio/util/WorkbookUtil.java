@@ -118,18 +118,16 @@ public class WorkbookUtil {
             for (int i = 0; i <= maxColumns; ++i) {
                 if (sheet instanceof SXSSFSheet) {
                     ((SXSSFSheet)sheet).trackColumnForAutoSizing(i);
-                } else {
-                    sheet.autoSizeColumn(i, true);
                 }
+                sheet.autoSizeColumn(i, true);
             }
         } else {
             for (int i = 0; i <= maxColumns; ++i) {
                 if (defaultColumnWidth.get(i) == null) {
                     if (sheet instanceof SXSSFSheet) {
                         ((SXSSFSheet)sheet).trackColumnForAutoSizing(i);
-                    } else {
-                        sheet.autoSizeColumn(i, true);
                     }
+                    sheet.autoSizeColumn(i, true);
                 } else {
                     int width = table.getMinOrMaxOrActualCellWidth(defaultColumnWidth.get(i));
                     sheet.setColumnWidth(i, width);
