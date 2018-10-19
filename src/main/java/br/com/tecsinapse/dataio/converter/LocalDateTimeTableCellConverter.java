@@ -6,17 +6,19 @@
  */
 package br.com.tecsinapse.dataio.converter;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
-
-import org.joda.time.LocalDateTime;
 
 import com.google.common.base.Strings;
 
 public class LocalDateTimeTableCellConverter implements FromDateConverter<LocalDateTime> {
 
+    public static final LocalDateTimeTableCellConverter LOCAL_DATE_TIME_CONVERTER = new LocalDateTimeTableCellConverter();
+
     @Override
     public LocalDateTime apply(Date input) {
-        return LocalDateTime.fromDateFields(input);
+        return LocalDateTime.ofInstant(input.toInstant(), ZoneId.systemDefault());
     }
 
     @Override

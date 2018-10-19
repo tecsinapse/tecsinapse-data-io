@@ -6,10 +6,8 @@
  */
 package br.com.tecsinapse.dataio.converter;
 
+import java.time.LocalDate;
 import java.util.Date;
-
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 
 import com.google.common.base.Strings;
 
@@ -17,12 +15,12 @@ public class LocalDateTableCellConverter implements FromDateConverter<LocalDate>
 
     @Override
     public LocalDate apply(Date input) {
-        return LocalDate.fromDateFields(input);
+        return LocalDateTimeTableCellConverter.LOCAL_DATE_TIME_CONVERTER.apply(input).toLocalDate();
     }
 
     @Override
     public LocalDate apply(String input) {
-        return Strings.isNullOrEmpty(input) ? null : LocalDateTime.parse(input).toLocalDate();
+        return Strings.isNullOrEmpty(input) ? null : LocalDate.parse(input);
     }
 
 }

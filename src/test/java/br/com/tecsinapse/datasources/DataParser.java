@@ -7,10 +7,10 @@
 package br.com.tecsinapse.datasources;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
 import org.testng.Assert;
 
 import br.com.tecsinapse.dataio.annotation.TableCellMapping;

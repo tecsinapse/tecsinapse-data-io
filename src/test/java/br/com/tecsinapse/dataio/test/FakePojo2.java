@@ -6,7 +6,7 @@
  */
 package br.com.tecsinapse.dataio.test;
 
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
 
 import br.com.tecsinapse.dataio.annotation.TableCellMapping;
 import br.com.tecsinapse.dataio.converter.LocalDateTableCellConverter;

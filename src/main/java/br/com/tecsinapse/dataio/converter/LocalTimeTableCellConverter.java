@@ -6,9 +6,8 @@
  */
 package br.com.tecsinapse.dataio.converter;
 
+import java.time.LocalTime;
 import java.util.Date;
-
-import org.joda.time.LocalTime;
 
 import com.google.common.base.Strings;
 
@@ -16,7 +15,7 @@ public class LocalTimeTableCellConverter implements FromDateConverter<LocalTime>
 
     @Override
     public LocalTime apply(Date input) {
-        return LocalTime.fromDateFields(input);
+        return LocalDateTimeTableCellConverter.LOCAL_DATE_TIME_CONVERTER.apply(input).toLocalTime();
     }
 
     @Override

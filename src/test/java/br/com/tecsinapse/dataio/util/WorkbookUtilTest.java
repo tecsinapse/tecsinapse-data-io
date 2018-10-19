@@ -7,7 +7,8 @@
 
 package br.com.tecsinapse.dataio.util;
 
-import org.joda.time.LocalDateTime;
+import java.time.LocalDateTime;
+
 import org.testng.annotations.Test;
 
 import br.com.tecsinapse.dataio.Table;

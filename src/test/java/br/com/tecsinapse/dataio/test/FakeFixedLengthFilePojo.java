@@ -6,9 +6,8 @@
  */
 package br.com.tecsinapse.dataio.test;
 
+import java.time.LocalDate;
 import java.util.Objects;
-
-import org.joda.time.LocalDate;
 
 import br.com.tecsinapse.dataio.annotation.FixedLengthColumn;
 import br.com.tecsinapse.dataio.annotation.LineFixedLengthFile;

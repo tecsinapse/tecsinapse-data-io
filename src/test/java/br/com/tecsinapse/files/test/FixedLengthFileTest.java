@@ -10,10 +10,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.LocalDate;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -72,10 +73,10 @@ public class FixedLengthFileTest {
 
     private List<FakeFixedLengthFilePojo> expectedPojos() {
         final List<FakeFixedLengthFilePojo> pojos = new ArrayList<>();
-        pojos.add(new FakeFixedLengthFilePojo(1, "String 01", new LocalDate(2014, 9, 19), "01String 01 2014-09-19"));
-        pojos.add(new FakeFixedLengthFilePojo(2, "Str02", new LocalDate(2014, 9, 20), "02Str02     2014-09-20"));
-        pojos.add(new FakeFixedLengthFilePojo(3, "0303030303", new LocalDate(2014, 9, 21), "0303030303032014-09-21"));
-        pojos.add(new FakeFixedLengthFilePojo(4, "Acentuação", new LocalDate(2014, 9, 21), "4Acentuação2014-09-21"));
+        pojos.add(new FakeFixedLengthFilePojo(1, "String 01", LocalDate.of(2014, 9, 19), "01String 01 2014-09-19"));
+        pojos.add(new FakeFixedLengthFilePojo(2, "Str02", LocalDate.of(2014, 9, 20), "02Str02     2014-09-20"));
+        pojos.add(new FakeFixedLengthFilePojo(3, "0303030303", LocalDate.of(2014, 9, 21), "0303030303032014-09-21"));
+        pojos.add(new FakeFixedLengthFilePojo(4, "Acentuação", LocalDate.of(2014, 9, 21), "4Acentuação2014-09-21"));
         return pojos;
     }
 
@@ -158,7 +159,7 @@ public class FixedLengthFileTest {
         validaImportacao(pojos, importedPojos);
     }
 
-    @Test(dataProvider = "dataWithError", expectedExceptions = IllegalArgumentException.class)
+    @Test(dataProvider = "dataWithError", expectedExceptions = {IllegalArgumentException.class, DateTimeParseException.class})
     public void validaImportacaoErro(List<FakeFixedLengthFilePojo> pojos, File file) throws IOException,
             ReflectiveOperationException {
         new FixedLengthFileParser<>(FakeFixedLengthFilePojo.class).withCharset(
