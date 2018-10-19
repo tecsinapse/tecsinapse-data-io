@@ -11,6 +11,10 @@ Wants to contribute to tecsinapse-data-io?
 ---
 Before working on the code, if you plan to contribute changes, please read the following [CONTRIBUTING](CONTRIBUTING.md) document.
 
+IMPORTANT
+---
+In version >= 3 package moved from **br.com.tecsinpase.exporter** to **br.com.tecsinpase.dataio**
+
 Using tecsinapse-data-io
 ---
 
@@ -20,14 +24,14 @@ Maven:
 <dependency>
   <groupId>br.com.tecsinapse</groupId>
   <artifactId>tecsinapse-data-io</artifactId>
-  <version>2.0.4</version>
+  <version>3.0.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-compile "br.com.tecsinapse:tecsinapse-data-io:2.0.4"
+compile "br.com.tecsinapse:tecsinapse-data-io:3.0.0"
 ```
 
 If you want to use snapshots first config OSS Sonatype Snapshots repository:
