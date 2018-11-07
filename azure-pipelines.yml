@@ -7,8 +7,6 @@ pool:
   vmImage: 'Ubuntu 16.04'
 
 steps:
-- task: DevCheckout
-  script: git checkout azure-pipelines
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
