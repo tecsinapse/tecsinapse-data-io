@@ -26,6 +26,8 @@
         <hamcrest.version>1.3</hamcrest.version>
         <poi.version>3.14</poi.version>
         <reflections.verson>0.9.10</reflections.verson>
+        <slf4j.version>1.7.26</slf4j.version>
+
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>tecsinapse-oss</sonar.organization>
         <sonar.projectKey>br.com.tecsinapse:tecsinapse-data-io</sonar.projectKey>
@@ -141,10 +143,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>org.testng</groupId>
