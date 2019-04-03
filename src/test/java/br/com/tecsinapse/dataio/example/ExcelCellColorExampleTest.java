@@ -33,10 +33,10 @@ public class ExcelCellColorExampleTest {
 
         int line = 0;
         List<HSSFColor> colors = new ArrayList<>(HSSFColor.getIndexHash().values());
-        colors.add(new HSSFColor.AUTOMATIC());
+        colors.add(HSSFColor.HSSFColorPredefined.AUTOMATIC.getColor());
 
-        HSSFColor cBlue = table.newCustomColor(new HSSFColor.AQUA(), new java.awt.Color(0,0,255));
-        HSSFColor cGreen = table.newCustomColor(new HSSFColor.RED(), new java.awt.Color(0,255,0));
+        HSSFColor cBlue = table.newCustomColor(HSSFColor.HSSFColorPredefined.AQUA.getColor(), new java.awt.Color(0,0,255));
+        HSSFColor cGreen = table.newCustomColor(HSSFColor.HSSFColorPredefined.RED.getColor(), new java.awt.Color(0,255,0));
         colors.add(cGreen);
         colors.add(cBlue);
         for (HSSFColor color : colors) {

@@ -8,7 +8,7 @@
 package br.com.tecsinapse.dataio.style;
 
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hssf.util.HSSFColor.WHITE;
+import static org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined.WHITE;
 
 public enum CssStyle {
     BOLD("font-weight:bold;"),
@@ -35,7 +35,7 @@ public enum CssStyle {
             return "";
         }
 
-        if (whiteAsTransparent && WHITE.hexString.equals(hssfColor.getHexString())) {
+        if (whiteAsTransparent && WHITE.getHexString().equals(hssfColor.getHexString())) {
             return "";
         }
 

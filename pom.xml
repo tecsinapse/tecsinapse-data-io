@@ -24,7 +24,7 @@
         <!-- dependencies -->
         <guava.version>19.0</guava.version>
         <lombok.version>1.18.6</lombok.version>
-        <poi.version>3.14</poi.version>
+        <poi.version>4.0.1</poi.version>
         <reflections.verson>0.9.11</reflections.verson>
         <slf4j.version>1.7.26</slf4j.version>
 

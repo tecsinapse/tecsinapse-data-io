@@ -7,9 +7,10 @@
 
 package br.com.tecsinapse.dataio.style;
 
-import static br.com.tecsinapse.dataio.util.WorkbookUtil.toRgbByte;
+import static br.com.tecsinapse.dataio.util.WorkbookUtil.toIndexedColorMap;
 
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -80,33 +81,33 @@ public class CellStyleBorder {
             return cellStyle;
         }
         if (left) {
-            cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+            cellStyle.setBorderLeft(BorderStyle.THIN);
             if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setLeftBorderColor(new XSSFColor(toRgbByte(borderColor)));
+                ((XSSFCellStyle)cellStyle).setLeftBorderColor(new XSSFColor(toIndexedColorMap(borderColor)));
             } else {
                 cellStyle.setLeftBorderColor(borderColor.getIndex());
             }
         }
         if (right) {
-            cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+            cellStyle.setBorderRight(BorderStyle.THIN);
             if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setRightBorderColor(new XSSFColor(toRgbByte(borderColor)));
+                ((XSSFCellStyle)cellStyle).setRightBorderColor(new XSSFColor(toIndexedColorMap(borderColor)));
             } else {
                 cellStyle.setRightBorderColor(borderColor.getIndex());
             }
         }
         if (bottom) {
-            cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+            cellStyle.setBorderBottom(BorderStyle.THIN);
             if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setBottomBorderColor(new XSSFColor(toRgbByte(borderColor)));
+                ((XSSFCellStyle)cellStyle).setBottomBorderColor(new XSSFColor(toIndexedColorMap(borderColor)));
             } else {
                 cellStyle.setBottomBorderColor(borderColor.getIndex());
             }
         }
         if (top) {
-            cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+            cellStyle.setBorderTop(BorderStyle.THIN);
             if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setTopBorderColor(new XSSFColor(toRgbByte(borderColor)));
+                ((XSSFCellStyle)cellStyle).setTopBorderColor(new XSSFColor(toIndexedColorMap(borderColor)));
             } else {
                 cellStyle.setTopBorderColor(borderColor.getIndex());
             }

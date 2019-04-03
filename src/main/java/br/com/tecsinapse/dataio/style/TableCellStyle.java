@@ -8,10 +8,11 @@ package br.com.tecsinapse.dataio.style;
 
 import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_FOOTER;
 import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_HEADER;
-import static br.com.tecsinapse.dataio.util.WorkbookUtil.toRgbByte;
+import static br.com.tecsinapse.dataio.util.WorkbookUtil.toIndexedColorMap;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -201,11 +202,11 @@ public class TableCellStyle {
 
         if (getBackgroundColor() != null) {
             if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setFillForegroundColor(new XSSFColor(toRgbByte(getBackgroundColor())));
+                ((XSSFCellStyle)cellStyle).setFillForegroundColor(new XSSFColor(toIndexedColorMap(getBackgroundColor())));
             } else {
                 cellStyle.setFillForegroundColor(getBackgroundColor().getIndex());
             }
-            cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         }
         if (getBorder() != null) {
             cellStyle = border.toCellStyle(cellStyle);
@@ -238,7 +239,7 @@ public class TableCellStyle {
         }
         if (getFontColor() != null) {
             if (font instanceof XSSFFont) {
-                ((XSSFFont)font).setColor(new XSSFColor(toRgbByte(fontColor)));
+                ((XSSFFont)font).setColor(new XSSFColor(toIndexedColorMap(fontColor)));
             } else {
                 font.setColor(fontColor.getIndex());
             }
