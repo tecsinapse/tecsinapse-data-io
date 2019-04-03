@@ -17,7 +17,7 @@ public class FileTxt {
     private boolean endsWithSeparator = false;
 
     public void addNewLine() {
-        fields.add(new ArrayList<FieldTxt>());
+        fields.add(new ArrayList<>());
     }
 
     public void add(String content) {

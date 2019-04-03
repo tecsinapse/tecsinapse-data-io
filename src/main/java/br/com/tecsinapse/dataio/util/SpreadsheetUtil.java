@@ -8,10 +8,10 @@ package br.com.tecsinapse.dataio.util;
 
 import com.google.common.base.Strings;
 
-public final class SpreadsheetUtil {
+import lombok.experimental.UtilityClass;
 
-    private SpreadsheetUtil() {
-    }
+@UtilityClass
+public final class SpreadsheetUtil {
 
     public static int getColumnIndexByColumnName(String columnName) {
         columnName = getColumnFromCellName(columnName.toUpperCase());

@@ -23,7 +23,6 @@ class TableCellStyleProtected extends TableCellStyle {
         throw new UnsupportedOperationException("TableCellStyleDefaultHeader: Unsupported operation for default objects.");
     }
 
-
     @Override
     public void setFontColor(HSSFColor fontColor) {
         throwUnsupportedOperationException();

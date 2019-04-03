@@ -15,6 +15,13 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@EqualsAndHashCode
 public class CellStyleBorder {
 
     private HSSFColor borderColor;
@@ -36,45 +43,6 @@ public class CellStyleBorder {
         this.bottom = bottom;
     }
 
-    public HSSFColor getBorderColor() {
-        return borderColor;
-    }
-
-    public void setBorderColor(HSSFColor borderColor) {
-        this.borderColor = borderColor;
-    }
-
-    public boolean isLeft() {
-        return left;
-    }
-
-    public void setLeft(boolean left) {
-        this.left = left;
-    }
-
-    public boolean isRight() {
-        return right;
-    }
-
-    public void setRight(boolean right) {
-        this.right = right;
-    }
-
-    public boolean isTop() {
-        return top;
-    }
-
-    public void setTop(boolean top) {
-        this.top = top;
-    }
-
-    public boolean isBottom() {
-        return bottom;
-    }
-
-    public void setBottom(boolean bottom) {
-        this.bottom = bottom;
-    }
 
     public CellStyle toCellStyle(CellStyle cellStyle) {
         if (cellStyle == null || !left && !right && !bottom && !top) {
@@ -143,44 +111,4 @@ public class CellStyleBorder {
         return new CellStyleBorder(getBorderColor(), isLeft(), isRight(), isTop(), isBottom());
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || !(o instanceof CellStyleBorder)) {
-            return false;
-        }
-
-        final CellStyleBorder that = (CellStyleBorder) o;
-
-        if (left != that.left) {
-            return false;
-        }
-        if (right != that.right) {
-            return false;
-        }
-        if (top != that.top) {
-            return false;
-        }
-        if (bottom != that.bottom) {
-            return false;
-        }
-        if (size != that.size) {
-            return false;
-        }
-        return borderColor != null ? borderColor.equals(that.borderColor) : that.borderColor == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = borderColor != null ? borderColor.hashCode() : 0;
-        result = 31 * result + (left ? 1 : 0);
-        result = 31 * result + (right ? 1 : 0);
-        result = 31 * result + (top ? 1 : 0);
-        result = 31 * result + (bottom ? 1 : 0);
-        result = 31 * result + (int) size;
-        return result;
-    }
 }

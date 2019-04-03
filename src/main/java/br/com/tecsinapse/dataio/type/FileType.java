@@ -17,8 +17,13 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import br.com.tecsinapse.dataio.util.ExporterDateUtils;
 
+@Getter
+@AllArgsConstructor
 public enum FileType {
 
     XLS("MS Excel file (.xls)", MIME_XLSX_XLS, ".xls") {
@@ -47,12 +52,6 @@ public enum FileType {
     private final String mimeType;
     private final String extension;
 
-    FileType(String description, String mimeType, String extension) {
-        this.description = description;
-        this.mimeType = mimeType;
-        this.extension = extension;
-    }
-
     public static FileType getFileType(String filename) {
         for (FileType fileType : values()) {
             if (filename.toLowerCase().endsWith(fileType.getExtension().toLowerCase())) {
@@ -62,20 +61,8 @@ public enum FileType {
         return TXT;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
     public Workbook buildWorkbook(InputStream inputStream) throws IOException {
         throw new UnsupportedOperationException(MSG_IGNORED);
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public String getExtension() {
-        return extension;
     }
 
     public String toFilenameWithExtension(String filename) {

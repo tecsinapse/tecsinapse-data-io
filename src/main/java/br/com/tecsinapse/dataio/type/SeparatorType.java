@@ -7,6 +7,11 @@
 
 package br.com.tecsinapse.dataio.type;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum SeparatorType {
 
     TAB("\t"),
@@ -16,13 +21,5 @@ public enum SeparatorType {
     COMMA(",");
 
     private final String separator;
-
-    SeparatorType(String separator) {
-        this.separator = separator;
-    }
-
-    public String getSeparator() {
-        return separator;
-    }
 
 }

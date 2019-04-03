@@ -14,10 +14,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class FixedLengthFileUtil {
+import lombok.experimental.UtilityClass;
 
-    private FixedLengthFileUtil() {
-    }
+@UtilityClass
+public final class FixedLengthFileUtil {
 
     public static List<String> getLines(InputStream inputStream, boolean ignoreFirstLine, Charset charset) throws IOException {
         return getLines(inputStream, ignoreFirstLine, 0, null, charset);

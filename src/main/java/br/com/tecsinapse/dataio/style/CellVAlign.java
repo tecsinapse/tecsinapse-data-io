@@ -9,6 +9,11 @@ package br.com.tecsinapse.dataio.style;
 
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum CellVAlign {
 
     CENTER(VerticalAlignment.CENTER, "vertical-align:middle;"),
@@ -19,16 +24,4 @@ public enum CellVAlign {
     private final VerticalAlignment cellStyleVAlign;
     private final String css;
 
-    CellVAlign(short cellStyleVAlign, String css) {
-        this.cellStyleVAlign = cellStyleVAlign;
-        this.css = css;
-    }
-
-    public short getCellStyleVAlign() {
-        return cellStyleVAlign;
-    }
-
-    public String getCss() {
-        return css;
-    }
 }

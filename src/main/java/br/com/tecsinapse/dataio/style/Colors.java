@@ -10,9 +10,10 @@ package br.com.tecsinapse.dataio.style;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 
-public final class Colors {
+import lombok.experimental.UtilityClass;
 
-    private Colors() {}
+@UtilityClass
+public final class Colors {
 
     public HSSFColor AUTOMATIC = HSSFColorPredefined.AUTOMATIC.getColor();
     public HSSFColor BLACK = HSSFColorPredefined.BLACK.getColor();
