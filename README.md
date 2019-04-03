@@ -24,14 +24,14 @@ Maven:
 <dependency>
   <groupId>br.com.tecsinapse</groupId>
   <artifactId>tecsinapse-data-io</artifactId>
-  <version>3.0.3</version>
+  <version>3.1.x</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-compile "br.com.tecsinapse:tecsinapse-data-io:3.0.3"
+compile "br.com.tecsinapse:tecsinapse-data-io:3.1.x"
 ```
 
 If you want to use snapshots first config OSS Sonatype Snapshots repository:
@@ -67,14 +67,14 @@ And then the dependency:
 <dependency>
   <groupId>br.com.tecsinapse</groupId>
   <artifactId>tecsinapse-data-io</artifactId>
-  <version>2.0.5-SNAPSHOT</version>
+  <version>3.1.x-SNAPSHOT</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-compile 'br.com.tecsinapse:tecsinapse-data-io:2.0.5-SNAPSHOT'
+compile 'br.com.tecsinapse:tecsinapse-data-io:3.1.x-SNAPSHOT'
 ```
 
 Documentation and samples
