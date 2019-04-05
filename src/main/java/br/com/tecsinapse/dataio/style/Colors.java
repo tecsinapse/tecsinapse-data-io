@@ -32,5 +32,7 @@ public final class Colors {
     public HSSFColor RED = HSSFColorPredefined.RED.getColor();
     public HSSFColor WHITE = HSSFColorPredefined.WHITE.getColor();
     public HSSFColor YELLOW = HSSFColorPredefined.YELLOW.getColor();
+    public HSSFColor SEA_GREEN = HSSFColorPredefined.SEA_GREEN.getColor();
+    public HSSFColor LIGHT_TURQUOISE = HSSFColorPredefined.LIGHT_TURQUOISE.getColor();
 
 }
