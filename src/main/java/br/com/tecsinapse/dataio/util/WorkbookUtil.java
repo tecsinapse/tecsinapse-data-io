@@ -227,4 +227,24 @@ public class WorkbookUtil {
         return (i) -> toRgbByte(hssfColor);
     }
 
+    public static boolean isString(Cell cell) {
+        return cell != null && org.apache.poi.ss.usermodel.CellType.STRING == cell.getCellType();
+    }
+
+    public static boolean isNumber(Cell cell) {
+        return cell != null && org.apache.poi.ss.usermodel.CellType.NUMERIC == cell.getCellType();
+    }
+
+    public static boolean isFormula(Cell cell) {
+        return cell != null && org.apache.poi.ss.usermodel.CellType.FORMULA == cell.getCellType();
+    }
+
+    public static boolean isStringEmpty(Cell cell) {
+        return isString(cell) && cell.getStringCellValue().trim().isEmpty();
+    }
+
+    public static boolean isBlank(Cell cell) {
+        return cell.getCellType() == org.apache.poi.ss.usermodel.CellType.BLANK;
+    }
+
 }
