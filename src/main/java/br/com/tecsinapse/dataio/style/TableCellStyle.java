@@ -6,8 +6,14 @@
  */
 package br.com.tecsinapse.dataio.style;
 
+import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_BODY;
+import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_BODY_BOLD;
+import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_BODY_CENTER;
+import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_BODY_CENTER_BOLD;
 import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_FOOTER;
+import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_FOOTER_BOLD;
 import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_HEADER;
+import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_HEADER_BOLD;
 import static br.com.tecsinapse.dataio.util.WorkbookUtil.toIndexedColorMap;
 
 import org.apache.poi.hssf.util.HSSFColor;
@@ -19,6 +25,13 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@EqualsAndHashCode
 public class TableCellStyle {
 
     private HSSFColor backgroundColor;
@@ -48,132 +61,17 @@ public class TableCellStyle {
         this(backgroundColor, null, false);
     }
 
-    public HSSFColor getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public HSSFColor getFontColor() {
-        return fontColor;
-    }
-
-    public void setFontColor(HSSFColor fontColor) {
-        this.fontColor = fontColor;
-    }
-
-    public void setBackgroundColor(HSSFColor backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
-    public Integer getFontSize() {
-        return fontSize;
-    }
-
-    public void setFontSize(Integer fontSize) {
-        this.fontSize = fontSize;
-    }
-
-    public boolean isBold() {
-        return bold;
-    }
-
-    public void setBold(boolean bold) {
-        this.bold = bold;
-    }
-
-    public boolean isItalic() {
-        return italic;
-    }
-
-    public void setItalic(boolean italic) {
-        this.italic = italic;
-    }
-
-    public boolean isUnderline() {
-        return underline;
-    }
-
-    public void setUnderline(boolean underline) {
-        this.underline = underline;
-    }
-
-    public boolean isStrikeout() {
-        return strikeout;
-    }
-
-    public void setStrikeout(boolean strikeout) {
-        this.strikeout = strikeout;
-    }
-
-    public boolean isWrapText() {
-        return wrapText;
-    }
-
-    public void setWrapText(boolean wrapText) {
-        this.wrapText = wrapText;
-    }
-
-    public CellVAlign getvAlign() {
-        return vAlign;
-    }
-
-    public void setvAlign(CellVAlign vAlign) {
-        this.vAlign = vAlign;
-    }
-
-    public CellHAlign gethAlign() {
-        return hAlign;
-    }
-
-    public void sethAlign(CellHAlign hAlign) {
-        this.hAlign = hAlign;
-    }
-
-    public CellStyleBorder getBorder() {
-        return border;
-    }
-
-    public void setBorder(CellStyleBorder border) {
-        this.border = border;
-    }
-
-    public String getCellFormat() {
-        return cellFormat;
-    }
-
-    public void setCellFormat(String cellFormat) {
-        this.cellFormat = cellFormat;
-    }
-
     public boolean isHeader() {
-        return this.equals(TABLE_CELL_STYLE_HEADER);
+        return this.equals(TABLE_CELL_STYLE_HEADER) || this.equals(TABLE_CELL_STYLE_HEADER_BOLD);
+    }
+
+    public boolean isBody() {
+        return this.equals(TABLE_CELL_STYLE_BODY) || this.equals(TABLE_CELL_STYLE_BODY_BOLD) ||
+                this.equals(TABLE_CELL_STYLE_BODY_CENTER) || this.equals(TABLE_CELL_STYLE_BODY_CENTER_BOLD);
     }
 
     public boolean isFooter() {
-        return this.equals(TABLE_CELL_STYLE_FOOTER);
-    }
-
-    public boolean isCssWhiteAsTransparent() {
-        return cssWhiteAsTransparent;
-    }
-
-    public void setCssWhiteAsTransparent(boolean cssWhiteAsTransparent) {
-        this.cssWhiteAsTransparent = cssWhiteAsTransparent;
-    }
-
-    public boolean isIgnoreCssStyle() {
-        return ignoreCssStyle;
-    }
-
-    public void setIgnoreCssStyle(boolean ignoreCssStyle) {
-        this.ignoreCssStyle = ignoreCssStyle;
-    }
-
-    public String getCssClass() {
-        return cssClass;
-    }
-
-    public void setCssClass(String cssClass) {
-        this.cssClass = cssClass;
+        return this.equals(TABLE_CELL_STYLE_FOOTER) || this.equals(TABLE_CELL_STYLE_FOOTER_BOLD);
     }
 
     public String getCssStyle() {
@@ -187,10 +85,10 @@ public class TableCellStyle {
         if (getBorder() != null) {
             css.append(border.toCss());
         }
-        if (getvAlign() != null) {
+        if (getVAlign() != null) {
             css.append(vAlign.getCss());
         }
-        if (gethAlign() != null) {
+        if (getHAlign() != null) {
             css.append(hAlign.getCss());
         }
         configCssFont(css);
@@ -211,10 +109,10 @@ public class TableCellStyle {
         if (getBorder() != null) {
             cellStyle = border.toCellStyle(cellStyle);
         }
-        if (getvAlign() != null) {
+        if (getVAlign() != null) {
             cellStyle.setVerticalAlignment(vAlign.getCellStyleVAlign());
         }
-        if (gethAlign() != null) {
+        if (getHAlign() != null) {
             cellStyle.setAlignment(hAlign.getCellStyleHAlign());
         }
 
@@ -276,8 +174,8 @@ public class TableCellStyle {
             tcs.setBorder(null);
         }
 
-        tcs.setvAlign(getvAlign());
-        tcs.sethAlign(gethAlign());
+        tcs.setVAlign(getVAlign());
+        tcs.setHAlign(getHAlign());
 
         tcs.setFontColor(getFontColor());
         tcs.setFontSize(getFontSize());
@@ -291,82 +189,6 @@ public class TableCellStyle {
         tcs.setIgnoreCssStyle(isIgnoreCssStyle());
         tcs.setCssClass(getCssClass());
         return tcs;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || !(o instanceof TableCellStyle)) {
-            return false;
-        }
-
-        final TableCellStyle that = (TableCellStyle) o;
-
-        if (bold != that.bold) {
-            return false;
-        }
-        if (italic != that.italic) {
-            return false;
-        }
-        if (underline != that.underline) {
-            return false;
-        }
-        if (strikeout != that.strikeout) {
-            return false;
-        }
-        if (wrapText != that.wrapText) {
-            return false;
-        }
-        if (cssWhiteAsTransparent != that.isCssWhiteAsTransparent()) {
-            return false;
-        }
-        if (ignoreCssStyle != that.isIgnoreCssStyle()) {
-            return false;
-        }
-        if (backgroundColor != null ? !backgroundColor.equals(that.backgroundColor) : that.backgroundColor != null) {
-            return false;
-        }
-        if (fontColor != null ? !fontColor.equals(that.fontColor) : that.fontColor != null) {
-            return false;
-        }
-        if (vAlign != that.vAlign) {
-            return false;
-        }
-        if (hAlign != that.hAlign) {
-            return false;
-        }
-        if (border != null ? !border.equals(that.border) : that.border != null) {
-            return false;
-        }
-        if (cellFormat != null && !cellFormat.equals(that.cellFormat)) {
-            return false;
-        }
-        if (cssClass != null && !cssClass.equals(that.cssClass)) {
-            return false;
-        }
-        return fontSize != null ? fontSize.equals(that.fontSize) : that.fontSize == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = backgroundColor != null ? backgroundColor.hashCode() : 0;
-        result = 31 * result + (fontColor != null ? fontColor.hashCode() : 0);
-        result = 31 * result + (vAlign != null ? vAlign.hashCode() : 0);
-        result = 31 * result + (hAlign != null ? hAlign.hashCode() : 0);
-        result = 31 * result + (border != null ? border.hashCode() : 0);
-        result = 31 * result + (fontSize != null ? fontSize.hashCode() : 0);
-        result = 31 * result + (bold ? 1 : 0);
-        result = 31 * result + (italic ? 1 : 0);
-        result = 31 * result + (underline ? 1 : 0);
-        result = 31 * result + (strikeout ? 1 : 0);
-        result = 31 * result + (wrapText ? 1 : 0);
-        result = 31 * result + (ignoreCssStyle ? 1 : 0);
-        result = 31 * result + (cssWhiteAsTransparent ? 1 : 0);
-        result = 31 * result + (cssClass != null ? cssClass.hashCode() : 0);
-        return result;
     }
 
     public String getCssBlockClassName() {
