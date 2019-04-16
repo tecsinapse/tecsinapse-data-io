@@ -46,7 +46,6 @@ public class CsvParser<T> implements Parser<T> {
 
     private boolean ignoreBlankLinesAtEnd = false;
 
-
     public CsvParser(Class<T> clazz, File file, Charset charset, int afterLine, Class<?> group) throws IOException {
         this(clazz, file, charset, group);
         this.headersRows = afterLine;
@@ -147,7 +146,7 @@ public class CsvParser<T> implements Parser<T> {
     }
 
     @Override
-    public List<List<String>> getLines() throws SAXException, OpenXML4JException, ParserConfigurationException, IOException {
+    public List<List<String>> getLines() {
         return Collections.emptyList();
     }
 
@@ -208,7 +207,7 @@ public class CsvParser<T> implements Parser<T> {
 
         List<String> linhaParseadaPorAspas = new ArrayList<>();
 
-        /**
+        /*
          * Percorre a linha em busca de ;
          * depois verifica se entre 2 ; existem aspas
          * Se houver, é preciso ignorar os ; internos às aspas
@@ -280,7 +279,7 @@ public class CsvParser<T> implements Parser<T> {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         //nada parser é feito atualmente no construtor
     }
 }

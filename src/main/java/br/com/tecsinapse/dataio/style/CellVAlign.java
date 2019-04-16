@@ -7,27 +7,21 @@
 
 package br.com.tecsinapse.dataio.style;
 
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum CellVAlign {
-    CENTER(CellStyle.VERTICAL_CENTER, "vertical-align:middle;"),
-    JUSTIFY(CellStyle.VERTICAL_JUSTIFY, ""),
-    TOP(CellStyle.VERTICAL_TOP, "vertical-align:top;"),
-    BOTTOM(CellStyle.VERTICAL_BOTTOM, "vertical-align:bottom;");
 
-    private final short cellStyleVAlign;
+    CENTER(VerticalAlignment.CENTER, "vertical-align:middle;"),
+    JUSTIFY(VerticalAlignment.JUSTIFY, ""),
+    TOP(VerticalAlignment.TOP, "vertical-align:top;"),
+    BOTTOM(VerticalAlignment.BOTTOM, "vertical-align:bottom;");
+
+    private final VerticalAlignment cellStyleVAlign;
     private final String css;
 
-    CellVAlign(short cellStyleVAlign, String css) {
-        this.cellStyleVAlign = cellStyleVAlign;
-        this.css = css;
-    }
-
-    public short getCellStyleVAlign() {
-        return cellStyleVAlign;
-    }
-
-    public String getCss() {
-        return css;
-    }
 }

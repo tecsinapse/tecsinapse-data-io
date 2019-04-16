@@ -12,9 +12,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@UtilityClass
 public final class ExporterDateUtils {
 
     private static final Date DATETIME_BIGBANG_PLUS_24H = new Date(-2208977612000L);
@@ -22,10 +24,6 @@ public final class ExporterDateUtils {
     private static final String DATE_ISO_FORMAT = "yyyy-MM-dd";
     private static final String DATETIME_ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     private static final String DATETIME_FILE_FORMAT = "yyyy-MM-dd_HH-mm";
-
-    private ExporterDateUtils() {
-
-    }
 
     public static DateType getDateType(Date date) {
         if (date == null) {
@@ -75,7 +73,7 @@ public final class ExporterDateUtils {
         try {
             return new SimpleDateFormat(DATETIME_ISO_FORMAT).parse(strDate);
         } catch (ParseException e) {
-            log.error("Parse date '{0}' error.", strDate, e);
+            log.error("Parse date '{}' error.", strDate, e);
             return null;
         }
     }

@@ -16,10 +16,10 @@ import java.util.zip.ZipOutputStream;
 
 import com.google.common.io.ByteStreams;
 
-public final class ZipUtil {
+import lombok.experimental.UtilityClass;
 
-    private ZipUtil() {
-    }
+@UtilityClass
+public final class ZipUtil {
 
     public static void zip(File newZip, File... filesToAdd) throws IOException {
         try (ZipOutputStream zos = new ZipOutputStream(

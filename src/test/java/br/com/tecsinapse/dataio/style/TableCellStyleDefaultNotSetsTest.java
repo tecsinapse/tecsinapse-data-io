@@ -22,72 +22,72 @@ public class TableCellStyleDefaultNotSetsTest {
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetFontColor(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetFontColor(TableCellStyle tableCellStyle) {
         tableCellStyle.setFontColor(null);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetBackgroundColor(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetBackgroundColor(TableCellStyle tableCellStyle) {
         tableCellStyle.setBackgroundColor(null);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetFontSize(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetFontSize(TableCellStyle tableCellStyle) {
         tableCellStyle.setFontSize(5);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetBold(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetBold(TableCellStyle tableCellStyle) {
         tableCellStyle.setBold(true);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetItalic(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetItalic(TableCellStyle tableCellStyle) {
         tableCellStyle.setItalic(true);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetUnderline(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetUnderline(TableCellStyle tableCellStyle) {
         tableCellStyle.setUnderline(true);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetStrikeout(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetStrikeout(TableCellStyle tableCellStyle) {
         tableCellStyle.setStrikeout(true);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetvAlign(TableCellStyle tableCellStyle) throws Exception {
-        tableCellStyle.setvAlign(null);
+    public void testSetvAlign(TableCellStyle tableCellStyle) {
+        tableCellStyle.setVAlign(null);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSethAlign(TableCellStyle tableCellStyle) throws Exception {
-        tableCellStyle.sethAlign(null);
+    public void testSethAlign(TableCellStyle tableCellStyle) {
+        tableCellStyle.setHAlign(null);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetBorder(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetBorder(TableCellStyle tableCellStyle) {
         tableCellStyle.setBorder(null);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetCellFormat(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetCellFormat(TableCellStyle tableCellStyle) {
         tableCellStyle.setCellFormat(null);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetCssWhiteAsTransparent(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetCssWhiteAsTransparent(TableCellStyle tableCellStyle) {
         tableCellStyle.setCssWhiteAsTransparent(true);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetCssClass(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetCssClass(TableCellStyle tableCellStyle) {
         tableCellStyle.setCssClass(null);
     }
 
     @Test(dataProvider = "objsNotSetsDs", expectedExceptions = {UnsupportedOperationException.class})
-    public void testSetIgnoreCssStyle(TableCellStyle tableCellStyle) throws Exception {
+    public void testSetIgnoreCssStyle(TableCellStyle tableCellStyle) {
         tableCellStyle.setIgnoreCssStyle(true);
     }
 

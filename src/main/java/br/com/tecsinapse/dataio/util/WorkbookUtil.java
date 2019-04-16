@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -24,6 +25,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.usermodel.IndexedColorMap;
 
 import br.com.tecsinapse.dataio.EmptyTableCell;
 import br.com.tecsinapse.dataio.ExporterFormatter;
@@ -90,10 +92,10 @@ public class WorkbookUtil {
                     CellRangeAddress cellRange = new CellRangeAddress(rowStart, rowEnd, colStart, colEnd);
                     sheet.addMergedRegion(cellRange);
 
-                    RegionUtil.setBorderTop(1, cellRange, sheet, wb);
-                    RegionUtil.setBorderRight(1, cellRange, sheet, wb);
-                    RegionUtil.setBorderBottom(1, cellRange, sheet, wb);
-                    RegionUtil.setBorderLeft(1, cellRange, sheet, wb);
+                    RegionUtil.setBorderTop(BorderStyle.THIN, cellRange, sheet);
+                    RegionUtil.setBorderRight(BorderStyle.THIN, cellRange, sheet);
+                    RegionUtil.setBorderBottom(BorderStyle.THIN, cellRange, sheet);
+                    RegionUtil.setBorderLeft(BorderStyle.THIN, cellRange, sheet);
                 } else if (!table.isAutoSizeColumnSheet()) {
                     Integer maxColumnWidth = defaultColumnWidth.get(c);
                     if (maxColumnWidth == null) {
@@ -117,7 +119,7 @@ public class WorkbookUtil {
         if (table.isAutoSizeColumnSheet()) {
             for (int i = 0; i <= maxColumns; ++i) {
                 if (sheet instanceof SXSSFSheet) {
-                    ((SXSSFSheet)sheet).trackColumnForAutoSizing(i);
+                    ((SXSSFSheet) sheet).trackColumnForAutoSizing(i);
                 }
                 sheet.autoSizeColumn(i, true);
             }
@@ -125,7 +127,7 @@ public class WorkbookUtil {
             for (int i = 0; i <= maxColumns; ++i) {
                 if (defaultColumnWidth.get(i) == null) {
                     if (sheet instanceof SXSSFSheet) {
-                        ((SXSSFSheet)sheet).trackColumnForAutoSizing(i);
+                        ((SXSSFSheet) sheet).trackColumnForAutoSizing(i);
                     }
                     sheet.autoSizeColumn(i, true);
                 } else {
@@ -200,7 +202,7 @@ public class WorkbookUtil {
     }
 
     private void replaceColorsPallete(Map<HSSFColor, HSSFColor> colorsReplaceMap, Workbook wb) {
-        if (! (wb instanceof HSSFWorkbook)) {
+        if (!(wb instanceof HSSFWorkbook)) {
             return;
         }
 
@@ -209,16 +211,40 @@ public class WorkbookUtil {
         for (Entry<HSSFColor, HSSFColor> e : colorsReplaceMap.entrySet()) {
             short[] rgb = e.getValue().getTriplet();
             customPalette.setColorAtIndex(e.getKey().getIndex(),
-                    (byte)rgb[0],
-                    (byte)rgb[1],
-                    (byte)rgb[2]
+                    (byte) rgb[0],
+                    (byte) rgb[1],
+                    (byte) rgb[2]
             );
         }
     }
 
     public static byte[] toRgbByte(HSSFColor hssfColor) {
         short[] rgb = hssfColor.getTriplet();
-        return new byte[] { (byte)rgb[0], (byte)rgb[1], (byte)rgb[2] };
+        return new byte[]{(byte) rgb[0], (byte) rgb[1], (byte) rgb[2]};
+    }
+
+    public static IndexedColorMap toIndexedColorMap(final HSSFColor hssfColor) {
+        return (i) -> toRgbByte(hssfColor);
+    }
+
+    public static boolean isString(Cell cell) {
+        return cell != null && org.apache.poi.ss.usermodel.CellType.STRING == cell.getCellType();
+    }
+
+    public static boolean isNumber(Cell cell) {
+        return cell != null && org.apache.poi.ss.usermodel.CellType.NUMERIC == cell.getCellType();
+    }
+
+    public static boolean isFormula(Cell cell) {
+        return cell != null && org.apache.poi.ss.usermodel.CellType.FORMULA == cell.getCellType();
+    }
+
+    public static boolean isStringEmpty(Cell cell) {
+        return isString(cell) && cell.getStringCellValue().trim().isEmpty();
+    }
+
+    public static boolean isBlank(Cell cell) {
+        return cell.getCellType() == org.apache.poi.ss.usermodel.CellType.BLANK;
     }
 
 }

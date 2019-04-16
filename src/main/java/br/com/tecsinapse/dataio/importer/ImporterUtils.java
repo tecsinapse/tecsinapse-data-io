@@ -258,17 +258,17 @@ public class ImporterUtils {
             return "";
         }
         switch (cellValue.getCellType()) {
-            case Cell.CELL_TYPE_BOOLEAN:
-                return Boolean.valueOf(cellValue.getBooleanValue());
-            case Cell.CELL_TYPE_NUMERIC:
+            case BOOLEAN:
+                return cellValue.getBooleanValue();
+            case NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return cell.getDateCellValue();
                 }
                 BigDecimal bd = BigDecimal.valueOf(cell.getNumericCellValue()).setScale(DECIMAL_PRECISION, BigDecimal.ROUND_HALF_UP);
                 return bd.stripTrailingZeros();
-            case Cell.CELL_TYPE_STRING:
+            case STRING:
                 return cellValue.getStringValue();
-            case Cell.CELL_TYPE_ERROR:
+            case ERROR:
                 return "ERRO";
             default:
                 return "";
@@ -303,7 +303,7 @@ public class ImporterUtils {
     }
 
     private static boolean isInstanceOf(Object value, Class<?> targetType) {
-        return value != null && targetType != null && targetType.isInstance(value);
+        return targetType != null && targetType.isInstance(value);
     }
 
     private static Method getTypedMethodConverter(Class<?> converter) {

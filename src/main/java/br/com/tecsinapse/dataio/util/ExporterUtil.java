@@ -25,6 +25,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import lombok.experimental.UtilityClass;
+
 import br.com.tecsinapse.dataio.Table;
 import br.com.tecsinapse.dataio.exceptions.ExporterException;
 import br.com.tecsinapse.dataio.exceptions.ExporterNotImplementedException;
@@ -32,10 +34,8 @@ import br.com.tecsinapse.dataio.txt.FieldTxt;
 import br.com.tecsinapse.dataio.txt.FileTxt;
 import br.com.tecsinapse.dataio.type.FileType;
 
+@UtilityClass
 public final class ExporterUtil {
-    private ExporterUtil() {
-
-    }
 
     public static File writeDataToFile(List<Table> table, FileType fileType, String filename) throws IOException {
         return writeDataToFile(table, fileType, filename, "UTF-8");

@@ -14,15 +14,14 @@ class TableCellStyleProtected extends TableCellStyle {
     TableCellStyleProtected(HSSFColor backgroundColor, String cssClass, boolean ignoreCssStyle,
                             CellHAlign cellHAlign, CellVAlign cellVAlign, boolean bold) {
         super(backgroundColor, cssClass, ignoreCssStyle);
-        super.sethAlign(cellHAlign);
-        super.setvAlign(cellVAlign);
+        super.setHAlign(cellHAlign);
+        super.setVAlign(cellVAlign);
         super.setBold(bold);
     }
 
     private void throwUnsupportedOperationException() {
         throw new UnsupportedOperationException("TableCellStyleDefaultHeader: Unsupported operation for default objects.");
     }
-
 
     @Override
     public void setFontColor(HSSFColor fontColor) {
@@ -60,12 +59,12 @@ class TableCellStyleProtected extends TableCellStyle {
     }
 
     @Override
-    public void setvAlign(CellVAlign vAlign) {
+    public void setVAlign(CellVAlign vAlign) {
         throwUnsupportedOperationException();
     }
 
     @Override
-    public void sethAlign(CellHAlign hAlign) {
+    public void setHAlign(CellHAlign hAlign) {
         throwUnsupportedOperationException();
     }
 

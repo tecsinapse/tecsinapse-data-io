@@ -8,9 +8,14 @@ package br.com.tecsinapse.dataio.type;
 
 import java.util.Date;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import br.com.tecsinapse.dataio.util.ExporterDateUtils;
 import br.com.tecsinapse.dataio.util.ExporterDateUtils.DateType;
 
+@Getter
+@AllArgsConstructor
 public enum CellType {
 
     STRING_TYPE(false),
@@ -26,11 +31,6 @@ public enum CellType {
 
     CellType(boolean allowFormat) {
         this(allowFormat, "text");
-    }
-
-    CellType(boolean allowFormat, String contenType) {
-        this.allowFormat = allowFormat;
-        this.contenType = contenType;
     }
 
     public static CellType byObject(Object o) {
@@ -54,11 +54,4 @@ public enum CellType {
         return STRING_TYPE;
     }
 
-    public boolean isAllowFormat() {
-        return allowFormat;
-    }
-
-    public String getContenType() {
-        return contenType;
-    }
 }

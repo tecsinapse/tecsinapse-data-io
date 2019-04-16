@@ -6,13 +6,11 @@ import org.apache.poi.hssf.util.HSSFColor;
 
 import lombok.Getter;
 
+@Getter
 class CustomColor extends HSSFColor {
 
-    @Getter
     private short index;
-    @Getter
     private final short[] triplet;
-    @Getter
     private final String hexString;
 
     CustomColor(short index, Color color) {
