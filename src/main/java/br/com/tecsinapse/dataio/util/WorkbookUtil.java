@@ -6,6 +6,7 @@
  */
 package br.com.tecsinapse.dataio.util;
 
+import java.awt.Color;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -200,7 +201,7 @@ public class WorkbookUtil {
     }
 
     private void replaceColorsPallete(Map<HSSFColor, HSSFColor> colorsReplaceMap, Workbook wb) {
-        if (! (wb instanceof HSSFWorkbook)) {
+        if (!(wb instanceof HSSFWorkbook)) {
             return;
         }
 
@@ -209,9 +210,9 @@ public class WorkbookUtil {
         for (Entry<HSSFColor, HSSFColor> e : colorsReplaceMap.entrySet()) {
             short[] rgb = e.getValue().getTriplet();
             customPalette.setColorAtIndex(e.getKey().getIndex(),
-                    (byte)rgb[0],
-                    (byte)rgb[1],
-                    (byte)rgb[2]
+                    (byte) rgb[0],
+                    (byte) rgb[1],
+                    (byte) rgb[2]
             );
         }
     }
@@ -220,5 +221,29 @@ public class WorkbookUtil {
         short[] rgb = hssfColor.getTriplet();
         return new byte[] { (byte)rgb[0], (byte)rgb[1], (byte)rgb[2] };
     }
+
+//    public static IndexedColorMap toIndexedColorMap(final HSSFColor hssfColor) {
+//        return (i) -> toRgbByte(hssfColor);
+//    }
+
+//    public static boolean isString(Cell cell) {
+//        return cell != null && org.apache.poi.ss.usermodel.CellType.STRING == cell.getCellType();
+//    }
+//
+//    public static boolean isNumber(Cell cell) {
+//        return cell != null && org.apache.poi.ss.usermodel.CellType.NUMERIC == cell.getCellType();
+//    }
+//
+//    public static boolean isFormula(Cell cell) {
+//        return cell != null && org.apache.poi.ss.usermodel.CellType.FORMULA == cell.getCellType();
+//    }
+//
+//    public static boolean isStringEmpty(Cell cell) {
+//        return isString(cell) && cell.getStringCellValue().trim().isEmpty();
+//    }
+//
+//    public static boolean isBlank(Cell cell) {
+//        return cell.getCellType() == org.apache.poi.ss.usermodel.CellType.BLANK;
+//    }
 
 }

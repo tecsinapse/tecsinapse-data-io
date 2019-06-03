@@ -56,6 +56,9 @@ public class ExcelCellColorExampleTest {
         String xlsx = "XLSX-cell-color.xlsx";
         Files.move(ExporterUtil.getXlsxFile(table, xlsx).toPath(), ResourceUtils.newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
+        String sxlsx = "XLSX-cell-color-streaming.xlsx";
+        Files.move(ExporterUtil.getSxlsxFile(table, sxlsx).toPath(), ResourceUtils.newFileTargetResource(sxlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
+
         String xls = "XLS-cell-color.xls";
         Files.move(ExporterUtil.getXlsFile(table, xls).toPath(), ResourceUtils.newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);
 

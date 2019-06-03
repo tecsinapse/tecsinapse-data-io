@@ -15,6 +15,7 @@ import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.com.tecsinapse.dataio.util.ExporterDateUtils;
@@ -31,6 +32,12 @@ public enum FileType {
         @Override
         public Workbook buildWorkbook(InputStream inputStream) throws IOException {
             return new XSSFWorkbook(inputStream);
+        }
+    },
+    SXLSX("MS Excel file (.xlsx)", MIME_XLSX_XLS, ".xlsx") {
+        @Override
+        public Workbook buildWorkbook(InputStream inputStream) throws IOException {
+            return new SXSSFWorkbook(new XSSFWorkbook(inputStream));
         }
     },
     XLSM("MS Excel file (.xlsm)", MIME_XLSX_XLS, ".xlsm") {

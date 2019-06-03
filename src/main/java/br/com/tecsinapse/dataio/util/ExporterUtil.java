@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.com.tecsinapse.dataio.Table;
@@ -60,6 +61,11 @@ public final class ExporterUtil {
             bufferedOutputStream.flush();
             return;
         }
+        if (fileType == FileType.SXLSX) {
+            writeSxlsx(table, bufferedOutputStream);
+            bufferedOutputStream.flush();
+            return;
+        }
         if (fileType == FileType.XLS) {
             writeXls(table, bufferedOutputStream);
             bufferedOutputStream.flush();
@@ -89,6 +95,11 @@ public final class ExporterUtil {
             }
             writer.flush();
         }
+    }
+
+    private static void writeSxlsx(List<Table> tables, OutputStream outputStream) throws IOException {
+        SXSSFWorkbook wb = new SXSSFWorkbook(new XSSFWorkbook(), 1000);
+        writeSpreadsheet(wb, tables, outputStream);
     }
 
     private static void writeXlsx(List<Table> tables, OutputStream outputStream) throws IOException {
@@ -154,8 +165,16 @@ public final class ExporterUtil {
         return getMoreThanOneSheetXlsxFile(Arrays.asList(t), file);
     }
 
+    public static File getSxlsxFile(Table t, String file) throws IOException {
+        return getMoreThanOneSheetSxlsxFile(Arrays.asList(t), file);
+    }
+
     public static File getMoreThanOneSheetXlsxFile(List<Table> t, String file) throws IOException {
         return writeDataToFile(t, FileType.XLSX, file);
+    }
+
+    public static File getMoreThanOneSheetSxlsxFile(List<Table> t, String file) throws IOException {
+        return writeDataToFile(t, FileType.SXLSX, file);
     }
 
     public static void writeCsvToOutput(Table t, String chartsetName, OutputStream out) throws IOException {

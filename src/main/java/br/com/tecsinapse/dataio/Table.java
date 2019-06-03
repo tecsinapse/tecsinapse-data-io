@@ -7,6 +7,7 @@
 package br.com.tecsinapse.dataio;
 
 import java.awt.Color;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Map;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import lombok.Getter;
@@ -322,6 +324,10 @@ public class Table {
 
     public Workbook toXSSFWorkBook() {
         return toWorkBook(new XSSFWorkbook());
+    }
+
+    public Workbook toSXSSFWorkBook() {
+        return toWorkBook(new SXSSFWorkbook());
     }
 
     public Workbook toHSSFWorkBook() {
