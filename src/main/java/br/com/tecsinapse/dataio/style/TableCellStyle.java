@@ -14,6 +14,7 @@ import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_FOOTER;
 import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_FOOTER_BOLD;
 import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_HEADER;
 import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_HEADER_BOLD;
+import static br.com.tecsinapse.dataio.util.WorkbookUtil.toAwtColor;
 import static br.com.tecsinapse.dataio.util.WorkbookUtil.toIndexedColorMap;
 
 import org.apache.poi.hssf.util.HSSFColor;
@@ -21,6 +22,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -98,9 +100,11 @@ public class TableCellStyle {
     public CellStyle toCellStyle(Workbook wb) {
         CellStyle cellStyle = wb.createCellStyle();
 
-        if (getBackgroundColor() != null) {
+        final HSSFColor bgColor = getBackgroundColor();
+        if (bgColor != null) {
             if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setFillForegroundColor(new XSSFColor(toIndexedColorMap(getBackgroundColor())));
+                ((XSSFCellStyle)cellStyle).setFillForegroundColor(new XSSFColor(toAwtColor(bgColor),
+                        new DefaultIndexedColorMap()));
             } else {
                 cellStyle.setFillForegroundColor(getBackgroundColor().getIndex());
             }
