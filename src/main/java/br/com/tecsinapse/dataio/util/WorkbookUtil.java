@@ -6,6 +6,7 @@
  */
 package br.com.tecsinapse.dataio.util;
 
+import java.awt.Color;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -225,6 +226,11 @@ public class WorkbookUtil {
 
     public static IndexedColorMap toIndexedColorMap(final HSSFColor hssfColor) {
         return (i) -> toRgbByte(hssfColor);
+    }
+
+    public static Color toAwtColor(final HSSFColor hssfColor) {
+        short[] rgb = hssfColor.getTriplet();
+        return new Color(rgb[0], rgb[1], rgb[2]);
     }
 
     public static boolean isString(Cell cell) {
