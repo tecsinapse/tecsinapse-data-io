@@ -28,3 +28,9 @@ if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then
     mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true --settings $GPG_DIR/settings.xml
     exit $?
 fi
+
+if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "auto-release" ]]; then
+    echo "Generate release from branch \"${TRAVIS_BRANCH}\""
+    mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true --settings $GPG_DIR/settings.xml
+    exit $?
+fi
