@@ -35,7 +35,6 @@ import br.com.tecsinapse.dataio.ExporterFormatter;
 import br.com.tecsinapse.dataio.annotation.TableCellMapping;
 import br.com.tecsinapse.dataio.converter.group.Default;
 import br.com.tecsinapse.dataio.importer.ImporterUtils;
-import br.com.tecsinapse.dataio.importer.ImporterXLSXType;
 import br.com.tecsinapse.dataio.importer.Parser;
 import br.com.tecsinapse.dataio.type.FileType;
 
@@ -190,16 +189,6 @@ public class SpreadsheetParser<T> implements Parser<T> {
     @Override
     public void close() throws IOException {
         inputStream.close();
-    }
-
-    /**
-     * For compatibility
-     *
-     * @deprecated
-     */
-    @Deprecated
-    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, FileType fileType, int headersRows, boolean lastSheet, ImporterXLSXType importerXLSXType) {
-        this(clazz, inputStream, fileType, headersRows, lastSheet);
     }
 
 }

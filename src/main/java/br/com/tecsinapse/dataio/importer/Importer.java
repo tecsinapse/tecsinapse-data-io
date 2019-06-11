@@ -154,23 +154,4 @@ public class Importer<T> implements Closeable {
         parser.close();
     }
 
-    /**
-     * For compatibility
-     *
-     * @deprecated
-     */
-    @Deprecated
-    public Importer(Class<T> clazz, InputStream inputStream, String filename, ImporterXLSXType importerXLSXType) {
-        this(clazz, inputStream, filename);
-    }
-
-    /**
-     * For compatibility
-     *
-     * @deprecated
-     */
-    @Deprecated
-    public void setDateStringPattern(String patternIgnored) {
-        throw new UnsupportedOperationException("Ignored.");
-    }
 }
