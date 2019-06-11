@@ -84,16 +84,6 @@ public class SpreadsheetParser<T> implements Parser<T> {
         }
     }
 
-    /**
-     * For compatibility
-     *
-     * @deprecated use {@link SpreadsheetParser#setHeadersRows(int)} }
-     */
-    @Deprecated
-    public void setAfterLine(int headersRows) {
-        setHeadersRows(headersRows);
-    }
-
     public void setSheetNumberAsFirstNotHidden() {
         sheetNumber = getWorkbook().getFirstVisibleTab();
     }
