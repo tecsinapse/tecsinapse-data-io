@@ -7,8 +7,9 @@
 
 package br.com.tecsinapse.dataio.style;
 
-import org.apache.poi.hssf.util.HSSFColor;
 import static org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined.WHITE;
+
+import org.apache.poi.hssf.util.HSSFColor;
 
 public enum CssStyle {
     BOLD("font-weight:bold;"),

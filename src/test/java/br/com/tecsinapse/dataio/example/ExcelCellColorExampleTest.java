@@ -90,10 +90,10 @@ public class ExcelCellColorExampleTest {
             tables.add(table);
         }
         String xlsx = "XLSX-cell-color-many-sheets.xlsx";
-        Files.move(ExporterUtil.getMoreThanOneSheetXlsxFile(tables, xlsx).toPath(), ResourceUtils.newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(ExporterUtil.getXlsxFile(tables, xlsx).toPath(), ResourceUtils.newFileTargetResource(xlsx).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         String xls = "XLS-cell-color-many-sheets.xls";
-        Files.move(ExporterUtil.getMoreThanOneSheetXlsxFile(tables, xls).toPath(), ResourceUtils.newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(ExporterUtil.getXlsxFile(tables, xls).toPath(), ResourceUtils.newFileTargetResource(xls).toPath(), StandardCopyOption.REPLACE_EXISTING);
 
 /*        File htmlOutput = ResourceUtils.newFileTargetResource("HTML-cell-color.html");
         ExportHtml.newInstance(Charset.forName("UTF-8")).toHtml(table, htmlOutput);*/
