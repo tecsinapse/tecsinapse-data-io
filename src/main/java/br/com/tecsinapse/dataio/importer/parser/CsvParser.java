@@ -89,17 +89,17 @@ public class CsvParser<T> implements Parser<T> {
 
     @Override
     public void setSheetNumber(int sheetNumber) {
-        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
+        // nothing to do when is CSV
     }
 
     @Override
     public void setLastsheet(boolean lastsheet) {
-        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
+        // nothing to do when is CSV
     }
 
     @Override
     public void setFirstVisibleSheet() {
-        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
+        // nothing to do when is CSV
     }
 
     @Override
@@ -109,7 +109,7 @@ public class CsvParser<T> implements Parser<T> {
 
     @Override
     public void setSheetNumberAsFirstNotHidden() {
-        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
+        // nothing to do when is CSV
     }
 
     @Override
