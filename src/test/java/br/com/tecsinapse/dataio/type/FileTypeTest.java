@@ -26,8 +26,8 @@ public class FileTypeTest {
     private Object[][] fileTypeDs() {
         return new Object[][]{
                 {"XLS", ResourceFiles.MOCK_PLANILHA_XLS, FileType.XLS, HSSFWorkbook.class, "application/vnd.ms-excel"},
-                {"XLSX", ResourceFiles.MOCK_PLANILHA_XLSX, FileType.XLSX, XSSFWorkbook.class, "application/vnd.ms-excel"},
-                {"XLSM", ResourceFiles.EXCEL_XLSM, FileType.XLSM, XSSFWorkbook.class, "application/vnd.ms-excel"},
+                {"XLSX", ResourceFiles.MOCK_PLANILHA_XLSX, FileType.XLSX, XSSFWorkbook.class, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+                {"XLSM", ResourceFiles.EXCEL_XLSM, FileType.XLSM, XSSFWorkbook.class, "application/vnd.ms-excel.sheet.macroEnabled.12"},
                 {"CSV", ResourceFiles.MOCK_PLANILHA_CSV, FileType.CSV, null, "text/plain"},
                 {"TXT", ResourceFiles.FIXED_LENGTH_FILE_TXT, FileType.TXT, null, "text/plain"},
                 {"ZIP", ResourceFiles.EXCEL_XLS_ZIP, FileType.ZIP, null, "application/zip"}
