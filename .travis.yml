@@ -5,7 +5,7 @@ jdk:
 notifications:
   email:
     recipients:
-    - edimar.cardoso@tecsinapse.com.br
+    - dev@tecsinapse.com.br
     on_success: change
     on_failure: always
 install: true
@@ -25,7 +25,7 @@ after_success:
 script:
   - jdk_switcher use oraclejdk8
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
-  - jdk_switcher use openjdk7
+  - jdk_switcher use openjdk8
 cache:
   directories:
   - "$HOME/.m2"
