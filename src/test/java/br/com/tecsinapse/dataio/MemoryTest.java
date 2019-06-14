@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.poi.xssf.model.Styles;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -18,7 +17,6 @@ import br.com.tecsinapse.dataio.style.TableCellStyle;
 import br.com.tecsinapse.dataio.util.ExporterUtil;
 
 public class MemoryTest {
-
 
     private List<Table> tables;
     private Path tempDir;
@@ -68,7 +66,7 @@ public class MemoryTest {
 
     @Test(enabled = false)
     public void sxlsxMemoryTest() throws IOException {
-        File xlsx = ExporterUtil.getMoreThanOneSheetSxlsxFile(tables, "test-memory-stream.xlsx");
+        File xlsx = ExporterUtil.getSxlsxFile(tables, "test-memory-stream.xlsx");
         Path out = new File(tempDir.toFile(), xlsx.getName()).toPath();
         Files.move(xlsx.toPath(), out, StandardCopyOption.REPLACE_EXISTING);
         System.out.println(out.toFile().getAbsolutePath());
@@ -76,7 +74,7 @@ public class MemoryTest {
 
     @Test(enabled = false)
     public void xlsxMemoryTest() throws IOException {
-        File xls = ExporterUtil.getMoreThanOneSheetXlsxFile(tables, "test-memory.xlsx");
+        File xls = ExporterUtil.getXlsxFile(tables, "test-memory.xlsx");
         Path out = new File(tempDir.toFile(), xls.getName()).toPath();
         Files.move(xls.toPath(),  out, StandardCopyOption.REPLACE_EXISTING);
         System.out.println(out.toFile().getAbsolutePath());

@@ -7,7 +7,6 @@
 package br.com.tecsinapse.dataio;
 
 import java.awt.Color;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

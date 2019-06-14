@@ -23,6 +23,9 @@ import org.reflections.ReflectionUtils;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Ints;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import br.com.tecsinapse.dataio.annotation.FixedLengthColumn;
 import br.com.tecsinapse.dataio.annotation.LineFixedLengthFile;
 import br.com.tecsinapse.dataio.converter.Converter;
@@ -145,7 +148,7 @@ public class FixedLengthFileParser<T> {
                     }
                 }
                 method.invoke(instance, obj);
-                workingLine = workingLine.substring(length, workingLine.length());
+                workingLine = workingLine.substring(length);
             }
             if (lineMethod != null) {
                 lineMethod.invoke(instance, lines.get(i));
@@ -172,23 +175,12 @@ public class FixedLengthFileParser<T> {
         return methodsAndAnnotations;
     }
 
+    @Getter
+    @AllArgsConstructor
     private static class AnnotationMethod implements Comparable<AnnotationMethod> {
 
         private final Method method;
         private final FixedLengthColumn flc;
-
-        public AnnotationMethod(Method method, FixedLengthColumn flc) {
-            this.method = method;
-            this.flc = flc;
-        }
-
-        public Method getMethod() {
-            return method;
-        }
-
-        public FixedLengthColumn getFlc() {
-            return flc;
-        }
 
         @Override
         public int hashCode() {
@@ -200,7 +192,7 @@ public class FixedLengthFileParser<T> {
             if (this == o) {
                 return true;
             }
-            if (o == null || !(o instanceof AnnotationMethod)) {
+            if (!(o instanceof AnnotationMethod)) {
                 return false;
             }
             return compareTo((AnnotationMethod) o) == 0;

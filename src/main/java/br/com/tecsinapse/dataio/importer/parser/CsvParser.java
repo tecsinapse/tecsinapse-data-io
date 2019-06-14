@@ -20,10 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.xml.sax.SAXException;
+import lombok.Getter;
+import lombok.Setter;
 
 import br.com.tecsinapse.dataio.ExporterFormatter;
 import br.com.tecsinapse.dataio.annotation.TableCellMapping;
@@ -33,17 +31,19 @@ import br.com.tecsinapse.dataio.importer.Importer;
 import br.com.tecsinapse.dataio.importer.ImporterUtils;
 import br.com.tecsinapse.dataio.importer.Parser;
 import br.com.tecsinapse.dataio.type.FileType;
-import br.com.tecsinapse.dataio.util.Constants;
 import br.com.tecsinapse.dataio.util.CsvUtil;
 
 public class CsvParser<T> implements Parser<T> {
 
     private final Class<T> clazz;
+    @Setter
     private Class<?> group;
     private List<String> csvLines;
+    @Setter
     private int headersRows = Importer.DEFAULT_START_ROW;
+    @Getter @Setter
     private ExporterFormatter exporterFormatter = ExporterFormatter.ENGLISH;
-
+    @Getter @Setter
     private boolean ignoreBlankLinesAtEnd = false;
 
     public CsvParser(Class<T> clazz, File file, Charset charset, int afterLine, Class<?> group) throws IOException {
@@ -89,17 +89,17 @@ public class CsvParser<T> implements Parser<T> {
 
     @Override
     public void setSheetNumber(int sheetNumber) {
-        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
+        // nothing to do when is CSV
     }
 
     @Override
     public void setLastsheet(boolean lastsheet) {
-        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
+        // nothing to do when is CSV
     }
 
     @Override
     public void setFirstVisibleSheet() {
-        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
+        // nothing to do when is CSV
     }
 
     @Override
@@ -109,40 +109,12 @@ public class CsvParser<T> implements Parser<T> {
 
     @Override
     public void setSheetNumberAsFirstNotHidden() {
-        throw new UnsupportedOperationException(Constants.MSG_IGNORED);
+        // nothing to do when is CSV
     }
 
     @Override
     public FileType getFileType() {
         return FileType.CSV;
-    }
-
-    @Override
-    public void setGroup(Class<?> group) {
-        this.group = group;
-    }
-
-    public void setExporterFormatter(ExporterFormatter exporterFormatter) {
-        this.exporterFormatter = exporterFormatter;
-    }
-
-    public ExporterFormatter getExporterFormatter() {
-        return exporterFormatter;
-    }
-
-    @Override
-    public void setHeadersRows(int headersRows) {
-        this.headersRows = headersRows;
-    }
-
-    @Override
-    public boolean isIgnoreBlankLinesAtEnd() {
-        return ignoreBlankLinesAtEnd;
-    }
-
-    @Override
-    public void setIgnoreBlankLinesAtEnd(boolean ignoreBlankLinesAtEnd) {
-        this.ignoreBlankLinesAtEnd = ignoreBlankLinesAtEnd;
     }
 
     @Override

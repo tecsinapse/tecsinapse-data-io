@@ -17,7 +17,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -139,7 +139,7 @@ public final class ExporterUtil {
     }
 
     public static File getCsvFile(Table t, String fileName, String charsetName, String separator) throws IOException {
-        return writeDataToFile(Arrays.asList(t), FileType.CSV, fileName, charsetName, separator);
+        return writeDataToFile(Collections.singletonList(t), FileType.CSV, fileName, charsetName, separator);
     }
 
     public static File getCsvFile(Table t, File f, String charsetName, char separator) throws IOException {
@@ -148,36 +148,37 @@ public final class ExporterUtil {
 
     public static File getCsvFile(Table t, File f, String charsetName, String separator) throws IOException {
         try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(f))) {
-            writeData(Arrays.asList(t), FileType.CSV, fos, charsetName, separator);
+            writeData(Collections.singletonList(t), FileType.CSV, fos, charsetName, separator);
         }
         return f;
     }
 
     public static File getXlsFile(Table t, String file) throws IOException {
-        return getMoreThanOneSheetXlsFile(Arrays.asList(t), file);
+        return getXlsFile(Collections.singletonList(t), file);
     }
 
-    public static File getMoreThanOneSheetXlsFile(List<Table> t, String file) throws IOException {
+    public static File getXlsFile(List<Table> t, String file) throws IOException {
         return writeDataToFile(t, FileType.XLS, file);
     }
 
     public static File getXlsxFile(Table t, String file) throws IOException {
-        return getMoreThanOneSheetXlsxFile(Arrays.asList(t), file);
+        return getXlsxFile(Collections.singletonList(t), file);
     }
 
     public static File getSxlsxFile(Table t, String file) throws IOException {
-        return getMoreThanOneSheetSxlsxFile(Arrays.asList(t), file);
+        return getSxlsxFile(Collections.singletonList(t), file);
     }
 
-    public static File getMoreThanOneSheetXlsxFile(List<Table> t, String file) throws IOException {
+    public static File getXlsxFile(List<Table> t, String file) throws IOException {
         return writeDataToFile(t, FileType.XLSX, file);
     }
 
-    public static File getMoreThanOneSheetSxlsxFile(List<Table> t, String file) throws IOException {
+    public static File getSxlsxFile(List<Table> t, String file) throws IOException {
         return writeDataToFile(t, FileType.SXLSX, file);
     }
 
     public static void writeCsvToOutput(Table t, String chartsetName, OutputStream out) throws IOException {
-        writeData(Arrays.asList(t), FileType.CSV, out, chartsetName, SEMICOLON.getSeparator());
+        writeData(Collections.singletonList(t), FileType.CSV, out, chartsetName, SEMICOLON.getSeparator());
     }
+
 }

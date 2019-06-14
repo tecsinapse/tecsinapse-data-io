@@ -9,13 +9,17 @@ package br.com.tecsinapse.dataio.util;
 
 import java.util.Locale;
 
-public final class Constants {
+import lombok.experimental.UtilityClass;
 
-    private Constants() {}
+@UtilityClass
+public final class Constants {
 
     public static final short DECIMAL_PRECISION = 10;
     public static final Locale LOCALE_PT_BR = new Locale("pt", "BR");
     public static final Locale LOCALE_ES_ES = new Locale("es", "ES");
     public static final String MSG_IGNORED = "Ignored";
-    public static final String MIME_XLSX_XLS = "application/vnd.ms-excel";
+    public static final String MIME_XLS = "application/vnd.ms-excel";
+    public static final String MIME_XLSM = "application/vnd.ms-excel.sheet.macroEnabled.12";
+    public static final String MIME_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
 }

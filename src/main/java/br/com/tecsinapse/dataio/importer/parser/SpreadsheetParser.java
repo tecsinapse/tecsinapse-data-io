@@ -28,27 +28,38 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.google.common.base.Throwables;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import br.com.tecsinapse.dataio.ExporterFormatter;
 import br.com.tecsinapse.dataio.annotation.TableCellMapping;
 import br.com.tecsinapse.dataio.converter.group.Default;
 import br.com.tecsinapse.dataio.importer.ImporterUtils;
-import br.com.tecsinapse.dataio.importer.ImporterXLSXType;
 import br.com.tecsinapse.dataio.importer.Parser;
 import br.com.tecsinapse.dataio.type.FileType;
 
 public class SpreadsheetParser<T> implements Parser<T> {
 
     private final Class<T> clazz;
+    @Setter
     private Class<?> group;
     private final InputStream inputStream;
+    @Getter @Setter
     private boolean ignoreBlankLinesAtEnd = true;
+    @Getter @Setter
     private boolean useFormatterToParseValueAsString = false;
+    @Setter
     private int headersRows;
+    @Getter @Setter
     private int sheetNumber;
+    @Setter
     private boolean lastsheet = false;
+    @Getter @Setter
     private ExporterFormatter exporterFormatter = ExporterFormatter.ENGLISH;
     private Workbook workbook;
+    @Getter
     private final FileType fileType;
+
     public SpreadsheetParser(Class<T> clazz, File file) throws IOException {
         this(clazz, new FileInputStream(file), file.getName());
     }
@@ -73,74 +84,13 @@ public class SpreadsheetParser<T> implements Parser<T> {
         }
     }
 
-    public boolean isIgnoreBlankLinesAtEnd() {
-        return ignoreBlankLinesAtEnd;
-    }
-
-    public void setIgnoreBlankLinesAtEnd(boolean ignoreBlankLinesAtEnd) {
-        this.ignoreBlankLinesAtEnd = ignoreBlankLinesAtEnd;
-    }
-
-    public ExporterFormatter getExporterFormatter() {
-        return exporterFormatter;
-    }
-
-    public void setExporterFormatter(ExporterFormatter exporterFormatter) {
-        this.exporterFormatter = exporterFormatter;
-    }
-
-    public void setHeadersRows(int headersRows) {
-        this.headersRows = headersRows;
-    }
-
-    /**
-     * For compatibility
-     *
-     * @deprecated use {@link SpreadsheetParser#setHeadersRows(int)} }
-     */
-    @Deprecated
-    public void setAfterLine(int headersRows) {
-        setHeadersRows(headersRows);
-    }
-
-    public int getSheetNumber() {
-        return sheetNumber;
-    }
-
-    public void setSheetNumber(int sheetNumber) {
-        this.sheetNumber = sheetNumber;
-    }
-
     public void setSheetNumberAsFirstNotHidden() {
         sheetNumber = getWorkbook().getFirstVisibleTab();
-    }
-
-    public boolean isUseFormatterToParseValueAsString() {
-        return useFormatterToParseValueAsString;
-    }
-
-    public void setUseFormatterToParseValueAsString(boolean useFormatterToParseValueAsString) {
-        this.useFormatterToParseValueAsString = useFormatterToParseValueAsString;
-    }
-
-    @Override
-    public void setLastsheet(boolean lastsheet) {
-        this.lastsheet = lastsheet;
     }
 
     @Override
     public void setFirstVisibleSheet() {
         setSheetNumber(getWorkbook().getFirstVisibleTab());
-    }
-
-    @Override
-    public void setGroup(Class<?> group) {
-        this.group = group;
-    }
-
-    @Override
-    public FileType getFileType() {
-        return fileType;
     }
 
     @Override
@@ -211,7 +161,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
         return list;
     }
 
-    public List<List<String>> getLines() throws Exception {
+    public List<List<String>> getLines() {
         return parseCurrentSheetAsStringList();
     }
 
@@ -229,16 +179,6 @@ public class SpreadsheetParser<T> implements Parser<T> {
     @Override
     public void close() throws IOException {
         inputStream.close();
-    }
-
-    /**
-     * For compatibility
-     *
-     * @deprecated
-     */
-    @Deprecated
-    public SpreadsheetParser(Class<T> clazz, InputStream inputStream, FileType fileType, int headersRows, boolean lastSheet, ImporterXLSXType importerXLSXType) {
-        this(clazz, inputStream, fileType, headersRows, lastSheet);
     }
 
 }
