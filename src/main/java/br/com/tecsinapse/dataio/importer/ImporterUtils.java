@@ -94,7 +94,7 @@ public class ImporterUtils {
                 }
                 final Method writeMethod = propertyDescriptor.getWriteMethod();
                 for (Annotation annotation : writeMethod.getDeclaredAnnotations()) {
-                    if (annotation instanceof TableCellMapping) {
+                    if (annotation instanceof TableCellMapping || annotation instanceof TableCellMappings) {
                         return true;
                     }
                 }
