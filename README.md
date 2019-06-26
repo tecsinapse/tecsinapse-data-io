@@ -12,7 +12,7 @@ Before working on the code, if you plan to contribute changes, please read the f
 
 IMPORTANT
 ---
-In version >= 3 package moved from **br.com.tecsinpase.exporter** to **br.com.tecsinpase.dataio**
+In version >= 3 package moved from **br.com.tecsinapse.exporter** to **br.com.tecsinapse.dataio**
 
 Using tecsinapse-data-io
 ---
