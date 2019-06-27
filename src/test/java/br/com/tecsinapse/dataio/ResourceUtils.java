@@ -19,7 +19,7 @@ public class ResourceUtils {
     }
 
     public static File newFileTargetResource(String name) {
-        File targetResourceDir = new File(Class.class.getResource("/").getFile());
+        File targetResourceDir = new File(ResourceUtils.class.getResource("/").getFile());
         return new File(targetResourceDir, name);
     }
 }
