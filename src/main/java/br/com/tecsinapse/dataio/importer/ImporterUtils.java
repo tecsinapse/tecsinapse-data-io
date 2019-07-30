@@ -208,16 +208,23 @@ public class ImporterUtils {
 
     public static <T> void parseSpreadsheetCell(Class<? extends Converter> tcc, FormulaEvaluator evaluator, Cell cell, Method method, T instance, ExporterFormatter exporterFormatter, boolean useFormatterToParseValueAsString) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         checkNotNull(method);
-        Object value = getValueOrEmptyAsObject(evaluator, cell);
+
+        Object value = null;
+
         try {
-            if (value == null) {
-                return;
-            }
             if (!method.isAccessible()) {
                 method.setAccessible(true);
             }
-            Class<?> converterReturnType = getReturnTypeApply(tcc);
+
             Class<?> converterInputType = getInputTypeApply(tcc);
+
+            value = getValueOrEmptyAsObject(evaluator, cell, Date.class.equals(converterInputType));
+
+            if (value == null) {
+                return;
+            }
+
+            Class<?> converterReturnType = getReturnTypeApply(tcc);
 
             Class<?> methodInputType = getMethodParamType(method);
 
@@ -253,6 +260,9 @@ public class ImporterUtils {
     }
 
     public static Object getValueOrEmptyAsObject(FormulaEvaluator evaluator, Cell cell) {
+        return getValueOrEmptyAsObject(evaluator, cell, false);
+    }
+    public static Object getValueOrEmptyAsObject(FormulaEvaluator evaluator, Cell cell, boolean expectedDate) {
         final CellValue cellValue = safeEvaluteFormula(evaluator, cell);
         if (cellValue == null) {
             return "";
@@ -261,7 +271,8 @@ public class ImporterUtils {
             case BOOLEAN:
                 return cellValue.getBooleanValue();
             case NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
+                if (DateUtil.isCellDateFormatted(cell)
+                        || (expectedDate && DateUtil.isValidExcelDate(cellValue.getNumberValue()))) {
                     return cell.getDateCellValue();
                 }
                 BigDecimal bd = BigDecimal.valueOf(cell.getNumericCellValue()).setScale(DECIMAL_PRECISION, BigDecimal.ROUND_HALF_UP);
