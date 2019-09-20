@@ -298,7 +298,7 @@ public class ImporterUtils {
     public static String getValueOrEmpty(FormulaEvaluator evaluator, Cell cell, ExporterFormatter exporterFormatter) {
         Object value = getValueOrEmptyAsObject(evaluator, cell);
         if (value instanceof Date) {
-            exporterFormatter.formatByDateType((Date) value);
+            return exporterFormatter.formatByDateType((Date) value);
         }
         if (value instanceof BigDecimal) {
             return formatNumericAsString((BigDecimal) value, exporterFormatter);
