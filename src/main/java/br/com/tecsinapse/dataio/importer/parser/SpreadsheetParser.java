@@ -119,12 +119,11 @@ public class SpreadsheetParser<T> implements Parser<T> {
         final Constructor<T> constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
 
-        int i = 0;
-        Iterator<Row> rowIterator = sheet.iterator();
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-            i++;
-            if (i <= headersRows) {
+        int k = 0;
+        for (int j = sheet.getFirstRowNum(); j <= sheet.getPhysicalNumberOfRows(); j++) {
+            final Row row = sheet.getRow(j);
+            k++;
+            if (k <= headersRows || row == null) {
                 continue;
             }
             T instance = constructor.newInstance();
@@ -134,6 +133,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
             }
             list.add(instance);
         }
+
         return list;
     }
 
@@ -143,6 +143,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
         final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         Iterator<Row> rowIterator = sheet.iterator();
         List<List<String>> list = new ArrayList<>();
+
         int i = 0;
         while (rowIterator.hasNext()) {
             List<String> rowList = new ArrayList<>();
