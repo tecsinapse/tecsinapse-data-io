@@ -1,6 +1,6 @@
 # Changelog
 
-### 3.1.8 (unreleased) - Kaizen
+### 3.1.8
 - Corrigido bug na contagem de linhas do cabeçalho quando existiam linhas em branco. 
 
 A contagem de linhas do cabeçalho não estava sendo executada corretamente quando arquivos .xls/.xlsx eram utilizados com linhas em branco no cabecalho.
