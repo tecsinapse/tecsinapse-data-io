@@ -12,7 +12,7 @@
         <version>2.0.2</version>
     </parent>
     <artifactId>tecsinapse-data-io</artifactId>
-    <version>3.1.8-SNAPSHOT</version>
+    <version>3.1.7-SNAPSHOT</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
 
