@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -486,12 +489,27 @@ public class Table {
         return tableCellStyles;
     }
 
-    public HSSFColor newCustomColor(HSSFColor replaceColor, Color newColor) {
-        HSSFColor hssfColor = new CustomColor(replaceColor.getIndex(), newColor);
-        colorsReplaceMap.put(replaceColor, hssfColor);
-        return hssfColor;
+    public Set<HSSFColor> getAllColors() {
+        return getTableCellStyles().stream()
+                .flatMap(tcs -> Stream.of(tcs.getBackgroundColor(), tcs.getFontColor()))
+                .collect(Collectors.toSet());
     }
 
+    private HSSFColor newCustomColor(short index, Color newColor) {
+        return new DataIOCustomColor(index, newColor);
+    }
+
+    /**
+     * @deprecated in future release, replaced by {@link #newCustomColor(Color newColor)}
+     */
+    @Deprecated
+    public HSSFColor newCustomColor(HSSFColor replaceColor, Color newColor) {
+        return newCustomColor(replaceColor.getIndex(), newColor);
+    }
+
+    public HSSFColor newCustomColor(Color newColor) {
+        return newCustomColor((short)-1, newColor);
+    }
 
     public int getMinOrMaxOrActualCellWidth(int value) {
         if (minColumnWidth == null && maxColumnWidth == null) {

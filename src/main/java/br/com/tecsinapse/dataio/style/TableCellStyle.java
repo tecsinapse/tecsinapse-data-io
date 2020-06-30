@@ -15,7 +15,7 @@ import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_FOOTER_BOLD;
 import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_HEADER;
 import static br.com.tecsinapse.dataio.style.Style.TABLE_CELL_STYLE_HEADER_BOLD;
 import static br.com.tecsinapse.dataio.util.WorkbookUtil.toAwtColor;
-import static br.com.tecsinapse.dataio.util.WorkbookUtil.toIndexedColorMap;
+import static br.com.tecsinapse.dataio.util.WorkbookUtil.toXSSFColor;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -141,7 +141,7 @@ public class TableCellStyle {
         }
         if (getFontColor() != null) {
             if (font instanceof XSSFFont) {
-                ((XSSFFont)font).setColor(new XSSFColor(toIndexedColorMap(fontColor)));
+                ((XSSFFont)font).setColor(toXSSFColor(fontColor));
             } else {
                 font.setColor(fontColor.getIndex());
             }

@@ -35,8 +35,10 @@ public class ExcelCellColorExampleTest {
         List<HSSFColor> colors = new ArrayList<>(HSSFColor.getIndexHash().values());
         colors.add(HSSFColor.HSSFColorPredefined.AUTOMATIC.getColor());
 
-        HSSFColor cBlue = table.newCustomColor(HSSFColor.HSSFColorPredefined.AQUA.getColor(), new java.awt.Color(0,0,255));
-        HSSFColor cGreen = table.newCustomColor(HSSFColor.HSSFColorPredefined.RED.getColor(), new java.awt.Color(0,255,0));
+        HSSFColor cBlue = table.newCustomColor(new java.awt.Color(0,0,255));
+        HSSFColor cGreen = table.newCustomColor(new java.awt.Color(0,255,0));
+        HSSFColor cPink = table.newCustomColor(new java.awt.Color(255,50,241));
+        HSSFColor cOrange = table.newCustomColor(new java.awt.Color(255,150,20));
         colors.add(cGreen);
         colors.add(cBlue);
         for (HSSFColor color : colors) {
@@ -44,6 +46,7 @@ public class ExcelCellColorExampleTest {
             line++;
             TableCell tableCell = new TableCell(String.format("Line %d - Color: %s", line, color.getClass().getSimpleName()));
             TableCellStyle style = new TableCellStyle(color);
+            style.setFontColor(color.getIndex() % 2 == 0 ? cPink : cOrange);
             tableCell.setTableCellStyle(style);
             table.add(tableCell);
             for (int i = 0; i < 10; i++) {

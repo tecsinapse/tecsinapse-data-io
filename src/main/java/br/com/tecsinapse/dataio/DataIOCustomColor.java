@@ -4,16 +4,20 @@ import java.awt.Color;
 
 import org.apache.poi.hssf.util.HSSFColor;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-class CustomColor extends HSSFColor {
+@EqualsAndHashCode(of = {"hexString"}, callSuper = false)
+public class DataIOCustomColor extends HSSFColor {
 
+    @Setter
     private short index;
     private final short[] triplet;
     private final String hexString;
 
-    CustomColor(short index, Color color) {
+    DataIOCustomColor(short index, Color color) {
         this.index = index;
         triplet = new short[] { (short)color.getRed(),
                 (short)color.getGreen(),
