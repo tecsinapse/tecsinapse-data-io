@@ -226,6 +226,9 @@ public class WorkbookUtil {
                 .filter(c -> !(c instanceof DataIOCustomColor) || c.getIndex() >= 0)
                 .map(HSSFColor::getIndex)
                 .collect(Collectors.toSet());
+        indexesUsedInColors.add(HSSFColorPredefined.WHITE.getIndex());
+        indexesUsedInColors.add(HSSFColorPredefined.BLACK.getIndex());
+        indexesUsedInColors.add(HSSFColorPredefined.AUTOMATIC.getIndex());
         List<Short> freeIndex = Stream.of(HSSFColorPredefined.values())
                 .map(HSSFColorPredefined::getIndex)
                 .filter(indexesUsedInColors::contains)
