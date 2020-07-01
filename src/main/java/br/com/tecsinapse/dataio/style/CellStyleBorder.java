@@ -7,13 +7,12 @@
 
 package br.com.tecsinapse.dataio.style;
 
-import static br.com.tecsinapse.dataio.util.WorkbookUtil.toIndexedColorMap;
+import static br.com.tecsinapse.dataio.util.WorkbookUtil.toXSSFColor;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -51,7 +50,7 @@ public class CellStyleBorder {
         if (left) {
             cellStyle.setBorderLeft(BorderStyle.THIN);
             if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setLeftBorderColor(new XSSFColor(toIndexedColorMap(borderColor)));
+                ((XSSFCellStyle)cellStyle).setLeftBorderColor(toXSSFColor(borderColor));
             } else {
                 cellStyle.setLeftBorderColor(borderColor.getIndex());
             }
@@ -59,7 +58,7 @@ public class CellStyleBorder {
         if (right) {
             cellStyle.setBorderRight(BorderStyle.THIN);
             if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setRightBorderColor(new XSSFColor(toIndexedColorMap(borderColor)));
+                ((XSSFCellStyle)cellStyle).setRightBorderColor(toXSSFColor(borderColor));
             } else {
                 cellStyle.setRightBorderColor(borderColor.getIndex());
             }
@@ -67,7 +66,7 @@ public class CellStyleBorder {
         if (bottom) {
             cellStyle.setBorderBottom(BorderStyle.THIN);
             if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setBottomBorderColor(new XSSFColor(toIndexedColorMap(borderColor)));
+                ((XSSFCellStyle)cellStyle).setBottomBorderColor(toXSSFColor(borderColor));
             } else {
                 cellStyle.setBottomBorderColor(borderColor.getIndex());
             }
@@ -75,7 +74,7 @@ public class CellStyleBorder {
         if (top) {
             cellStyle.setBorderTop(BorderStyle.THIN);
             if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setTopBorderColor(new XSSFColor(toIndexedColorMap(borderColor)));
+                ((XSSFCellStyle)cellStyle).setTopBorderColor(toXSSFColor(borderColor));
             } else {
                 cellStyle.setTopBorderColor(borderColor.getIndex());
             }

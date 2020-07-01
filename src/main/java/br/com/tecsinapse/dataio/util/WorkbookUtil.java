@@ -11,11 +11,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -26,12 +29,16 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.IndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 
+import br.com.tecsinapse.dataio.DataIOCustomColor;
 import br.com.tecsinapse.dataio.EmptyTableCell;
 import br.com.tecsinapse.dataio.ExporterFormatter;
 import br.com.tecsinapse.dataio.Table;
 import br.com.tecsinapse.dataio.TableCell;
+import br.com.tecsinapse.dataio.style.StyleColorUtil;
 import br.com.tecsinapse.dataio.style.TableCellStyle;
 import br.com.tecsinapse.dataio.type.CellType;
 
@@ -54,7 +61,8 @@ public class WorkbookUtil {
         List<List<TableCell>> matrix = table.getCells();
         List<List<TableCell>> matrixFull = table.toTableCellMatrix();
 
-        replaceColorsPallete(table.getColorsReplaceMap(), wb);
+        table.getTableCellStyles();
+        replaceCustomColorsPallete(table.getAllColors(), wb);
 
         String sheetName = table.getTitle();
         Sheet sheet = sheetName == null ? wb.createSheet() : wb.createSheet(sheetName);
@@ -202,16 +210,42 @@ public class WorkbookUtil {
         return DateUtil.getExcelDate(date);
     }
 
-    private void replaceColorsPallete(Map<HSSFColor, HSSFColor> colorsReplaceMap, Workbook wb) {
+    private void replaceCustomColorsPallete(Set<HSSFColor> colors, Workbook wb) {
         if (!(wb instanceof HSSFWorkbook)) {
             return;
         }
 
         HSSFWorkbook hssfWb = (HSSFWorkbook) wb;
         final HSSFPalette customPalette = hssfWb.getCustomPalette();
-        for (Entry<HSSFColor, HSSFColor> e : colorsReplaceMap.entrySet()) {
-            short[] rgb = e.getValue().getTriplet();
-            customPalette.setColorAtIndex(e.getKey().getIndex(),
+
+        Set<DataIOCustomColor> customColors = colors.stream()
+                .filter(c -> (c instanceof DataIOCustomColor))
+                .map(c -> (DataIOCustomColor)c)
+                .collect(Collectors.toSet());
+        Set<Short> indexesUsedInColors = colors.stream()
+                .filter(c -> !(c instanceof DataIOCustomColor) || c.getIndex() >= 0)
+                .map(HSSFColor::getIndex)
+                .collect(Collectors.toSet());
+        indexesUsedInColors.add(HSSFColorPredefined.WHITE.getIndex());
+        indexesUsedInColors.add(HSSFColorPredefined.BLACK.getIndex());
+        indexesUsedInColors.add(HSSFColorPredefined.AUTOMATIC.getIndex());
+        List<Short> freeIndex = Stream.of(HSSFColorPredefined.values())
+                .map(HSSFColorPredefined::getIndex)
+                .filter(indexesUsedInColors::contains)
+                .collect(Collectors.toList());
+        for (DataIOCustomColor dataIOCustomColor : customColors) {
+            if (freeIndex.size() <= 0) {
+                return;
+            }
+            short[] rgb = dataIOCustomColor.getTriplet();
+            final short index;
+            if (dataIOCustomColor.getIndex() >= 0) {
+                index = dataIOCustomColor.getIndex();
+            } else {
+                index = freeIndex.remove(0);
+                dataIOCustomColor.setIndex(index);
+            }
+            customPalette.setColorAtIndex(index,
                     (byte) rgb[0],
                     (byte) rgb[1],
                     (byte) rgb[2]
@@ -224,6 +258,14 @@ public class WorkbookUtil {
         return new byte[]{(byte) rgb[0], (byte) rgb[1], (byte) rgb[2]};
     }
 
+    public static XSSFColor toXSSFColor(final HSSFColor hssfColor) {
+        return new XSSFColor(Color.decode(StyleColorUtil.toHexColor(hssfColor)), new DefaultIndexedColorMap());
+    }
+
+    /**
+     * @deprecated in future release, replaced by {@link #toXSSFColor(HSSFColor hssfColor)}
+     */
+    @Deprecated
     public static IndexedColorMap toIndexedColorMap(final HSSFColor hssfColor) {
         return (i) -> toRgbByte(hssfColor);
     }
