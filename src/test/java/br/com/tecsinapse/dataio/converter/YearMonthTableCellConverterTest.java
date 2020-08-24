@@ -6,7 +6,6 @@
  */
 package br.com.tecsinapse.dataio.converter;
 
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Date;
@@ -18,7 +17,7 @@ public class YearMonthTableCellConverterTest extends AbstractFromDataTableCellCo
     private final YearMonthTableCellConverter converter = new YearMonthTableCellConverter();
 
     private static final String YEAR_MONTH_STR = "201301";
-    private static final Date DATE = new Date(1357005600000L);
+    private static final YearMonth YEAR_MONTH = YearMonth.of(2013, 1);
 
     @Override
     protected YearMonthTableCellConverter getConverter() {
@@ -31,10 +30,10 @@ public class YearMonthTableCellConverterTest extends AbstractFromDataTableCellCo
         return new Object[][]{
                 {null, null},
                 {EMPTY_STRING, null},
-                {YEAR_MONTH_STR, YearMonth.from(LocalDateTime.ofInstant(DATE.toInstant(), ZoneId.systemDefault()))},
-                {"2013-01", YearMonth.from(LocalDateTime.ofInstant(DATE.toInstant(), ZoneId.systemDefault()))},
-                {"01/2013", YearMonth.from(LocalDateTime.ofInstant(DATE.toInstant(), ZoneId.systemDefault()))},
-                {DATE, YearMonth.from(LocalDateTime.ofInstant(DATE.toInstant(), ZoneId.systemDefault()))}
+                {YEAR_MONTH_STR, YEAR_MONTH},
+                {"2013-01", YEAR_MONTH},
+                {"01/2013", YEAR_MONTH},
+                {Date.from(YEAR_MONTH.atDay(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), YEAR_MONTH}
         };
     }
 

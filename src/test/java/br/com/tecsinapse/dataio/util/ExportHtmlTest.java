@@ -25,50 +25,53 @@ import br.com.tecsinapse.dataio.style.TableCellStyle;
 
 public class ExportHtmlTest {
 
+
+    public static final String LINE_SEPARATOR = System.lineSeparator();
+
     @DataProvider(name = "toHtmlDs")
     private Object[][] toHtmlDs() {
         Map<String, String> tableMap = new LinkedHashMap<>();
         tableMap.put("border", "1");
         tableMap.put("style", "background-color: #DFDFDF");
         return new Object[][] {
-                {null, 1, 1, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")), false, "<table>\n" +
-                        "<tr>\n" +
-                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c1</td>\n" +
-                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c2</td>\n" +
-                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c3</td>\n" +
-                        "</tr>\n" +
-                        "<tr>\n" +
-                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c4</td>\n" +
-                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c5</td>\n" +
-                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c6</td>\n" +
-                        "</tr>\n" +
-                        "</table>\n"},
+                {null, 1, 1, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")), false, "<table>" + LINE_SEPARATOR +
+                        "<tr>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c1</td>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c2</td>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c3</td>" + LINE_SEPARATOR +
+                        "</tr>" + LINE_SEPARATOR +
+                        "<tr>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c4</td>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c5</td>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c6</td>" + LINE_SEPARATOR +
+                        "</tr>" + LINE_SEPARATOR +
+                        "</table>" + LINE_SEPARATOR},
                 {tableMap, 1, 1, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")), true,
-                        "<table border=\"1\" style=\"background-color: #DFDFDF\">\n" +
-                        "<tr>\n" +
-                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c1</td>\n" +
-                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c2</td>\n" +
-                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c3</td>\n" +
-                        "</tr>\n" +
-                        "<tr>\n" +
-                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c4</td>\n" +
-                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c5</td>\n" +
-                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c6</td>\n" +
-                        "</tr>\n" +
-                        "</table>\n"},
+                        "<table border=\"1\" style=\"background-color: #DFDFDF\">" + LINE_SEPARATOR +
+                        "<tr>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c1</td>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c2</td>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c3</td>" + LINE_SEPARATOR +
+                        "</tr>" + LINE_SEPARATOR +
+                        "<tr>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c4</td>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c5</td>" + LINE_SEPARATOR +
+                        "<td class=\"tbcs-body\" style=\"border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c6</td>" + LINE_SEPARATOR +
+                        "</tr>" + LINE_SEPARATOR +
+                        "</table>" + LINE_SEPARATOR},
                 {tableMap, 2, 2, Arrays.asList(Arrays.asList("c1", "c2", "c3"), Arrays.asList("c4", "c5", "c6")), false,
-                        "<table border=\"1\" style=\"background-color: #DFDFDF\">\n" +
-                                "<tr>\n" +
-                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c1</td>\n" +
-                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c2</td>\n" +
-                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c3</td>\n" +
-                                "</tr>\n" +
-                                "<tr>\n" +
-                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c4</td>\n" +
-                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c5</td>\n" +
-                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c6</td>\n" +
-                                "</tr>\n" +
-                                "</table>\n"}
+                        "<table border=\"1\" style=\"background-color: #DFDFDF\">" + LINE_SEPARATOR +
+                                "<tr>" + LINE_SEPARATOR +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c1</td>" + LINE_SEPARATOR +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c2</td>" + LINE_SEPARATOR +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c3</td>" + LINE_SEPARATOR +
+                                "</tr>" + LINE_SEPARATOR +
+                                "<tr>" + LINE_SEPARATOR +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c4</td>" + LINE_SEPARATOR +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c5</td>" + LINE_SEPARATOR +
+                                "<td class=\"tbcs-body\" rowspan=\"2\" colspan=\"2\" style=\"background-color:#FFFFFF;border:solid #000000 1px;vertical-align:middle;text-align:left;font-size:10;\">c6</td>" + LINE_SEPARATOR +
+                                "</tr>" + LINE_SEPARATOR +
+                                "</table>" + LINE_SEPARATOR}
         };
     }
 
