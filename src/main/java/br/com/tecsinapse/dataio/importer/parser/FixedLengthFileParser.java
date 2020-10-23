@@ -30,6 +30,7 @@ import br.com.tecsinapse.dataio.annotation.FixedLengthColumn;
 import br.com.tecsinapse.dataio.annotation.LineFixedLengthFile;
 import br.com.tecsinapse.dataio.converter.Converter;
 import br.com.tecsinapse.dataio.util.FixedLengthFileUtil;
+import br.com.tecsinapse.dataio.util.ReflectionUtil;
 
 public class FixedLengthFileParser<T> {
 
@@ -107,7 +108,7 @@ public class FixedLengthFileParser<T> {
         final List<AnnotationMethod> methodsAndAnnotations = orderedAnnotationsAndMethods(methods);
 
         final Constructor<T> constructor = clazz.getDeclaredConstructor();
-        constructor.setAccessible(true);
+        ReflectionUtil.setConstructorAccessible(constructor);
         for (int i = 0; i < lines.size(); i++) {
             T instance = constructor.newInstance();
             String workingLine = lines.get(i);
@@ -135,7 +136,7 @@ public class FixedLengthFileParser<T> {
                 if (removeDuplicatedSpaces) {
                     value = value.replaceAll("\\s+", " ");
                 }
-                Converter<?, ?> converter = flc.converter().newInstance();
+                Converter<?, ?> converter = ReflectionUtil.newInstance(flc.converter());
                 Object obj;
                 try {
                     obj = converter.apply(value);

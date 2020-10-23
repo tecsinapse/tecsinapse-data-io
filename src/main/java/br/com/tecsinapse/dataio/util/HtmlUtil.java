@@ -11,6 +11,8 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import lombok.experimental.UtilityClass;
 
+import br.com.tecsinapse.dataio.exceptions.ExporterException;
+
 @UtilityClass
 public class HtmlUtil {
 
@@ -22,7 +24,7 @@ public class HtmlUtil {
             kit.read(new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)), doc, 0);
             return doc.getText(0, doc.getLength());
         } catch (IOException | BadLocationException e) {
-            throw new RuntimeException(e);
+            throw new ExporterException(e);
         }
     }
 

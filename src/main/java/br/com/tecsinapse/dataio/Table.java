@@ -173,12 +173,16 @@ public class Table {
         }
     }
 
-    //TODO revisar
     public void removeInitialRows(int numberRows) {
-        if (cells.size() > numberRows) {
-            for (int i = 0; i < numberRows; i++) {
-                cells.remove(0);
-            }
+        if (cells.isEmpty() || numberRows <= 0) {
+            return;
+        }
+        if (cells.size() <= numberRows) {
+            cells.clear();
+            return;
+        }
+        for (int i = numberRows; i > 0; i--) {
+            cells.remove(i-1);
         }
     }
 

@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -37,7 +39,6 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.reflections.ReflectionUtils;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
@@ -52,6 +53,7 @@ import br.com.tecsinapse.dataio.annotation.TableCellMapping;
 import br.com.tecsinapse.dataio.annotation.TableCellMappings;
 import br.com.tecsinapse.dataio.converter.Converter;
 import br.com.tecsinapse.dataio.util.ExporterDateUtils;
+import br.com.tecsinapse.dataio.util.ReflectionUtil;
 
 @Slf4j
 public class ImporterUtils {
@@ -123,7 +125,7 @@ public class ImporterUtils {
         return propertyDescriptor -> propertyDescriptor != null ? propertyDescriptor.getReadMethod() : null;
     }
 
-    public static final Map<Method, TableCellMapping> getMappedMethods(Class<?> clazz, final Class<?> group) {
+    public static Map<Method, TableCellMapping> getMappedMethods(Class<?> clazz, final Class<?> group) {
 
         Set<Method> cellMappingMethods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
         cellMappingMethods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMappings.class)));
@@ -132,8 +134,10 @@ public class ImporterUtils {
         Multimap<Method, Optional<TableCellMapping>> tableCellMappingByMethod = FluentIterable.from(cellMappingMethods)
                 .index(method -> {
                     checkNotNull(method);
-                    return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
-                            .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class), group));
+                    TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
+                    return tcm != null ? Optional.of(tcm)
+                            : getFirstTableCellMapping(method.getAnnotation(
+                            TableCellMappings.class), group);
                 })
                 .inverse();
 
@@ -156,15 +160,12 @@ public class ImporterUtils {
 
     private static Optional<TableCellMapping> getFirstTableCellMapping(TableCellMappings tcms, final Class<?> group) {
         if (tcms == null) {
-            return Optional.absent();
+            return Optional.empty();
         }
-
-        return FluentIterable.from(Lists.newArrayList(tcms.value()))
-                .filter(tcm -> {
-                    checkNotNull(tcm);
-                    return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
-                })
-                .first();
+        return Arrays.stream(tcms.value())
+                .filter(Objects::nonNull)
+                .filter(tcm -> Arrays.stream(tcm.groups()).anyMatch(c -> c.isAssignableFrom(group)))
+                .findFirst();
     }
 
     private static Predicate<? super Class<?>> assignableTo(final Class<?> group) {
@@ -180,9 +181,7 @@ public class ImporterUtils {
         Object value = null;
 
         try {
-            if (!method.isAccessible()) {
-                method.setAccessible(true);
-            }
+            ReflectionUtil.setMethodAccessible(method);
 
             Class<?> converterInputType = getInputTypeApply(tcc);
 
@@ -197,7 +196,7 @@ public class ImporterUtils {
             Class<?> methodInputType = getMethodParamType(method);
 
             if (isInstanceOf(value, converterInputType) && isSameClassOrExtendedNullSafe(converterReturnType, methodInputType)) {
-                Converter converter = tcc.newInstance();
+                Converter converter = ReflectionUtil.newInstance(tcc);
                 method.invoke(instance, converter.apply(value));
                 return;
             }
@@ -219,10 +218,10 @@ public class ImporterUtils {
                 }
             }
 
-            Converter<?, ?> converter = tcc.newInstance();
+            Converter<?, ?> converter = ReflectionUtil.newInstance(tcc);
             method.invoke(instance, converter.apply(toStringNullSafe(value)));
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            Converter<?, ?> converter = tcc.newInstance();
+            Converter<?, ?> converter = ReflectionUtil.newInstance(tcc);
             method.invoke(instance, converter.apply(toStringNullSafe(value)));
         }
     }
@@ -230,6 +229,7 @@ public class ImporterUtils {
     public static Object getValueOrEmptyAsObject(FormulaEvaluator evaluator, Cell cell) {
         return getValueOrEmptyAsObject(evaluator, cell, false);
     }
+
     public static Object getValueOrEmptyAsObject(FormulaEvaluator evaluator, Cell cell, boolean expectedDate) {
         final CellValue cellValue = safeEvaluteFormula(evaluator, cell);
         if (cellValue == null) {
@@ -289,7 +289,7 @@ public class ImporterUtils {
         Method[] converterMethod = converter.getMethods();
         for (Method method : converterMethod) {
             Class<?>[] paramTypes = method.getParameterTypes();
-            if (method.getName().equals("apply") && paramTypes.length >0 && !isStringOrObject(paramTypes[0])) {
+            if (method.getName().equals("apply") && paramTypes.length > 0 && !isStringOrObject(paramTypes[0])) {
                 return method;
             }
         }
@@ -297,7 +297,7 @@ public class ImporterUtils {
     }
 
     private static Class<?> getTypedToComparePrimitive(Class<?> c) throws NoSuchFieldException, IllegalAccessException {
-        return  (Class<?>) c.getField("TYPE").get(null);
+        return (Class<?>) c.getField("TYPE").get(null);
     }
 
     private static boolean isStringOrObject(Class<?> type) {
