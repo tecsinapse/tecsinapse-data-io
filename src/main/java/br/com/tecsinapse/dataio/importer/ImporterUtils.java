@@ -21,14 +21,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -86,31 +85,23 @@ public class ImporterUtils {
     }
 
     private static Predicate<PropertyDescriptor> hasAnnotationTableCellMapping() {
-        return new Predicate<PropertyDescriptor>() {
-            @Override
-            public boolean apply(PropertyDescriptor propertyDescriptor) {
-                if (propertyDescriptor == null) {
-                    return false;
-                }
-                final Method writeMethod = propertyDescriptor.getWriteMethod();
-                for (Annotation annotation : writeMethod.getDeclaredAnnotations()) {
-                    if (annotation instanceof TableCellMapping || annotation instanceof TableCellMappings) {
-                        return true;
-                    }
-                }
+        return propertyDescriptor -> {
+            if (propertyDescriptor == null) {
                 return false;
             }
+            final Method writeMethod = propertyDescriptor.getWriteMethod();
+            for (Annotation annotation : writeMethod.getDeclaredAnnotations()) {
+                if (annotation instanceof TableCellMapping || annotation instanceof TableCellMappings) {
+                    return true;
+                }
+            }
+            return false;
         };
     }
 
     private static Predicate<PropertyDescriptor> hasWriteAndReadMethod() {
-        return new Predicate<PropertyDescriptor>() {
-            @Override
-            public boolean apply(PropertyDescriptor propertyDescriptor) {
-                return propertyDescriptor != null && propertyDescriptor.getWriteMethod() != null &&
-                        propertyDescriptor.getReadMethod() != null;
-            }
-        };
+        return propertyDescriptor -> propertyDescriptor != null && propertyDescriptor.getWriteMethod() != null &&
+                propertyDescriptor.getReadMethod() != null;
     }
 
     private static <T> boolean allPropertiesHasNoValue(T instance, Set<Method> readMethodsOfWriteMethodsWithTableCellMapping) throws InvocationTargetException, IllegalAccessException {
@@ -129,12 +120,7 @@ public class ImporterUtils {
     }
 
     private static Function<PropertyDescriptor, Method> toReadMethod() {
-        return new Function<PropertyDescriptor, Method>() {
-            @Override
-            public Method apply(PropertyDescriptor propertyDescriptor) {
-                return propertyDescriptor != null ? propertyDescriptor.getReadMethod() : null;
-            }
-        };
+        return propertyDescriptor -> propertyDescriptor != null ? propertyDescriptor.getReadMethod() : null;
     }
 
     public static final Map<Method, TableCellMapping> getMappedMethods(Class<?> clazz, final Class<?> group) {
@@ -144,39 +130,27 @@ public class ImporterUtils {
 
 
         Multimap<Method, Optional<TableCellMapping>> tableCellMappingByMethod = FluentIterable.from(cellMappingMethods)
-                .index(new Function<Method, Optional<TableCellMapping>>() {
-                    @Override
-                    public Optional<TableCellMapping> apply(Method method) {
-                        checkNotNull(method);
-                        return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
-                                .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class), group));
-                    }
+                .index(method -> {
+                    checkNotNull(method);
+                    return Optional.fromNullable(method.getAnnotation(TableCellMapping.class))
+                            .or(getFirstTableCellMapping(method.getAnnotation(TableCellMappings.class), group));
                 })
                 .inverse();
 
-        tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, new Predicate<Entry<Method, Optional<TableCellMapping>>>() {
-            @Override
-            public boolean apply(Entry<Method, Optional<TableCellMapping>> entry) {
-                checkNotNull(entry);
-                return entry.getValue().isPresent()
-                        && any(Lists.newArrayList(entry.getValue().get().groups()), assignableTo(group));
-            }
+        tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, entry -> {
+            checkNotNull(entry);
+            return entry.getValue().isPresent()
+                    && any(Lists.newArrayList(entry.getValue().get().groups()), assignableTo(group));
         });
 
-        Multimap<Method, TableCellMapping> methodByTableCellMapping = transformValues(tableCellMappingByMethod, new Function<Optional<TableCellMapping>, TableCellMapping>() {
-            @Override
-            public TableCellMapping apply(Optional<TableCellMapping> tcmOptional) {
-                checkNotNull(tcmOptional);
-                return tcmOptional.get();
-            }
+        Multimap<Method, TableCellMapping> methodByTableCellMapping = transformValues(tableCellMappingByMethod, tcmOptional -> {
+            checkNotNull(tcmOptional);
+            return tcmOptional.get();
         });
 
-        return Maps.transformValues(methodByTableCellMapping.asMap(), new Function<Collection<TableCellMapping>, TableCellMapping>() {
-            @Override
-            public TableCellMapping apply(Collection<TableCellMapping> tcms) {
-                checkNotNull(tcms);
-                return Iterables.getFirst(tcms, null);
-            }
+        return Maps.transformValues(methodByTableCellMapping.asMap(), tcms -> {
+            checkNotNull(tcms);
+            return Iterables.getFirst(tcms, null);
         });
     }
 
@@ -186,23 +160,17 @@ public class ImporterUtils {
         }
 
         return FluentIterable.from(Lists.newArrayList(tcms.value()))
-                .filter(new Predicate<TableCellMapping>() {
-                    @Override
-                    public boolean apply(TableCellMapping tcm) {
-                        checkNotNull(tcm);
-                        return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
-                    }
+                .filter(tcm -> {
+                    checkNotNull(tcm);
+                    return any(Lists.newArrayList(tcm.groups()), assignableTo(group));
                 })
                 .first();
     }
 
     private static Predicate<? super Class<?>> assignableTo(final Class<?> group) {
-        return new Predicate<Class<?>>() {
-            @Override
-            public boolean apply(Class<?> g) {
-                checkNotNull(g);
-                return g.isAssignableFrom(group);
-            }
+        return (Predicate<Class<?>>) g -> {
+            checkNotNull(g);
+            return g.isAssignableFrom(group);
         };
     }
 
@@ -275,7 +243,7 @@ public class ImporterUtils {
                         || (expectedDate && DateUtil.isValidExcelDate(cellValue.getNumberValue()))) {
                     return cell.getDateCellValue();
                 }
-                BigDecimal bd = BigDecimal.valueOf(cell.getNumericCellValue()).setScale(DECIMAL_PRECISION, BigDecimal.ROUND_HALF_UP);
+                BigDecimal bd = BigDecimal.valueOf(cell.getNumericCellValue()).setScale(DECIMAL_PRECISION, RoundingMode.HALF_UP);
                 return bd.stripTrailingZeros();
             case STRING:
                 return cellValue.getStringValue();

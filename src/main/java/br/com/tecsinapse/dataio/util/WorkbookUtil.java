@@ -234,7 +234,7 @@ public class WorkbookUtil {
                 .filter(indexesUsedInColors::contains)
                 .collect(Collectors.toList());
         for (DataIOCustomColor dataIOCustomColor : customColors) {
-            if (freeIndex.size() <= 0) {
+            if (freeIndex.isEmpty()) {
                 return;
             }
             short[] rgb = dataIOCustomColor.getTriplet();
@@ -267,7 +267,7 @@ public class WorkbookUtil {
      */
     @Deprecated
     public static IndexedColorMap toIndexedColorMap(final HSSFColor hssfColor) {
-        return (i) -> toRgbByte(hssfColor);
+        return i -> toRgbByte(hssfColor);
     }
 
     public static Color toAwtColor(final HSSFColor hssfColor) {

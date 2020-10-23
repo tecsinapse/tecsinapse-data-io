@@ -6,6 +6,10 @@
  */
 package br.com.tecsinapse.dataio;
 
+import static java.text.NumberFormat.getCurrencyInstance;
+import static java.text.NumberFormat.getInstance;
+import static java.text.NumberFormat.getIntegerInstance;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
@@ -56,9 +60,9 @@ public class ExporterFormatter {
         this.dateTimeFormatPattern = getPatternFromDateTimeFormatter(dateTimeFormat);
         this.dateFormatPattern = getPatternFromDateTimeFormatter(dateFormat);
         this.timeFormatPattern = getPatternFromDateTimeFormatter(timeFormat);
-        this.decimalFormat = (DecimalFormat) DecimalFormat.getInstance(locale);
-        this.integerFormat = (DecimalFormat) DecimalFormat.getIntegerInstance(locale);
-        this.currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(locale == Locale.ENGLISH ? Locale.US : locale);
+        this.decimalFormat = (DecimalFormat) getInstance(locale);
+        this.integerFormat = (DecimalFormat) getIntegerInstance(locale);
+        this.currencyFormat = (DecimalFormat) getCurrencyInstance(locale == Locale.ENGLISH ? Locale.US : locale);
         this.cellDateTimeFormat = DateFormatConverter.convert(locale, dateTimeFormatPattern);
         this.cellDateFormat = DateFormatConverter.convert(locale, dateFormatPattern);
         this.cellTimeFormat = DateFormatConverter.convert(locale, timeFormatPattern);
@@ -98,9 +102,9 @@ public class ExporterFormatter {
         this.dateTimeFormatPattern = dateTimeFormat;
         this.dateFormatPattern = dateFormat;
         this.timeFormatPattern = timeFormat;
-        this.decimalFormat = (DecimalFormat) DecimalFormat.getInstance(locale);
-        this.integerFormat = (DecimalFormat) DecimalFormat.getIntegerInstance(locale);
-        this.currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(locale == Locale.ENGLISH ? Locale.US : locale);
+        this.decimalFormat = (DecimalFormat) getInstance(locale);
+        this.integerFormat = (DecimalFormat) getIntegerInstance(locale);
+        this.currencyFormat = (DecimalFormat) getCurrencyInstance(locale == Locale.ENGLISH ? Locale.US : locale);
         this.cellDateTimeFormat = DateFormatConverter.convert(locale, dateTimeFormatPattern);
         this.cellDateFormat = DateFormatConverter.convert(locale, dateFormatPattern);
         this.cellTimeFormat = DateFormatConverter.convert(locale, timeFormatPattern);

@@ -32,12 +32,12 @@ public final class SpreadsheetUtil {
     }
 
     public static String getColumnNameByColumnIndex(int columnIndex) {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         do {
-            s = (char) ('A' + (columnIndex % 26)) + s;
+            s.insert(0, (char) ('A' + (columnIndex % 26)));
             columnIndex /= 26;
         } while (columnIndex-- > 0);
-        return s;
+        return s.toString();
     }
 
 }

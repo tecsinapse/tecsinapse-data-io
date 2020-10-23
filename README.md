@@ -2,10 +2,10 @@ Tecsinapse Data Input and Output
 ==========
 [![License (LGPL version 3)](https://img.shields.io/badge/license-GNU%20LGPL%20version%203.0-blue.svg)](https://github.com/tecsinapse/tecsinapse-data-io/blob/master/LICENCE)
 [![Build Status](https://travis-ci.org/tecsinapse/tecsinapse-data-io.svg?branch=master)](https://travis-ci.org/tecsinapse/tecsinapse-data-io)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=br.com.tecsinapse%3Atecsinapse-data-io&metric=alert_status)](https://sonarcloud.io/dashboard?id=br.com.tecsinapse%3Atecsinapse-data-io)
 [![Coverage Status](https://img.shields.io/coveralls/tecsinapse/tecsinapse-data-io.svg?branch=master)](https://coveralls.io/github/tecsinapse/tecsinapse-data-io?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/br.com.tecsinapse/tecsinapse-data-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/br.com.tecsinapse/tecsinapse-data-io/)
 [![Javadoc](http://www.javadoc.io/badge/br.com.tecsinapse/tecsinapse-data-io.svg)](http://www.javadoc.io/doc/br.com.tecsinapse/tecsinapse-data-io)
-
 Wants to contribute to tecsinapse-data-io?
 ---
 Before working on the code, if you plan to contribute changes, please read the following [CONTRIBUTING](CONTRIBUTING.md) document.

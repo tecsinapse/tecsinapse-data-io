@@ -16,10 +16,10 @@ public class TableCellTest {
 
 	@Test
 	public void testGetContentText() throws Exception {
-		TableCell tc = new TableCell("<a href='/p/crm/relatorio/relatorio-acompanhamento/dealer/36470?dswid=9593&dsrid=9593'><span class='icon-plus' /> </a> Agulhas Negras - 23 (36470)", CellType.HTML_TYPE);
+		TableCell tc = new TableCell("<a href='/p/crm/relatorio/relatorio-acompanhamento/dealer/36470?dswid=9593&dsrid=9593'><span class='icon-plus' /> </a> Tecsinapse (2020)", CellType.HTML_TYPE);
 
 		String contentSemHtml = tc.getContentText();
 
-		assertEquals("Agulhas Negras - 23 (36470)", contentSemHtml);
+		assertEquals(contentSemHtml, "Tecsinapse (2020)");
 	}
 }

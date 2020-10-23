@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
 
 import br.com.tecsinapse.dataio.importer.Importer;
 
-public class ImporterTest2 {
+public class Importer2Test {
 
     @DataProvider(name = "arquivos")
     public Object[][] getExcel() throws URISyntaxException {
@@ -32,7 +32,9 @@ public class ImporterTest2 {
 
     @Test(dataProvider = "arquivos")
     public void test(File file, String result) throws Exception {
-        List<FakePojo2> pojos = new Importer<>(FakePojo2.class, file).parse();
+        Importer<FakePojo2> importer = new Importer<>(FakePojo2.class, file);
+        importer.setAfterLine(0);
+        List<FakePojo2> pojos = importer.parse();
         StringBuilder sb = new StringBuilder();
         for (FakePojo2 fp : pojos) {
             sb.append(fp);
