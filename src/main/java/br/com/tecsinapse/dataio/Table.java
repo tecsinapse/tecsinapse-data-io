@@ -152,7 +152,7 @@ public class Table {
     }
 
     public void addNewRow() {
-        cells.add(new ArrayList<TableCell>());
+        cells.add(new ArrayList<>());
     }
 
     public void addNewRow(List<TableCell> row) {
@@ -174,10 +174,15 @@ public class Table {
     }
 
     public void removeInitialRows(int numberRows) {
-        if (cells.size() > numberRows) {
-            for (int i = 0; i < numberRows; i++) {
-                cells.remove(0);
-            }
+        if (cells.isEmpty() || numberRows <= 0) {
+            return;
+        }
+        if (cells.size() <= numberRows) {
+            cells.clear();
+            return;
+        }
+        for (int i = numberRows; i > 0; i--) {
+            cells.remove(i-1);
         }
     }
 
@@ -190,7 +195,7 @@ public class Table {
         boolean[][] spanMark = new boolean[rows][];
         for (int r = 0; r < rows; ++r) {
             spanMark[r] = new boolean[columns];
-            matrix.add(new ArrayList<String>());
+            matrix.add(new ArrayList<>());
             for (int c = 0; c < columns; ++c) {
                 matrix.get(r).add("");
                 spanMark[r][c] = false;
@@ -248,7 +253,7 @@ public class Table {
         boolean[][] spanMark = new boolean[rows][];
         for (int r = 0; r < rows; ++r) {
             spanMark[r] = new boolean[columns];
-            matrix.add(new ArrayList<TableCell>());
+            matrix.add(new ArrayList<>());
             for (int c = 0; c < columns; ++c) {
                 matrix.get(r).add(EmptyTableCell.EMPTY_CELL);
                 spanMark[r][c] = false;

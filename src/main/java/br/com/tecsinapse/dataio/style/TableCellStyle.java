@@ -202,8 +202,9 @@ public class TableCellStyle {
     }
 
     public String getCssBlock() {
-        return String.format(".%s {%s}\n",
+        return String.format(".%s {%s}%s",
                 getCssBlockClassName(),
-                getCssStyle());
+                getCssStyle(),
+                "\n");
     }
 }

@@ -15,24 +15,23 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public final class Colors {
 
-    public HSSFColor AUTOMATIC = HSSFColorPredefined.AUTOMATIC.getColor();
-    public HSSFColor BLACK = HSSFColorPredefined.BLACK.getColor();
-    public HSSFColor BLUE = HSSFColorPredefined.BLUE.getColor();
-    public HSSFColor BRIGHT_GREEN = HSSFColorPredefined.BRIGHT_GREEN.getColor();
-    public HSSFColor BROWN = HSSFColorPredefined.BROWN.getColor();
-    public HSSFColor DARK_BLUE = HSSFColorPredefined.DARK_BLUE.getColor();
-    public HSSFColor DARK_GREEN = HSSFColorPredefined.DARK_GREEN.getColor();
-    public HSSFColor DARK_RED = HSSFColorPredefined.DARK_RED.getColor();
-    public HSSFColor DARK_YELLOW = HSSFColorPredefined.DARK_YELLOW.getColor();
-    public HSSFColor GREY_25_PERCENT = HSSFColorPredefined.GREY_25_PERCENT.getColor();
-    public HSSFColor GREY_40_PERCENT = HSSFColorPredefined.GREY_40_PERCENT.getColor();
-    public HSSFColor GREY_50_PERCENT = HSSFColorPredefined.GREY_50_PERCENT.getColor();
-    public HSSFColor GREY_80_PERCENT = HSSFColorPredefined.GREY_80_PERCENT.getColor();
-    public HSSFColor ORANGE = HSSFColorPredefined.ORANGE.getColor();
-    public HSSFColor RED = HSSFColorPredefined.RED.getColor();
-    public HSSFColor WHITE = HSSFColorPredefined.WHITE.getColor();
-    public HSSFColor YELLOW = HSSFColorPredefined.YELLOW.getColor();
-    public HSSFColor SEA_GREEN = HSSFColorPredefined.SEA_GREEN.getColor();
-    public HSSFColor LIGHT_TURQUOISE = HSSFColorPredefined.LIGHT_TURQUOISE.getColor();
-
+    public final HSSFColor AUTOMATIC = HSSFColorPredefined.AUTOMATIC.getColor();
+    public final HSSFColor BLACK = HSSFColorPredefined.BLACK.getColor();
+    public final HSSFColor BLUE = HSSFColorPredefined.BLUE.getColor();
+    public final HSSFColor BRIGHT_GREEN = HSSFColorPredefined.BRIGHT_GREEN.getColor();
+    public final HSSFColor BROWN = HSSFColorPredefined.BROWN.getColor();
+    public final HSSFColor DARK_BLUE = HSSFColorPredefined.DARK_BLUE.getColor();
+    public final HSSFColor DARK_GREEN = HSSFColorPredefined.DARK_GREEN.getColor();
+    public final HSSFColor DARK_RED = HSSFColorPredefined.DARK_RED.getColor();
+    public final HSSFColor DARK_YELLOW = HSSFColorPredefined.DARK_YELLOW.getColor();
+    public final HSSFColor GREY_25_PERCENT = HSSFColorPredefined.GREY_25_PERCENT.getColor();
+    public final HSSFColor GREY_40_PERCENT = HSSFColorPredefined.GREY_40_PERCENT.getColor();
+    public final HSSFColor GREY_50_PERCENT = HSSFColorPredefined.GREY_50_PERCENT.getColor();
+    public final HSSFColor GREY_80_PERCENT = HSSFColorPredefined.GREY_80_PERCENT.getColor();
+    public final HSSFColor ORANGE = HSSFColorPredefined.ORANGE.getColor();
+    public final HSSFColor RED = HSSFColorPredefined.RED.getColor();
+    public final HSSFColor WHITE = HSSFColorPredefined.WHITE.getColor();
+    public final HSSFColor YELLOW = HSSFColorPredefined.YELLOW.getColor();
+    public final HSSFColor SEA_GREEN = HSSFColorPredefined.SEA_GREEN.getColor();
+    public final HSSFColor LIGHT_TURQUOISE = HSSFColorPredefined.LIGHT_TURQUOISE.getColor();
 }

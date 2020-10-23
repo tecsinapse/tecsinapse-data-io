@@ -44,41 +44,13 @@ public class CellStyleBorder {
 
 
     public CellStyle toCellStyle(CellStyle cellStyle) {
-        if (cellStyle == null || !left && !right && !bottom && !top) {
-            return cellStyle;
+        if (cellStyle == null) {
+            return null;
         }
-        if (left) {
-            cellStyle.setBorderLeft(BorderStyle.THIN);
-            if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setLeftBorderColor(toXSSFColor(borderColor));
-            } else {
-                cellStyle.setLeftBorderColor(borderColor.getIndex());
-            }
-        }
-        if (right) {
-            cellStyle.setBorderRight(BorderStyle.THIN);
-            if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setRightBorderColor(toXSSFColor(borderColor));
-            } else {
-                cellStyle.setRightBorderColor(borderColor.getIndex());
-            }
-        }
-        if (bottom) {
-            cellStyle.setBorderBottom(BorderStyle.THIN);
-            if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setBottomBorderColor(toXSSFColor(borderColor));
-            } else {
-                cellStyle.setBottomBorderColor(borderColor.getIndex());
-            }
-        }
-        if (top) {
-            cellStyle.setBorderTop(BorderStyle.THIN);
-            if (cellStyle instanceof XSSFCellStyle) {
-                ((XSSFCellStyle)cellStyle).setTopBorderColor(toXSSFColor(borderColor));
-            } else {
-                cellStyle.setTopBorderColor(borderColor.getIndex());
-            }
-        }
+        configureCellStyleLeft(cellStyle);
+        configureCellStyleRight(cellStyle);
+        configureCellStyleTop(cellStyle);
+        configureCellStyleBottom(cellStyle);
         return cellStyle;
     }
 
@@ -108,6 +80,54 @@ public class CellStyleBorder {
 
     public CellStyleBorder duplicate() {
         return new CellStyleBorder(getBorderColor(), isLeft(), isRight(), isTop(), isBottom());
+    }
+
+    private void configureCellStyleLeft(CellStyle cellStyle) {
+        if (!left) {
+            return;
+        }
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        if (cellStyle instanceof XSSFCellStyle) {
+            ((XSSFCellStyle) cellStyle).setLeftBorderColor(toXSSFColor(borderColor));
+        } else {
+            cellStyle.setLeftBorderColor(borderColor.getIndex());
+        }
+    }
+
+    private void configureCellStyleRight(CellStyle cellStyle) {
+        if (!right) {
+            return;
+        }
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        if (cellStyle instanceof XSSFCellStyle) {
+            ((XSSFCellStyle) cellStyle).setRightBorderColor(toXSSFColor(borderColor));
+        } else {
+            cellStyle.setRightBorderColor(borderColor.getIndex());
+        }
+    }
+
+    private void configureCellStyleTop(CellStyle cellStyle) {
+        if (top) {
+            return;
+        }
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        if (cellStyle instanceof XSSFCellStyle) {
+            ((XSSFCellStyle) cellStyle).setTopBorderColor(toXSSFColor(borderColor));
+        } else {
+            cellStyle.setTopBorderColor(borderColor.getIndex());
+        }
+    }
+
+    private void configureCellStyleBottom(CellStyle cellStyle) {
+        if (bottom) {
+            return;
+        }
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        if (cellStyle instanceof XSSFCellStyle) {
+            ((XSSFCellStyle) cellStyle).setBottomBorderColor(toXSSFColor(borderColor));
+        } else {
+            cellStyle.setBottomBorderColor(borderColor.getIndex());
+        }
     }
 
 }

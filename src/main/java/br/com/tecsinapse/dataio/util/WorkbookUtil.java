@@ -78,8 +78,7 @@ public class WorkbookUtil {
             Row sheetRow = sheet.createRow(r);
 
             for (TableCell tableCell : row) {
-                while (matrixFull.get(r - titleRows)
-                        .get(c) == EmptyTableCell.EMPTY_CELL) {
+                while (matrixFull.get(r - titleRows).get(c) == EmptyTableCell.EMPTY_CELL) {
                     c++;
                     if (c >= matrixFull.get(r - titleRows).size()) {
                         c = 0;
@@ -92,30 +91,7 @@ public class WorkbookUtil {
                     maxColumns = c;
                 }
 
-                if (tableCell.getRowspan() > 1 || tableCell.getColspan() > 1) {
-                    int rowStart = r;
-                    int rowEnd = rowStart + (tableCell.getRowspan() - 1);
-                    int colStart = c;
-                    int colEnd = colStart + (tableCell.getColspan() - 1);
-
-                    CellRangeAddress cellRange = new CellRangeAddress(rowStart, rowEnd, colStart, colEnd);
-                    sheet.addMergedRegion(cellRange);
-
-                    RegionUtil.setBorderTop(BorderStyle.THIN, cellRange, sheet);
-                    RegionUtil.setBorderRight(BorderStyle.THIN, cellRange, sheet);
-                    RegionUtil.setBorderBottom(BorderStyle.THIN, cellRange, sheet);
-                    RegionUtil.setBorderLeft(BorderStyle.THIN, cellRange, sheet);
-                } else if (!table.isAutoSizeColumnSheet()) {
-                    Integer maxColumnWidth = defaultColumnWidth.get(c);
-                    if (maxColumnWidth == null) {
-                        defaultColumnWidth.put(c, tableCell.getDefaultColumnWidth());
-                    } else {
-                        int defaultWidth = tableCell.getDefaultColumnWidth();
-                        if (defaultWidth > maxColumnWidth) {
-                            defaultColumnWidth.put(c, defaultWidth);
-                        }
-                    }
-                }
+                configureColAndRowSpan(table, tableCell, sheet, defaultColumnWidth, r, c);
 
                 String format = setConvertedValue(cell, tableCell, tableExporterFormatter);
                 setCellStyle(cell, tableCell, wb, format);
@@ -124,7 +100,37 @@ public class WorkbookUtil {
             r++;
             c = 0;
         }
+        configureColumnAutoSize(table, sheet, maxColumns, defaultColumnWidth);
+        return wb;
+    }
 
+    private void configureColAndRowSpan(final Table table, final TableCell tableCell,
+                                        final Sheet sheet,
+                                        final Map<Integer, Integer> defaultColumnWidth,
+                                        int r, int c) {
+        if (tableCell.getRowspan() > 1 || tableCell.getColspan() > 1) {
+            int rowEnd = r + (tableCell.getRowspan() - 1);
+            int colEnd = c + (tableCell.getColspan() - 1);
+            CellRangeAddress cellRange = new CellRangeAddress(r, rowEnd, c, colEnd);
+            sheet.addMergedRegion(cellRange);
+            RegionUtil.setBorderTop(BorderStyle.THIN, cellRange, sheet);
+            RegionUtil.setBorderRight(BorderStyle.THIN, cellRange, sheet);
+            RegionUtil.setBorderBottom(BorderStyle.THIN, cellRange, sheet);
+            RegionUtil.setBorderLeft(BorderStyle.THIN, cellRange, sheet);
+        } else if (!table.isAutoSizeColumnSheet()) {
+            Integer maxColumnWidth = defaultColumnWidth.get(c);
+            if (maxColumnWidth == null) {
+                defaultColumnWidth.put(c, tableCell.getDefaultColumnWidth());
+            } else {
+                int defaultWidth = tableCell.getDefaultColumnWidth();
+                if (defaultWidth > maxColumnWidth) {
+                    defaultColumnWidth.put(c, defaultWidth);
+                }
+            }
+        }
+    }
+
+    private void configureColumnAutoSize(final Table table, final Sheet sheet, final int maxColumns, final Map<Integer, Integer> defaultColumnWidth) {
         if (table.isAutoSizeColumnSheet()) {
             for (int i = 0; i <= maxColumns; ++i) {
                 if (sheet instanceof SXSSFSheet) {
@@ -132,20 +138,19 @@ public class WorkbookUtil {
                 }
                 sheet.autoSizeColumn(i, true);
             }
-        } else {
-            for (int i = 0; i <= maxColumns; ++i) {
-                if (defaultColumnWidth.get(i) == null) {
-                    if (sheet instanceof SXSSFSheet) {
-                        ((SXSSFSheet) sheet).trackColumnForAutoSizing(i);
-                    }
-                    sheet.autoSizeColumn(i, true);
-                } else {
-                    int width = table.getMinOrMaxOrActualCellWidth(defaultColumnWidth.get(i));
-                    sheet.setColumnWidth(i, width);
+            return;
+        }
+        for (int i = 0; i <= maxColumns; ++i) {
+            if (defaultColumnWidth.get(i) == null) {
+                if (sheet instanceof SXSSFSheet) {
+                    ((SXSSFSheet) sheet).trackColumnForAutoSizing(i);
                 }
+                sheet.autoSizeColumn(i, true);
+            } else {
+                int width = table.getMinOrMaxOrActualCellWidth(defaultColumnWidth.get(i));
+                sheet.setColumnWidth(i, width);
             }
         }
-        return wb;
     }
 
     private void setCellStyle(Cell cell, TableCell tableCell, Workbook wb, String cellFormat) {
@@ -234,7 +239,7 @@ public class WorkbookUtil {
                 .filter(indexesUsedInColors::contains)
                 .collect(Collectors.toList());
         for (DataIOCustomColor dataIOCustomColor : customColors) {
-            if (freeIndex.size() <= 0) {
+            if (freeIndex.isEmpty()) {
                 return;
             }
             short[] rgb = dataIOCustomColor.getTriplet();
@@ -267,7 +272,7 @@ public class WorkbookUtil {
      */
     @Deprecated
     public static IndexedColorMap toIndexedColorMap(final HSSFColor hssfColor) {
-        return (i) -> toRgbByte(hssfColor);
+        return i -> toRgbByte(hssfColor);
     }
 
     public static Color toAwtColor(final HSSFColor hssfColor) {

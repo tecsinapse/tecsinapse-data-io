@@ -37,6 +37,7 @@ import br.com.tecsinapse.dataio.converter.group.Default;
 import br.com.tecsinapse.dataio.importer.ImporterUtils;
 import br.com.tecsinapse.dataio.importer.Parser;
 import br.com.tecsinapse.dataio.type.FileType;
+import br.com.tecsinapse.dataio.util.ReflectionUtil;
 
 public class SpreadsheetParser<T> implements Parser<T> {
 
@@ -117,7 +118,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
         final FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         Map<Method, TableCellMapping> cellMappingByMethod = ImporterUtils.getMappedMethods(clazz, group);
         final Constructor<T> constructor = clazz.getDeclaredConstructor();
-        constructor.setAccessible(true);
+        ReflectionUtil.setConstructorAccessible(constructor);
 
         int k = 0;
         for (int j = sheet.getFirstRowNum(); j <= sheet.getPhysicalNumberOfRows(); j++) {

@@ -14,7 +14,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public final class Constants {
 
-    public static final short DECIMAL_PRECISION = 10;
+    public static final int DECIMAL_PRECISION = 10;
     public static final Locale LOCALE_PT_BR = new Locale("pt", "BR");
     public static final Locale LOCALE_ES_ES = new Locale("es", "ES");
     public static final String MSG_IGNORED = "Ignored";

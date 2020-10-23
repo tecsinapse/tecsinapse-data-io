@@ -32,6 +32,7 @@ import br.com.tecsinapse.dataio.importer.ImporterUtils;
 import br.com.tecsinapse.dataio.importer.Parser;
 import br.com.tecsinapse.dataio.type.FileType;
 import br.com.tecsinapse.dataio.util.CsvUtil;
+import br.com.tecsinapse.dataio.util.ReflectionUtil;
 
 public class CsvParser<T> implements Parser<T> {
 
@@ -141,7 +142,7 @@ public class CsvParser<T> implements Parser<T> {
         Map<Method, TableCellMapping> cellMappingByMethod = ImporterUtils.getMappedMethods(clazz, group);
 
         final Constructor<T> constructor = clazz.getDeclaredConstructor();
-        constructor.setAccessible(true);
+        ReflectionUtil.setConstructorAccessible(constructor);
         for (int i = 0; i < csvLines.size(); i++) {
             final String line = csvLines.get(i);
             if ((i + 1) <= headersRows) {
@@ -153,11 +154,11 @@ public class CsvParser<T> implements Parser<T> {
 
             for (Entry<Method, TableCellMapping> methodTcm : cellMappingByMethod.entrySet()) {
                 Method method = methodTcm.getKey();
-                method.setAccessible(true);
+                ReflectionUtil.setMethodAccessible(method);
 
                 TableCellMapping tcm = methodTcm.getValue();
                 String value = getValueOrEmpty(fields, tcm.columnIndex());
-                Converter<?, ?> converter = tcm.converter().newInstance();
+                Converter<?, ?> converter = ReflectionUtil.newInstance(tcm.converter());
                 Object obj = converter.apply(value);
                 method.invoke(instance, obj);
             }
