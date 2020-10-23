@@ -14,8 +14,10 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
 
-public class YearMonthTableCellConverter implements FromDateConverter<YearMonth> {
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+public class YearMonthTableCellConverter implements FromDateConverter<YearMonth> {
     private static final DateTimeFormatter YYYY_MM = DateTimeFormatter.ofPattern("yyyyMM");
     private static final Pattern DEFAULT_YM_PATTERN = Pattern.compile("\\d{4}-\\d{2}");
     private static final Pattern VALID_PATTERN = Pattern.compile("(\\d{4}.\\d{2})|(\\d{2}.\\d{4})");
@@ -53,7 +55,7 @@ public class YearMonthTableCellConverter implements FromDateConverter<YearMonth>
             String[] dateInput = input.split("-");
             return YearMonth.parse(dateInput[1] + "-" + dateInput[0]);
         } catch (DateTimeParseException e) {
-            e.printStackTrace();
+            log.warn("Convert YearMonth error", e);
             return null;
         }
     }

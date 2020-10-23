@@ -10,6 +10,10 @@ package br.com.tecsinapse.dataio.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ReflectionUtil {
 
     public static <T> void setConstructorAccessible(final Constructor<T> constructor) {
