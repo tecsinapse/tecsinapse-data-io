@@ -27,6 +27,6 @@ jobs:
         env:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
       - name: SonarCloud Scan
-        run: mvn -B org.sonarsource.scanner.maven:sonar --file pom.xml
+        run: mvn -B -Psonar sonar:sonar --file pom.xml
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -4,7 +4,9 @@
   License: GNU Lesser General Public License (LGPL), version 3 or later
   See the LICENSE file in the root directory or <http://www.gnu.org/licenses/lgpl-3.0.html>.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>br.com.tecsinapse</groupId>
@@ -27,12 +29,6 @@
         <poi.version>4.0.1</poi.version>
         <reflections.verson>0.9.11</reflections.verson>
         <slf4j.version>1.7.26</slf4j.version>
-
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.organization>tecsinapse-oss</sonar.organization>
-        <sonar.projectKey>br.com.tecsinapse:tecsinapse-data-io</sonar.projectKey>
-        <sonar.projectName>TecSinapse Data IO</sonar.projectName>
-        <sonar.coverage.exclusions>br/com/tecsinapse/*</sonar.coverage.exclusions>
     </properties>
 
     <build>
@@ -100,7 +96,8 @@
     <scm>
         <url>https://github.com/tecsinapse/tecsinapse-data-io</url>
         <connection>scm:git:git@github.com:tecsinapse/tecsinapse-data-io.git</connection>
-        <developerConnection>scm:git:git@github.com:tecsinapse/tecsinapse-data-io.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:tecsinapse/tecsinapse-data-io.git
+        </developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -159,5 +156,34 @@
     <prerequisites>
         <maven>3.5.0</maven>
     </prerequisites>
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.sonarsource.scanner.maven</groupId>
+                            <artifactId>sonar-maven-plugin</artifactId>
+                            <version>3.7.0.1746</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+                <sonar.organization>tecsinapse-oss</sonar.organization>
+                <sonar.projectKey>br.com.tecsinapse:tecsinapse-data-io</sonar.projectKey>
+                <sonar.projectName>TecSinapse Data IO</sonar.projectName>
+                <sonar.coverage.exclusions>br/com/tecsinapse/*</sonar.coverage.exclusions>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
