@@ -29,7 +29,7 @@ jobs:
         run: mvn -B package --file pom.xml
       - name: Coverage report
         run: mvn -B jacoco:report coveralls:report --file pom.xml
-        env:
+        with:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
@@ -39,5 +39,6 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
       - name: SonarCloud Scan
         run: mvn -B -Psonar sonar:sonar --file pom.xml
-        env:
+        with:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
