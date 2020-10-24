@@ -23,7 +23,7 @@ public final class ReflectionUtil {
         constructor.setAccessible(true);
     }
 
-    public static <T> void setMethodAccessible(final Method method) {
+    public static void setMethodAccessible(final Method method) {
         if (method == null || method.isAccessible()) {
             return;
         }

@@ -22,7 +22,7 @@ public @interface TableCellMapping {
 
     int columnIndex();
 
-    Class<? extends Converter<?, ?>> converter() default StringTableCellConverter.class;
+    Class<? extends Converter> converter() default StringTableCellConverter.class;
 
     Class<?>[] groups() default {Default.class};
 

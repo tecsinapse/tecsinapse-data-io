@@ -25,6 +25,6 @@ public @interface FixedLengthColumn {
 
     boolean useLineLength() default false;
 
-    Class<? extends Converter<?, ?>> converter() default StringTableCellConverter.class;
+    Class<? extends Converter> converter() default StringTableCellConverter.class;
 
 }

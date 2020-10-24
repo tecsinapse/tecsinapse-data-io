@@ -125,7 +125,7 @@ public class ImporterUtils {
         return propertyDescriptor -> propertyDescriptor != null ? propertyDescriptor.getReadMethod() : null;
     }
 
-    public static Map<Method, TableCellMapping> getMappedMethods(Class<?> clazz, final Class<?> group) {
+    public static <T> Map<Method, TableCellMapping> getMappedMethods(Class<T> clazz, final Class<?> group) {
 
         Set<Method> cellMappingMethods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
         cellMappingMethods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMappings.class)));
@@ -196,7 +196,7 @@ public class ImporterUtils {
             Class<?> methodInputType = getMethodParamType(method);
 
             if (isInstanceOf(value, converterInputType) && isSameClassOrExtendedNullSafe(converterReturnType, methodInputType)) {
-                Converter converter = ReflectionUtil.newInstance(tcc);
+                Converter<Object, T> converter = tcc.newInstance();
                 method.invoke(instance, converter.apply(value));
                 return;
             }

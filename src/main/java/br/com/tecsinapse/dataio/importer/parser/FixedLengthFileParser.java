@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.reflections.ReflectionUtils;
 
@@ -111,54 +112,62 @@ public class FixedLengthFileParser<T> {
         ReflectionUtil.setConstructorAccessible(constructor);
         for (int i = 0; i < lines.size(); i++) {
             T instance = constructor.newInstance();
-            String workingLine = lines.get(i);
-            boolean ignoreLine = false;
-            for (AnnotationMethod annotationMethod : methodsAndAnnotations) {
-                if (workingLine.length() == 0) {
-                    break;
-                }
-                Method method = annotationMethod.getMethod();
-                FixedLengthColumn flc = annotationMethod.getFlc();
-                final boolean naoValidouTamanhoDaLinha = !flc.useLineLength() && workingLine.length() < flc.columnSize() && !ignoreColumnLengthError;
-                if (naoValidouTamanhoDaLinha) {
-                    if (ignoreLineWhenError) {
-                        ignoreLine = true;
-                        break;
-                    } else {
-                        int line = ignoreFirstLine ? i + 1 : i;
-                        throw new IllegalStateException(String.format(
-                                "Malformed file or wrong configuration. Line %s size doesn't match the configuration.",
-                                line));
-                    }
-                }
-                int length = flc.useLineLength() || workingLine.length() < flc.columnSize() ? workingLine.length() : flc.columnSize();
-                String value = workingLine.substring(0, length).trim();
-                if (removeDuplicatedSpaces) {
-                    value = value.replaceAll("\\s+", " ");
-                }
-                Converter<?, ?> converter = ReflectionUtil.newInstance(flc.converter());
-                Object obj;
-                try {
-                    obj = converter.apply(value);
-                } catch (Exception e) {
-                    if (ignoreLineWhenError) {
-                        ignoreLine = true;
-                        break;
-                    } else {
-                        throw e;
-                    }
-                }
-                method.invoke(instance, obj);
-                workingLine = workingLine.substring(length);
-            }
+            AtomicBoolean ignoreLine = new AtomicBoolean(false);
+            processColsToBean(methodsAndAnnotations, instance, lines.get(i), i, ignoreLine);
             if (lineMethod != null) {
                 lineMethod.invoke(instance, lines.get(i));
             }
-            if (!ignoreLine) {
+            if (!ignoreLine.get()) {
                 list.add(instance);
             }
         }
         return list;
+    }
+
+    private void processColsToBean(final List<AnnotationMethod> methodsAndAnnotations,
+                                      final T instance, final String currentLine,
+                                      final int lineIndex, AtomicBoolean ignoreLine) throws ReflectiveOperationException {
+        String workingLine = currentLine;
+        for (AnnotationMethod annotationMethod : methodsAndAnnotations) {
+            if (workingLine.length() == 0) {
+                return;
+            }
+            FixedLengthColumn flc = annotationMethod.getFlc();
+            final boolean naoValidouTamanhoDaLinha = !flc.useLineLength() && workingLine.length() < flc.columnSize() && !ignoreColumnLengthError;
+            if (naoValidouTamanhoDaLinha) {
+                if (ignoreLineWhenError) {
+                    ignoreLine.set(true);
+                    return;
+                }
+                int line = ignoreFirstLine ? lineIndex + 1 : lineIndex;
+                throw new IllegalStateException(String.format(
+                        "Malformed file or wrong configuration. Line %s size doesn't match the configuration.",
+                        line));
+            }
+            int length = flc.useLineLength() || workingLine.length() < flc.columnSize() ? workingLine.length() : flc.columnSize();
+            String value = workingLine.substring(0, length).trim();
+            selColValueInBean(flc, annotationMethod.getMethod(), instance, value, ignoreLine);
+            workingLine = workingLine.substring(length);
+        }
+    }
+
+    private void selColValueInBean(FixedLengthColumn flc, Method method, final T instance, String value,
+                                   AtomicBoolean ignoreLine)  throws ReflectiveOperationException {
+        if (removeDuplicatedSpaces) {
+            value = value.replaceAll("\\s+", " ");
+        }
+        Converter<?, ?> converter = ReflectionUtil.newInstance(flc.converter());
+        Object obj;
+        try {
+            obj = converter.apply(value);
+            method.invoke(instance, obj);
+        } catch (Exception e) {
+            if (ignoreLineWhenError) {
+                ignoreLine.set(true);
+            } else {
+                throw e;
+            }
+        }
     }
 
     private List<AnnotationMethod> orderedAnnotationsAndMethods(final Set<Method> methods) {
