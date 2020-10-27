@@ -2,7 +2,7 @@
 name: Solicitação de melhoria
 about: Envia uma sugestão de melhoria este projeto
 title: ''
-labels: 'melhoria'
+labels: 'Melhoria'
 assignees: ''
 
 ---
