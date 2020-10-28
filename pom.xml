@@ -186,7 +186,7 @@
         </profile>
         <profile>
             <!-- migrate to parent -->
-            <id>sonatype-nexus</id>
+            <id>nexus</id>
             <properties>
                 <gpg.executable>gpg</gpg.executable>
                 <gpg.defaultKeyring>false</gpg.defaultKeyring>
