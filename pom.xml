@@ -186,12 +186,14 @@
         </profile>
         <profile>
             <!-- migrate to parent -->
-            <id>nexus</id>
+            <id>sonatype-nexus</id>
             <properties>
                 <gpg.executable>gpg</gpg.executable>
                 <gpg.defaultKeyring>false</gpg.defaultKeyring>
                 <gpg.keyname>${env.GPG_KEYNAME}</gpg.keyname>
                 <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
+                <gpg.publicKeyring/>
+                <gpg.secretKeyring/>
             </properties>
             <activation>
                 <property>
