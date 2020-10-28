@@ -34,7 +34,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Publish on nexus
-        run: mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true --settings .nexus/settings.xml
+        run: mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true -Dgpg.publicKeyring=.nexus/pubring.gpg --settings .nexus/settings.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
