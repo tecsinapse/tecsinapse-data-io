@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.base.Strings;
-
 import lombok.experimental.UtilityClass;
 
 import br.com.tecsinapse.dataio.type.SeparatorType;
@@ -60,7 +58,7 @@ public class CsvUtil {
     }
 
     public static String getColumnValue(String[] columns, int index) {
-        if (index >= columns.length || Strings.isNullOrEmpty(columns[index])) {
+        if (index >= columns.length || CommonUtils.isNullOrEmpty(columns[index])) {
             return null;
         }
 

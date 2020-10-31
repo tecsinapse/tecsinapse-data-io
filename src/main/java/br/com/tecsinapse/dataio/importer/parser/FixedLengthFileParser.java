@@ -21,9 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.reflections.ReflectionUtils;
 
-import com.google.common.collect.Iterables;
-import com.google.common.primitives.Ints;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -104,7 +101,9 @@ public class FixedLengthFileParser<T> {
                 ReflectionUtils.<Method>withAnnotation(FixedLengthColumn.class));
 
         @SuppressWarnings("unchecked")
-        Method lineMethod = Iterables.getFirst(ReflectionUtils.getMethods(clazz, ReflectionUtils.<Method>withAnnotation(LineFixedLengthFile.class)), null);
+        Method lineMethod = ReflectionUtils.getMethods(clazz, ReflectionUtils.withAnnotation(LineFixedLengthFile.class)).stream()
+                .findAny()
+                .orElse(null);
 
         final List<AnnotationMethod> methodsAndAnnotations = orderedAnnotationsAndMethods(methods);
 
@@ -210,7 +209,7 @@ public class FixedLengthFileParser<T> {
 
         @Override
         public int compareTo(AnnotationMethod other) {
-            return Ints.compare(this.flc.columnIndex(), other.getFlc().columnIndex());
+            return Integer.compare(this.flc.columnIndex(), other.getFlc().columnIndex());
         }
 
     }

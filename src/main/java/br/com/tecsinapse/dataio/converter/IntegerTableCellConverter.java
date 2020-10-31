@@ -9,7 +9,7 @@ package br.com.tecsinapse.dataio.converter;
 
 import java.math.BigDecimal;
 
-import com.google.common.base.Strings;
+import br.com.tecsinapse.dataio.util.CommonUtils;
 
 public class IntegerTableCellConverter implements FromNumberConverter<Integer> {
 
@@ -20,7 +20,7 @@ public class IntegerTableCellConverter implements FromNumberConverter<Integer> {
 
     @Override
     public Integer apply(String input) {
-        return Strings.isNullOrEmpty(input) ? null : Integer.valueOf(input);
+        return CommonUtils.isNullOrEmpty(input) ? null : Integer.valueOf(input);
     }
 
 }

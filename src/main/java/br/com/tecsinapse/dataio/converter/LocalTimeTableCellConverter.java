@@ -9,7 +9,7 @@ package br.com.tecsinapse.dataio.converter;
 import java.time.LocalTime;
 import java.util.Date;
 
-import com.google.common.base.Strings;
+import br.com.tecsinapse.dataio.util.CommonUtils;
 
 public class LocalTimeTableCellConverter implements FromDateConverter<LocalTime> {
 
@@ -20,7 +20,7 @@ public class LocalTimeTableCellConverter implements FromDateConverter<LocalTime>
 
     @Override
     public LocalTime apply(String input) {
-        return Strings.isNullOrEmpty(input) ? null : LocalTime.parse(input);
+        return CommonUtils.isNullOrEmpty(input) ? null : LocalTime.parse(input);
     }
 
 }

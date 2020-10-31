@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-import com.google.common.base.Strings;
+import br.com.tecsinapse.dataio.util.CommonUtils;
 
 public class LocalDateTimeTableCellConverter implements FromDateConverter<LocalDateTime> {
 
@@ -23,7 +23,7 @@ public class LocalDateTimeTableCellConverter implements FromDateConverter<LocalD
 
     @Override
     public LocalDateTime apply(String input) {
-        return Strings.isNullOrEmpty(input) ? null : LocalDateTime.parse(input);
+        return CommonUtils.isNullOrEmpty(input) ? null : LocalDateTime.parse(input);
     }
 
 }

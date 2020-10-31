@@ -6,8 +6,6 @@
  */
 package br.com.tecsinapse.dataio.util;
 
-import com.google.common.base.Strings;
-
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -24,7 +22,7 @@ public final class SpreadsheetUtil {
     }
 
     private static String getColumnFromCellName(String cellReference) {
-        if (Strings.isNullOrEmpty(cellReference)) {
+        if (CommonUtils.isNullOrEmpty(cellReference)) {
             return "";
         }
 

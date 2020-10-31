@@ -13,6 +13,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -27,14 +28,12 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Charsets;
-
 import br.com.tecsinapse.ResourceFiles;
 import br.com.tecsinapse.dataio.converter.FromDateConverter;
-import br.com.tecsinapse.datasources.ThreeColumnValue;
 import br.com.tecsinapse.dataio.importer.Importer;
 import br.com.tecsinapse.dataio.importer.parser.SpreadsheetParser;
 import br.com.tecsinapse.dataio.type.FileType;
+import br.com.tecsinapse.datasources.ThreeColumnValue;
 
 public class ImporterFileTest {
 
@@ -65,7 +64,7 @@ public class ImporterFileTest {
     public void validaArquivo(File arquivo, int afterLine, FileType esperadoFileType, List<FileBean> esperados) throws Exception {
         for (Locale locale : LOCALES) {
             Locale.setDefault(locale);
-            try (final Importer<FileBean> importer = new Importer<>(FileBean.class, Charsets.UTF_8, arquivo)) {
+            try (final Importer<FileBean> importer = new Importer<>(FileBean.class, StandardCharsets.UTF_8, arquivo)) {
                 importer.setAfterLine(afterLine);
 
                 assertEquals(importer.getFileType(), esperadoFileType);
