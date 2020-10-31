@@ -1,5 +1,17 @@
 # Changelog
 
+### 3.1.9 (preview)
+
+Issue #50: Usar github actions para publicar no Nexus
+Melhorias de DevOps/Publicação de pacotes
+ 
+Issue #46: Analisar alerta de segurança guava 
+Remoção de dependência di Guava
+
+Issue #47 :Revisar itens sonar
+Melhorias de códigos apontados pelo sonar
+
+
 ### 3.1.8
 - Corrigido bug na contagem de linhas do cabeçalho (headerRows) em arquivos com linhas em branco. 
 
