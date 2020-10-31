@@ -12,7 +12,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Strings;
+import br.com.tecsinapse.dataio.util.CommonUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +29,7 @@ public class YearMonthTableCellConverter implements FromDateConverter<YearMonth>
 
     @Override
     public YearMonth apply(String input) {
-        if (Strings.isNullOrEmpty(input)) {
+        if (CommonUtils.isNullOrEmpty(input)) {
             return null;
         }
         try {

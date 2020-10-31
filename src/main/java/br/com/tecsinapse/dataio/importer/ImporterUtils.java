@@ -6,13 +6,10 @@
  */
 package br.com.tecsinapse.dataio.importer;
 
+import static br.com.tecsinapse.dataio.util.CommonUtils.checkNotNull;
+import static br.com.tecsinapse.dataio.util.CommonUtils.isNullOrEmpty;
+import static br.com.tecsinapse.dataio.util.CommonUtils.nullToEmpty;
 import static br.com.tecsinapse.dataio.util.Constants.DECIMAL_PRECISION;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.base.Strings.nullToEmpty;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Multimaps.filterEntries;
-import static com.google.common.collect.Multimaps.transformValues;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -22,15 +19,21 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -38,20 +41,13 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.reflections.ReflectionUtils;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-
 import lombok.extern.slf4j.Slf4j;
 
 import br.com.tecsinapse.dataio.ExporterFormatter;
 import br.com.tecsinapse.dataio.annotation.TableCellMapping;
 import br.com.tecsinapse.dataio.annotation.TableCellMappings;
 import br.com.tecsinapse.dataio.converter.Converter;
+import br.com.tecsinapse.dataio.util.CommonUtils;
 import br.com.tecsinapse.dataio.util.ExporterDateUtils;
 import br.com.tecsinapse.dataio.util.ReflectionUtil;
 
@@ -61,16 +57,14 @@ public class ImporterUtils {
     private ImporterUtils() {
     }
 
-    public static final String EMPTY_STRING = "";
-
     public static <T> void removeBlankLinesOfEnd(List<T> resultList, Class<T> clazz) throws InvocationTargetException, IllegalAccessException, IntrospectionException {
         Collections.reverse(resultList);
         final PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-        final Set<Method> readMethodsOfWriteMethodsWithTableCellMapping = FluentIterable.from(Arrays.asList(propertyDescriptors))
+        final Set<Method> readMethodsOfWriteMethodsWithTableCellMapping = Stream.of(propertyDescriptors)
                 .filter(hasWriteAndReadMethod())
                 .filter(hasAnnotationTableCellMapping())
-                .transform(toReadMethod())
-                .toSet();
+                .map(toReadMethod())
+                .collect(Collectors.toSet());
 
         if (!readMethodsOfWriteMethodsWithTableCellMapping.isEmpty()) {
             final Iterator<T> iterator = resultList.iterator();
@@ -130,32 +124,26 @@ public class ImporterUtils {
         Set<Method> cellMappingMethods = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMapping.class));
         cellMappingMethods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(TableCellMappings.class)));
 
-
-        Multimap<Method, Optional<TableCellMapping>> tableCellMappingByMethod = FluentIterable.from(cellMappingMethods)
-                .index(method -> {
-                    checkNotNull(method);
+        return cellMappingMethods.stream()
+                .filter(Objects::nonNull)
+                .map(method -> {
                     TableCellMapping tcm = method.getAnnotation(TableCellMapping.class);
-                    return tcm != null ? Optional.of(tcm)
-                            : getFirstTableCellMapping(method.getAnnotation(
-                            TableCellMappings.class), group);
+                    if (tcm == null) {
+                        tcm = getFirstTableCellMapping(method.getAnnotation(
+                                TableCellMappings.class), group)
+                                .orElse(tcm);
+                    }
+                    return new SimpleEntry<>(method, tcm);
                 })
-                .inverse();
-
-        tableCellMappingByMethod = filterEntries(tableCellMappingByMethod, entry -> {
-            checkNotNull(entry);
-            return entry.getValue().isPresent()
-                    && any(Lists.newArrayList(entry.getValue().get().groups()), assignableTo(group));
-        });
-
-        Multimap<Method, TableCellMapping> methodByTableCellMapping = transformValues(tableCellMappingByMethod, tcmOptional -> {
-            checkNotNull(tcmOptional);
-            return tcmOptional.get();
-        });
-
-        return Maps.transformValues(methodByTableCellMapping.asMap(), tcms -> {
-            checkNotNull(tcms);
-            return Iterables.getFirst(tcms, null);
-        });
+                .filter(entry -> {
+                    if (entry.getValue() == null) {
+                        return false;
+                    }
+                    return Arrays.stream(entry.getValue().groups())
+                            .filter(Objects::nonNull)
+                            .anyMatch(g -> g.isAssignableFrom(group));
+                })
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     private static Optional<TableCellMapping> getFirstTableCellMapping(TableCellMappings tcms, final Class<?> group) {
@@ -166,13 +154,6 @@ public class ImporterUtils {
                 .filter(Objects::nonNull)
                 .filter(tcm -> Arrays.stream(tcm.groups()).anyMatch(c -> c.isAssignableFrom(group)))
                 .findFirst();
-    }
-
-    private static Predicate<? super Class<?>> assignableTo(final Class<?> group) {
-        return (Predicate<Class<?>>) g -> {
-            checkNotNull(g);
-            return g.isAssignableFrom(group);
-        };
     }
 
     public static <T> void parseSpreadsheetCell(Class<? extends Converter> tcc, FormulaEvaluator evaluator, Cell cell, Method method, T instance, ExporterFormatter exporterFormatter, boolean useFormatterToParseValueAsString) throws IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -196,7 +177,7 @@ public class ImporterUtils {
             Class<?> methodInputType = getMethodParamType(method);
 
             if (isInstanceOf(value, converterInputType) && isSameClassOrExtendedNullSafe(converterReturnType, methodInputType)) {
-                Converter<Object, T> converter = tcc.newInstance();
+                Converter<Object, T> converter = ReflectionUtil.newInstance(tcc);
                 method.invoke(instance, converter.apply(value));
                 return;
             }
@@ -341,7 +322,7 @@ public class ImporterUtils {
     }
 
     private static String toStringNullSafe(Object o) {
-        return o == null ? EMPTY_STRING : o.toString();
+        return o == null ? CommonUtils.EMPTY_STRING : o.toString();
     }
 
 }

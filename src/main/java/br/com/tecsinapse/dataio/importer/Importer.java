@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import com.google.common.base.Strings;
+import br.com.tecsinapse.dataio.util.CommonUtils;
 
 import br.com.tecsinapse.dataio.converter.group.Default;
 import br.com.tecsinapse.dataio.importer.parser.CsvParser;
@@ -122,7 +122,7 @@ public class Importer<T> implements Closeable {
     }
 
     public FileType getFileType() {
-        if (this.file == null && Strings.isNullOrEmpty(this.filename)) {
+        if (this.file == null && CommonUtils.isNullOrEmpty(this.filename)) {
             throw new IllegalStateException("File is null and filename is null");
         }
         String name = this.filename;

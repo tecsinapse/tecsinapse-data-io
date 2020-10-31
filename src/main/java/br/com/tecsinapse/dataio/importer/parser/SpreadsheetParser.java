@@ -26,14 +26,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.google.common.base.Throwables;
-
 import lombok.Getter;
 import lombok.Setter;
 
 import br.com.tecsinapse.dataio.ExporterFormatter;
 import br.com.tecsinapse.dataio.annotation.TableCellMapping;
 import br.com.tecsinapse.dataio.converter.group.Default;
+import br.com.tecsinapse.dataio.exceptions.ExporterException;
 import br.com.tecsinapse.dataio.importer.ImporterUtils;
 import br.com.tecsinapse.dataio.importer.Parser;
 import br.com.tecsinapse.dataio.type.FileType;
@@ -172,7 +171,7 @@ public class SpreadsheetParser<T> implements Parser<T> {
             try {
                 workbook = fileType.buildWorkbook(inputStream);
             } catch (Exception e) {
-                throw Throwables.propagate(e);
+                throw new ExporterException(e);
             }
         }
         return workbook;

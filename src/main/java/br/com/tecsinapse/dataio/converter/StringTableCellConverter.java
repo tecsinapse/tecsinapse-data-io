@@ -6,13 +6,13 @@
  */
 package br.com.tecsinapse.dataio.converter;
 
-import com.google.common.base.Strings;
+import br.com.tecsinapse.dataio.util.CommonUtils;
 
 public class StringTableCellConverter implements FromStringConverter<String> {
 
     @Override
     public String apply(String input) {
-        if (Strings.isNullOrEmpty(input)) {
+        if (CommonUtils.isNullOrEmpty(input)) {
             return "";
         }
         return input.trim();

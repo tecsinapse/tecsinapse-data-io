@@ -16,12 +16,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -30,15 +34,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
-import com.google.common.collect.FluentIterable;
-
 import br.com.tecsinapse.dataio.ExporterFormatter;
 import br.com.tecsinapse.dataio.Table;
 import br.com.tecsinapse.dataio.TableCell;
+import br.com.tecsinapse.dataio.exceptions.ExporterException;
 import br.com.tecsinapse.dataio.importer.parser.SpreadsheetParser;
 import br.com.tecsinapse.dataio.util.CsvUtil;
 import br.com.tecsinapse.dataio.util.ExporterUtil;
@@ -54,59 +53,44 @@ public class ExporterFileTest {
         final List<FileBean> beans = FileBean.getBeans();
 
         //melhorar e unificar api de exportação
-        final Function<Table, File> csvExport = new Function<Table, File>() {
-            @Override
-            public File apply(Table table) {
-                try {
-                    final File csv = File.createTempFile("csv", ".csv");
-                    csv.deleteOnExit();
+        final java.util.function.Function<Table, File> csvExport = table -> {
+            try {
+                final File csv = File.createTempFile("csv", ".csv");
+                csv.deleteOnExit();
 
-                    ExporterUtil.writeCsvToOutput(table, Charsets.ISO_8859_1.displayName(), new FileOutputStream(csv));
+                ExporterUtil.writeCsvToOutput(table, StandardCharsets.ISO_8859_1.displayName(), new FileOutputStream(csv));
 
-                    return csv;
-                } catch (IOException e) {
-                    throw Throwables.propagate(e);
-                }
+                return csv;
+            } catch (IOException e) {
+                throw new ExporterException(e);
             }
         };
-        final Function<File, List<List<String>>> csvLines = new Function<File, List<List<String>>>() {
-            @Override
-            public List<List<String>> apply(File input) {
-                try {
-                    final List<String> strings = CsvUtil.processCSV(new FileInputStream(input), Charsets.ISO_8859_1);
-
-                    return FluentIterable.from(strings).transform(new Function<String, List<String>>() {
-                        @Override
-                        public List<String> apply(String input) {
-                            return Arrays.asList(input.split(";"));
-                        }
-                    }).toList();
-                } catch (IOException e) {
-                    throw Throwables.propagate(e);
-                }
+        final java.util.function.Function<File, List<List<String>>> csvLines = input -> {
+            try {
+                final List<String> strings = CsvUtil.processCSV(new FileInputStream(input), StandardCharsets.ISO_8859_1);
+                return strings.stream().map(str -> Arrays.asList(str.split(";"))).collect(Collectors.toList());
+            } catch (IOException e) {
+                throw new ExporterException(e);
             }
         };
 
-        final Function<File, List<List<String>>> excelLines = new Function<File, List<List<String>>>() {
-            @Override
-            public List<List<String>> apply(File file) {
-                try (final SpreadsheetParser<?> parser = new SpreadsheetParser<>(null, file)) {
-                    parser.setExporterFormatter(exporterFormatter);
-                    parser.setHeadersRows(0);
-                    return parser.getLines();
-                } catch (Exception e) {
-                    throw Throwables.propagate(e);
-                }
+        final java.util.function.Function<File, List<List<String>>> excelLines = file -> {
+            try (final SpreadsheetParser<?> parser = new SpreadsheetParser<>(null, file)) {
+                parser.setExporterFormatter(exporterFormatter);
+                parser.setHeadersRows(0);
+                return parser.getLines();
+            } catch (Exception e) {
+                throw new ExporterException(e);
             }
         };
 
-        final Function<Table, File> xlsExport = toWorkbookFunction(new Supplier<Workbook>() {
+        final java.util.function.Function<Table, File> xlsExport = toWorkbookFunction(new Supplier<Workbook>() {
             @Override
             public Workbook get() {
                 return new HSSFWorkbook();
             }
         });
-        final Function<Table, File> xlsxExport = toWorkbookFunction(new Supplier<Workbook>() {
+        final java.util.function.Function<Table, File> xlsxExport = toWorkbookFunction(new Supplier<Workbook>() {
             @Override
             public Workbook get() {
                 return new XSSFWorkbook();
@@ -127,23 +111,20 @@ public class ExporterFileTest {
         };
     }
 
-    private Function<Table, File> toWorkbookFunction(final Supplier<Workbook> supplier) {
-        return new Function<Table, File>() {
-            @Override
-            public File apply(Table table) {
-                try {
-                    String ext = supplier.get() instanceof HSSFWorkbook ? ".xls" : ".xlsx";
-                    final File file = File.createTempFile("xls", ext);
-                    file.deleteOnExit();
+    private java.util.function.Function<Table, File> toWorkbookFunction(final java.util.function.Supplier<Workbook> supplier) {
+        return table -> {
+            try {
+                String ext = supplier.get() instanceof HSSFWorkbook ? ".xls" : ".xlsx";
+                final File file = File.createTempFile("xls", ext);
+                file.deleteOnExit();
 
-                    try (final FileOutputStream out = new FileOutputStream(file)) {
-                        table.toWorkBook(supplier.get())
-                                .write(out);
-                        return file;
-                    }
-                } catch (IOException e) {
-                    throw Throwables.propagate(e);
+                try (final FileOutputStream out = new FileOutputStream(file)) {
+                    table.toWorkBook(supplier.get())
+                            .write(out);
+                    return file;
                 }
+            } catch (IOException e) {
+                throw new ExporterException(e);
             }
         };
     }

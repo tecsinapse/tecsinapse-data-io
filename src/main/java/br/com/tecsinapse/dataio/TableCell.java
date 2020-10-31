@@ -6,8 +6,6 @@
  */
 package br.com.tecsinapse.dataio;
 
-import com.google.common.primitives.Doubles;
-
 import br.com.tecsinapse.dataio.style.Style;
 import br.com.tecsinapse.dataio.style.TableCellStyle;
 import br.com.tecsinapse.dataio.type.CellType;
@@ -154,10 +152,17 @@ public class TableCell {
     }
 
     public Double getContentAsDoubleOrNull() {
+        if (content == null) {
+            return null;
+        }
         if (content instanceof Number) {
             return ((Number) content).doubleValue();
         }
-        return content == null ? null : Doubles.tryParse(getContentText());
+        try {
+            return Double.parseDouble(getContentText());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String getStyle() {

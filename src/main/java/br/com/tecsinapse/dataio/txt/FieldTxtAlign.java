@@ -6,7 +6,7 @@
  */
 package br.com.tecsinapse.dataio.txt;
 
-import com.google.common.base.Strings;
+import br.com.tecsinapse.dataio.util.CommonUtils;
 
 /**
  * Representa o alinhamento que o campo deve utilizar dentro do arquivo
@@ -22,7 +22,7 @@ public enum FieldTxtAlign {
         public String getValueAligned(FieldTxt field) {
             String content = getContent(field);
             int size = field.getFixedSize();
-            return size == 0 ? content : String.format("%s%s", Strings.repeat(field.getFiller(), size - content.length()), content);
+            return size == 0 ? content : String.format("%s%s", CommonUtils.repeat(field.getFiller(), size - content.length()), content);
         }
     },
     LEFT {
@@ -30,7 +30,7 @@ public enum FieldTxtAlign {
         public String getValueAligned(FieldTxt field) {
             String content = getContent(field);
             int size = field.getFixedSize();
-            return size == 0 ? content : String.format("%s%s", content, Strings.repeat(field.getFiller(), size - content.length()));
+            return size == 0 ? content : String.format("%s%s", content, CommonUtils.repeat(field.getFiller(), size - content.length()));
         }
     };
 

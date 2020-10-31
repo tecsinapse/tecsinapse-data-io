@@ -9,11 +9,10 @@ package br.com.tecsinapse.dataio;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
 
 import org.testng.annotations.Test;
-
-import com.google.common.io.Files;
 
 import br.com.tecsinapse.dataio.style.Colors;
 import br.com.tecsinapse.dataio.style.TableCellStyle;
@@ -41,7 +40,7 @@ public class TableTest {
                 .withCell(tableCellDate);
         File file = ResourceUtils.newFileTargetResource("/tableFluentRowAndCellTest.xlsx");
         File outFile = ExporterUtil.getXlsxFile(table, file.getName());
-        Files.move(outFile, file);
+        java.nio.file.Files.move(outFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
 }

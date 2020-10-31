@@ -25,7 +25,6 @@ import br.com.tecsinapse.dataio.style.TableCellStyle;
 
 public class ExportHtmlTest {
 
-
     public static final String LINE_SEPARATOR = System.lineSeparator();
 
     @DataProvider(name = "toHtmlDs")

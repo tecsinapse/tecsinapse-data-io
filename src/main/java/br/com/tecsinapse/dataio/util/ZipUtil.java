@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.google.common.io.ByteStreams;
+import org.apache.poi.util.IOUtils;
 
 import lombok.experimental.UtilityClass;
 
@@ -34,8 +34,11 @@ public final class ZipUtil {
         if (file.isDirectory()) {
             ZipEntry entry = new ZipEntry(file.getName());
             zos.putNextEntry(entry);
-            for (File subFile : file.listFiles()) {
-                addFile(zos, subFile);
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File subFile : files) {
+                    addFile(zos, subFile);
+                }
             }
             zos.closeEntry();
         }
@@ -43,7 +46,7 @@ public final class ZipUtil {
         try (FileInputStream fis = new FileInputStream(file)) {
             ZipEntry entry = new ZipEntry(file.getName());
             zos.putNextEntry(entry);
-            ByteStreams.copy(fis, zos);
+            IOUtils.copy(fis, zos);
             zos.closeEntry();
         }
     }
