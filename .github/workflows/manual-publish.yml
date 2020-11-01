@@ -27,12 +27,12 @@ jobs:
           server-password: SONATYPE_PASSWORD
           gpg-passphrase: GPG_PASSPHRASE
           gpg-private-key: ${{ secrets.OSS_GPG_PRIVATE_KEY }}
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+#      - name: Cache Maven packages
+#        uses: actions/cache@v2
+#        with:
+#          path: ~/.m2
+#          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: ${{ runner.os }}-m2
       - name: Publish on nexus
         run: mvn -B -U -X deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true
         env:
