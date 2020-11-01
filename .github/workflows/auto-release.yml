@@ -18,18 +18,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-          server-id: sonatype-nexus
-          server-username: SONATYPE_USERNAME
-          server-password: SONATYPE_PASSWORD
-          gpg-passphrase: GPG_PASSPHRASE
-          gpg-private-key: ${{ secrets.OSS_GPG_PRIVATE_KEY }}
       - name: Cache Maven packages
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Configure SSH and Push
+      - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_DEPLOY_KEY" > ~/.ssh/id_rsa
@@ -51,10 +46,7 @@ jobs:
           SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
       - name: New release
         run: |
-          mvn release:prepare release:perform -DpushChanges=true -f -P pom.xml
+          mvn -B release:prepare release:perform -DpushChanges=true -Dmaven.deploy.skip=true -Darguments="-Dmaven.deploy.skip=true" -f pom.xml
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-          GPG_KEYNAME: ${{ secrets.OSS_GPG_KEYNAME }}
-          SONATYPE_USERNAME: ${{ secrets.OSS_SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.OSS_SONATYPE_PASSWORD }}
