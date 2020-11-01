@@ -5,7 +5,10 @@ name: Auto deploy
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+    tags:
+      - tecsinapse-oss-parent-*
 
 jobs:
   build:
