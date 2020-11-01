@@ -1,0 +1,60 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Auto release CI
+
+on:
+  push:
+    branches: [ release/rc ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+          server-id: sonatype-nexus
+          server-username: SONATYPE_USERNAME
+          server-password: SONATYPE_PASSWORD
+          gpg-passphrase: GPG_PASSPHRASE
+          gpg-private-key: ${{ secrets.OSS_GPG_PRIVATE_KEY }}
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Configure SSH and Push
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_DEPLOY_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "#!/bin/sh\nexec cat" > ~/.askpass.sh
+          chmod +x ~/.askpass.sh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          export SSH_ASKPASS=~/.askpass.sh
+          echo "$SSH_DEPLOY_KEY_PASS"| ssh-add ~/.ssh/id_rsa #2> /dev/null
+          git config --global user.email "dev+oss@tecsinapse.com.br"
+          git config --global user.name "Tecsinapse Release Bot"
+          git fetch
+          git merge origin/release/rc
+          git flow version || echo "NO GITFLOW"
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          SSH_DEPLOY_KEY_PASS: ${{ secrets.SSH_DEPLOY_KEY_PASS }}
+          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+      - name: New release
+        run: |
+          mvn release:prepare release:perform -DpushChanges=true -f -P pom.xml
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          GPG_KEYNAME: ${{ secrets.OSS_GPG_KEYNAME }}
+          SONATYPE_USERNAME: ${{ secrets.OSS_SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.OSS_SONATYPE_PASSWORD }}

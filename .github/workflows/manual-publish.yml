@@ -25,8 +25,8 @@ jobs:
           server-id: sonatype-nexus
           server-username: SONATYPE_USERNAME
           server-password: SONATYPE_PASSWORD
-#          gpg-passphrase: GPG_PASSPHRASE
-          gpg-private-key: ${{ secrets.TEC_OSS_GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+          gpg-private-key: ${{ secrets.OSS_GPG_PRIVATE_KEY }}
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
@@ -37,5 +37,7 @@ jobs:
         run: mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GPG_KEYNAME: ${{ secrets.GPG_KEYNAME }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_KEYNAME: ${{ secrets.OSS_GPG_KEYNAME }}
+          GPG_PASSPHRASE: ${{ secrets.OSS_GPG_PASSPHRASE }}
+          SONATYPE_USERNAME: ${{ secrets.OSS_SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.OSS_SONATYPE_PASSWORD }}
