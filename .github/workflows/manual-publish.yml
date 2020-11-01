@@ -34,7 +34,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Publish on nexus
-        run: mvn -B deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true
+        run: mvn -B -X deploy -Dmaven.test.skip=true -Dfindbugs.skip=true -DperformRelease=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_KEYNAME: ${{ secrets.OSS_GPG_KEYNAME }}
