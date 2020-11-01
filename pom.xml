@@ -33,7 +33,6 @@
         <sonar.projectName>TecSinapse Data IO</sonar.projectName>
         <sonar.coverage.exclusions>br/com/tecsinapse/*</sonar.coverage.exclusions>
     </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -115,12 +114,6 @@
     </ciManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>${project.parent.groupId}</groupId>
-            <artifactId>${project.parent.artifactId}</artifactId>
-            <version>${project.parent.version}</version>
-            <type>pom</type>
-        </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
