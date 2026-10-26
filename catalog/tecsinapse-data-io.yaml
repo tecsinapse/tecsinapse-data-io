@@ -28,7 +28,7 @@ metadata:
     - product
 
 spec:
-  type: service
+  type: library
   lifecycle: production
   owner: group:default/kaizen
   system: tecsinapse-data-io
