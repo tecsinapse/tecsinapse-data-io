@@ -1,0 +1,34 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: tecsinapse-data-io
+  title: tecsinapse-data-io
+  description: >
+    Biblioteca tecsinapse-data-io.
+  tags:
+    - eks
+    - product
+
+spec:
+  owner: group:default/kaizen
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: tecsinapse-data-io
+  title: tecsinapse-data-io
+  description: >
+    Biblioteca tecsinapse-data-io.
+  annotations:
+    github.com/project-slug: tecsinapse/tecsinapse-data-io
+    backstage.io/source-location: url:https://github.com/tecsinapse/tecsinapse-data-io/tree/develop/
+  tags:
+    - eks
+    - product
+
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/kaizen
+  system: tecsinapse-data-io
