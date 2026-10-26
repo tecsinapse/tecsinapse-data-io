@@ -1,0 +1,9 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: tecsinapse-data-io-catalog
+  description: Entidades do produto tecsinapse-data-io no Backstage
+spec:
+  type: url
+  targets:
+    - ./catalog/tecsinapse-data-io.yaml
