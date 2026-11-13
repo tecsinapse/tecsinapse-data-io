@@ -1,0 +1,10 @@
+site_name: Tecsinapse Data IO
+docs_dir: docs/md
+
+plugins:
+  - techdocs-core
+
+nav:
+  - Início: index.md
+  - Uso: uso.md
+  - Migração v3: migracao.md
