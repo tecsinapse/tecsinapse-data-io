@@ -6,8 +6,15 @@ metadata:
   title: tecsinapse-data-io
   description: >
     Biblioteca tecsinapse-data-io.
+  labels:
+    tecsinapse.com/lifecycle: ativo
+  annotations:
+    tecsinapse.com/pm: user:default/a-confirmar
+    tecsinapse.com/po: user:default/a-confirmar
+    tecsinapse.com/tech-lead: user:default/a-confirmar
+    tecsinapse.com/personal-data: a-confirmar
   tags:
-    - eks
+    - library
     - product
 
 spec:
@@ -20,11 +27,18 @@ metadata:
   title: tecsinapse-data-io
   description: >
     Biblioteca tecsinapse-data-io.
+  labels:
+    tecsinapse.com/lifecycle: ativo
   annotations:
     github.com/project-slug: tecsinapse/tecsinapse-data-io
     backstage.io/source-location: url:https://github.com/tecsinapse/tecsinapse-data-io/tree/develop/
+    backstage.io/techdocs-ref: dir:..
+    tecsinapse.com/pm: user:default/a-confirmar
+    tecsinapse.com/po: user:default/a-confirmar
+    tecsinapse.com/tech-lead: user:default/a-confirmar
+    tecsinapse.com/personal-data: a-confirmar
   tags:
-    - eks
+    - library
     - product
 
 spec:
